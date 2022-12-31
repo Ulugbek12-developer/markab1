@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Telefoningizni soting - Markab Electronics{% endblock %}
+{% block title %}{% trans "Telefoningizni soting" %} - Markab Electronics{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-12 max-w-2xl">
     <div class="text-center mb-12 animate-fade-in">
-        <h2 class="text-4xl font-black tracking-tight mb-4 uppercase">Telefoningizni soting</h2>
-        <p class="text-gray-400">Ma'lumotlarni to'ldiring va e'loningizni minglab xaridorlarga ko'rsating.</p>
+        <h2 class="text-4xl font-black tracking-tight mb-4 uppercase">{% trans "Telefoningizni soting" %}</h2>
+        <p class="text-gray-400">{% trans "Ma'lumotlarni to'ldiring va e'loningizni minglab xaridorlarga ko'rsating." %}</p>
     </div>
 
     <div class="glass rounded-[32px] p-8 border border-white/5 relative overflow-hidden">
@@ -19,7 +20,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Model</label>
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">{% trans "Model" %}</label>
                     <select name="model" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none appearance-none transition-all">
                         <option value="11">iPhone 11</option>
                         <option value="12">iPhone 12</option>
@@ -31,7 +32,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Xotira</label>
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">{% trans "Xotira" %}</label>
                     <select name="memory" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none appearance-none transition-all">
                         <option value="64">64 GB</option>
                         <option value="128">128 GB</option>
@@ -44,46 +45,46 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Batareya holati (%)</label>
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">{% trans "Batareya holati (%)" %}</label>
                     <input type="number" name="battery" placeholder="95" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none transition-all">
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Holati</label>
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">{% trans "Holati" %}</label>
                     <select name="condition" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none appearance-none transition-all">
-                        <option value="ideal">Ideal</option>
-                        <option value="medium">Yaxshi</option>
-                        <option value="bad">Yomon</option>
+                        <option value="ideal">{% trans "Ideal" %}</option>
+                        <option value="medium">{% trans "Yaxshi" %}</option>
+                        <option value="bad">{% trans "Yomon" %}</option>
                     </select>
                 </div>
             </div>
 
             <div class="space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Siz aytgan narx (so'm)</label>
+                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">{% trans "Siz aytgan narx" %}</label>
                 <div class="relative">
                     <input type="number" name="price" placeholder="7 000 000" required class="w-full bg-white/5 border border-white/10 rounded-2xl pl-6 pr-16 py-4 text-white focus:border-brand outline-none transition-all text-xl font-bold">
-                    <span class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-500 font-bold">SO'M</span>
+                    <span class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-500 font-bold">{% trans "SO'M" %}</span>
                 </div>
             </div>
 
             <div class="space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Rasm yuklash</label>
+                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">{% trans "Rasm yuklash" %}</label>
                 <div class="relative group">
                     <input type="file" name="image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
                     <div class="bg-white/5 border-2 border-dashed border-white/10 rounded-2xl p-8 text-center group-hover:border-brand/50 transition-all">
                         <svg class="w-8 h-8 mx-auto mb-4 text-gray-500 group-hover:text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <p class="text-sm font-bold text-gray-400">Rasm tanlash uchun bosing yoki sudrab keling</p>
+                        <p class="text-sm font-bold text-gray-400">{% trans "Rasm tanlash uchun bosing yoki sudrab keling" %}</p>
                     </div>
                 </div>
             </div>
 
             <div class="space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Aloqa uchun telefon</label>
+                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">{% trans "Aloqa uchun telefon" %}</label>
                 <input type="tel" name="phone" placeholder="+998" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none transition-all">
             </div>
 
             <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-white py-5 rounded-2xl font-black text-lg transition-all duration-300 uppercase tracking-tighter shadow-lg shadow-brand/20">
-                E'LONNI YUBORISH
+                {% trans "E'LONNI YUBORISH" %}
             </button>
         </form>
     </div>

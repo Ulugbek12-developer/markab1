@@ -49,6 +49,17 @@ async def init_db():
             )
         """)
         
+        # Users table
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                user_id INTEGER PRIMARY KEY,
+                username TEXT,
+                full_name TEXT,
+                language TEXT DEFAULT 'uz',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
         # Seed initial branches if empty
         async with db.execute("SELECT COUNT(*) FROM branches") as cursor:
             count = await cursor.fetchone()
@@ -63,8 +74,6 @@ async def init_db():
                     ("Sergeli", "📍 Sergeli")
                 ]
                 await db.executemany("INSERT INTO branches (name, location) VALUES (?, ?)", initial_branches)
-
-        # Migrations
         columns = [
             ("branch", "TEXT"),
             ("region", "TEXT"),
@@ -186,3 +195,20 @@ async def search_ads(model=None, branch=None):
         
         async with db.execute(query, params) as cursor:
             return await cursor.fetchall()
+
+async def update_user_language(user_id, lang):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        await db.execute("UPDATE users SET language = ? WHERE user_id = ?", (lang, user_id))
+        await db.commit()
+
+async def get_user_language(user_id):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        # First ensure user exists
+        async with db.execute("SELECT language FROM users WHERE user_id = ?", (user_id,)) as cursor:
+            row = await cursor.fetchone()
+            if row:
+                return row[0]
+            else:
+                await db.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?)", (user_id,))
+                await db.commit()
+                return 'uz'

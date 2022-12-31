@@ -3,71 +3,81 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from states import AdminState, AdminAuth, AdminAddProduct, AdminBranchMgmt, AdminDeleteProduct
 import keyboards
-from database import update_ad_status, get_ad_by_id, update_price_request, get_price_request, add_ad, add_branch, get_all_branches, delete_branch, delete_ad, update_price_request, get_price_request
+from database import update_ad_status, get_ad_by_id, update_price_request, get_price_request, add_ad, add_branch, get_all_branches, delete_branch, delete_ad, get_user_language
 from config import config
+from strings import STRINGS
 
 router = Router()
 
-ADMIN_PASSWORD = "MARKAB777" # Siz xohlagan parol
+ADMIN_PASSWORD = "MARKAB777" 
 
-@router.message(F.text == "🔐 Admin Panel")
+@router.message(F.text.in_(["🔐 Admin Panel", "🔐 Админ-панель"]))
 async def admin_login(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.set_state(AdminAuth.waiting_for_password)
-    await message.answer("🔑 <b>Admin panelga kirish uchun parolni kiriting:</b>", parse_mode="HTML", reply_markup=keyboards.get_main_menu())
+    await message.answer(STRINGS[lang]['prompt_admin_pass'], parse_mode="HTML", reply_markup=keyboards.get_main_menu(lang))
 
 @router.message(AdminAuth.waiting_for_password)
 async def check_password(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     if message.text == ADMIN_PASSWORD:
         await state.clear()
-        await message.answer("🔓 <b>Xush kelibsiz, Admin!</b>\n\nFiliallarga mahsulot qo'shishingiz mumkin.", parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard())
+        await message.answer(STRINGS[lang]['admin_welcome'], parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
     else:
-        await message.answer("❌ <b>Parol noto'g'ri!</b> Qaytadan urinib ko'ring yoki bekor qiling.", parse_mode="HTML")
+        await message.answer(STRINGS[lang]['err_pass'], parse_mode="HTML")
 
-@router.message(F.text == "➕ Mahsulot qo'shish")
+@router.message(F.text.in_(["➕ Mahsulot qo'shish", "➕ Добавить товар"]))
 async def admin_add_product_start(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.set_state(AdminAddProduct.model)
-    await message.answer("📱 <b>Qo'shmoqchi bo'lgan iPhone modelini tanlang:</b>", parse_mode="HTML", reply_markup=keyboards.get_iphone_models_keyboard())
+    await message.answer(STRINGS[lang]['prompt_admin_model'], parse_mode="HTML", reply_markup=keyboards.get_iphone_models_keyboard(lang))
 
 @router.message(AdminAddProduct.model)
 async def admin_add_model(message: Message, state: FSMContext):
-    if message.text == "⬅️ Orqaga":
-        await message.answer("🏠 Admin menu", reply_markup=keyboards.get_admin_panel_keyboard())
+    lang = await get_user_language(message.from_user.id)
+    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
+        await message.answer(STRINGS[lang]['main_menu'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
         await state.clear()
         return
     await state.update_data(model=message.text)
     await state.set_state(AdminAddProduct.branch)
     branches = await get_all_branches()
-    await message.answer("🏢 <b>Qaysi filialga qo'shmoqchisiz?</b>", parse_mode="HTML", reply_markup=keyboards.get_branches_keyboard(branches))
+    await message.answer(STRINGS[lang]['prompt_admin_branch'], parse_mode="HTML", reply_markup=keyboards.get_branches_keyboard(branches, lang))
 
 @router.message(AdminAddProduct.branch)
 async def admin_add_branch(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.update_data(branch=message.text)
     await state.set_state(AdminAddProduct.storage)
-    await message.answer("💾 <b>Xotira hajmini tanlang:</b>", parse_mode="HTML", reply_markup=keyboards.get_memory_keyboard())
+    await message.answer(STRINGS[lang]['prompt_admin_storage'], parse_mode="HTML", reply_markup=keyboards.get_memory_keyboard(lang))
 
 @router.message(AdminAddProduct.storage)
 async def admin_add_storage(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.update_data(storage=message.text)
     await state.set_state(AdminAddProduct.battery)
-    await message.answer("🔋 <b>Batareya yomkostini kiriting (masalan: 95):</b>", parse_mode="HTML")
+    await message.answer(STRINGS[lang]['prompt_admin_battery'], parse_mode="HTML")
 
 @router.message(AdminAddProduct.battery)
 async def admin_add_battery(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.update_data(battery=message.text)
     await state.set_state(AdminAddProduct.condition)
-    await message.answer("🛠 <b>Holatini tanlang:</b>", parse_mode="HTML", reply_markup=keyboards.get_condition_keyboard())
+    await message.answer(STRINGS[lang]['prompt_admin_condition'], parse_mode="HTML", reply_markup=keyboards.get_condition_keyboard(lang))
 
 @router.message(AdminAddProduct.condition)
 async def admin_add_condition(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.update_data(condition=message.text)
     await state.set_state(AdminAddProduct.price)
-    await message.answer("💰 <b>Sotuv narxini kiriting (masalan: 8.5 mln yoki 800$):</b>", parse_mode="HTML")
+    await message.answer(STRINGS[lang]['prompt_admin_price'], parse_mode="HTML")
 
 @router.message(AdminAddProduct.price)
 async def admin_add_price(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.update_data(price=message.text)
     await state.set_state(AdminAddProduct.photos)
-    await message.answer("📸 <b>Mahsulot rasmilarini yuboring (kamida 1 ta):</b>", parse_mode="HTML")
+    await message.answer(STRINGS[lang]['prompt_admin_photos'], parse_mode="HTML")
 
 @router.message(AdminAddProduct.photos, F.photo)
 async def admin_add_photos(message: Message, state: FSMContext):
@@ -141,57 +151,65 @@ async def admin_add_photos(message: Message, state: FSMContext):
         err_msg = f"DEBUG: Sync Bot -> Web App error: {e}\n{traceback.format_exc()}\n"
         with open('sync_debug.log', 'a') as f: f.write(err_msg)
 
-    await message.answer("✅ <b>Mahsulot muvaffaqiyatli filialga va Mini Appga qo'shildi!</b>", parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard())
+    await message.answer(STRINGS[lang]['admin_add_success'], parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
     await state.clear()
 
-@router.message(F.text == "⬅️ Chiqish")
+@router.message(F.text.in_(["⬅️ Chiqish", "⬅️ Выход"]))
 async def admin_exit(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.clear()
-    await message.answer("🏠 Bosh menyuga qaytildi.", reply_markup=keyboards.get_main_menu())
+    await message.answer(STRINGS[lang]['msg_cancelled'], reply_markup=keyboards.get_main_menu(lang))
 
-@router.message(F.text == "🏢 Filiallarni boshqarish")
+@router.message(F.text.in_(["🏢 Filiallarni boshqarish", "🏢 Управление филиалами"]))
 async def admin_branch_mgmt(message: Message, state: FSMContext):
-    await message.answer("🏢 <b>Filiallarni boshqarish menyusi:</b>", parse_mode="HTML", reply_markup=keyboards.get_admin_branch_mgmt_keyboard())
+    lang = await get_user_language(message.from_user.id)
+    await message.answer(STRINGS[lang]['admin_branch_menu'], parse_mode="HTML", reply_markup=keyboards.get_admin_branch_mgmt_keyboard(lang))
 
-@router.message(F.text == "➕ Yangi filial qo'shish")
+@router.message(F.text.in_(["➕ Yangi filial qo'shish", "➕ Добавить филиал"]))
 async def admin_add_branch_start(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.set_state(AdminBranchMgmt.waiting_for_name)
-    await message.answer("📝 <b>Yangi filial nomini kiriting:</b>", parse_mode="HTML")
+    await message.answer(STRINGS[lang]['prompt_branch_name'], parse_mode="HTML")
 
 @router.message(AdminBranchMgmt.waiting_for_name)
 async def admin_add_branch_process(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await add_branch(message.text)
-    await message.answer(f"✅ <b>{message.text}</b> filiali muvaffaqiyatli qo'shildi!", parse_mode="HTML", reply_markup=keyboards.get_admin_branch_mgmt_keyboard())
+    await message.answer(STRINGS[lang]['branch_added'].format(name=message.text), parse_mode="HTML", reply_markup=keyboards.get_admin_branch_mgmt_keyboard(lang))
     await state.clear()
 
-@router.message(F.text == "❌ Filialni o'chirish")
+@router.message(F.text.in_(["❌ Filialni o'chirish", "❌ Удалить филиал"]))
 async def admin_delete_branch_start(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     branches = await get_all_branches()
     await state.set_state(AdminBranchMgmt.waiting_for_delete)
-    await message.answer("🗑 <b>O'chirmoqchi bo'lgan filialni tanlang:</b>", parse_mode="HTML", reply_markup=keyboards.get_branches_keyboard(branches))
+    await message.answer(STRINGS[lang]['prompt_delete_branch'], parse_mode="HTML", reply_markup=keyboards.get_branches_keyboard(branches, lang))
 
 @router.message(AdminBranchMgmt.waiting_for_delete)
 async def admin_delete_branch_process(message: Message, state: FSMContext):
-    if message.text == "⬅️ Orqaga":
+    lang = await get_user_language(message.from_user.id)
+    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
         await admin_branch_mgmt(message, state)
         return
     await delete_branch(message.text)
-    await message.answer(f"✅ <b>{message.text}</b> filiali o'chirildi!", parse_mode="HTML", reply_markup=keyboards.get_admin_branch_mgmt_keyboard())
+    await message.answer(STRINGS[lang]['branch_deleted'].format(name=message.text), parse_mode="HTML", reply_markup=keyboards.get_admin_branch_mgmt_keyboard(lang))
     await state.clear()
 
-@router.message(F.text == "⬅️ Admin menyuga qaytish")
+@router.message(F.text.in_(["⬅️ Admin menyuga qaytish", "⬅️ Вернуться в админ-меню"]))
 async def admin_return(message: Message, state: FSMContext):
-    await message.answer("🏠 Admin panel", reply_markup=keyboards.get_admin_panel_keyboard())
+    lang = await get_user_language(message.from_user.id)
+    await message.answer("🏠 Admin panel", reply_markup=keyboards.get_admin_panel_keyboard(lang))
 
-@router.message(F.text == "🗑 Mahsulotni o'chirish")
+@router.message(F.text.in_(["🗑 Mahsulotni o'chirish", "🗑 Удалить товар"]))
 async def admin_delete_product_start(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.set_state(AdminDeleteProduct.waiting_for_model)
-    await message.answer("📱 <b>Qaysi modeldagi telefonni o'chirmoqchisiz?</b>\n(Masalan: iPhone 13 Pro Max)", parse_mode="HTML")
+    await message.answer(STRINGS[lang]['prompt_delete_model'], parse_mode="HTML")
 
 @router.message(AdminDeleteProduct.waiting_for_model)
 async def admin_delete_product_model(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     model = message.text
-    # Search in Bot DB
     import sqlite3
     conn = sqlite3.connect(config.DB_NAME)
     cursor = conn.cursor()
@@ -200,38 +218,41 @@ async def admin_delete_product_model(message: Message, state: FSMContext):
     conn.close()
     
     if not ads:
-        await message.answer("❌ <b>Bunday modeldagi mahsulot topilmadi.</b>", parse_mode="HTML")
+        await message.answer(STRINGS[lang]['no_model_found'], parse_mode="HTML")
         return
     
-    text = "🔍 <b>Topilgan mahsulotlar:</b>\n\n"
+    text = STRINGS[lang]['found_models']
     for ad in ads:
         text += f"🆔 {ad[0]} | {ad[1]} {ad[2]}GB | {ad[3]:,.0f} so'm\n"
     
-    text += "\n🔢 <b>O'chirmoqchi bo'lgan telefon ID sini kiriting:</b>"
+    text += STRINGS[lang]['prompt_delete_id']
     await state.set_state(AdminDeleteProduct.waiting_for_selection)
     await message.answer(text, parse_mode="HTML")
 
 @router.message(AdminDeleteProduct.waiting_for_selection)
 async def admin_delete_product_finish(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     try:
         ad_id = int(message.text)
         await delete_ad(ad_id)
-        await message.answer(f"✅ <b>ID {ad_id}</b> bo'lgan mahsulot o'chirildi!", parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard())
+        await message.answer(STRINGS[lang]['ad_deleted'].format(id=ad_id), parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
         await state.clear()
     except ValueError:
-        await message.answer("❌ <b>Iltimos, faqat ID raqamini kiriting.</b>")
+        await message.answer("❌ ID?")
 
 @router.callback_query(F.data.startswith("approve_"))
 async def approve_ad(callback: CallbackQuery, state: FSMContext):
+    lang = await get_user_language(callback.from_user.id)
     ad_id = int(callback.data.split("_")[1])
     await state.update_data(ad_id=ad_id)
     await state.set_state(AdminState.setting_branch)
     branches = await get_all_branches()
-    await callback.message.answer("🏢 <b>Ushbu e'lon qaysi filialga tegishli?</b>", parse_mode="HTML", reply_markup=keyboards.get_branches_keyboard(branches))
+    await callback.message.answer(STRINGS[lang]['prompt_ad_branch'], parse_mode="HTML", reply_markup=keyboards.get_branches_keyboard(branches, lang))
     await callback.answer()
 
 @router.message(AdminState.setting_branch)
 async def process_admin_branch(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     if message.from_user.id != config.ADMIN_ID: return
     
     data = await state.get_data()
@@ -241,29 +262,35 @@ async def process_admin_branch(message: Message, state: FSMContext):
     await update_ad_status(ad_id, "approved", branch=branch)
     ad = await get_ad_by_id(ad_id)
     
-    await message.bot.send_message(ad['user_id'], f"✅ <b>Tabriklaymiz!</b>\n\nSizning e'loningiz (ID: {ad_id}) tasdiqlandi va <b>{branch}</b> filialiga biriktirildi. 🚀", parse_mode="HTML")
-    await message.answer(f"✅ E'lon {ad_id} tasdiqlandi va {branch} ga qo'shildi.", reply_markup=keyboards.get_main_menu())
+    user_lang = await get_user_language(ad['user_id'])
+    await message.bot.send_message(ad['user_id'], STRINGS[user_lang]['ad_approved_user'].format(id=ad_id, branch=branch), parse_mode="HTML")
+    await message.answer(STRINGS[lang]['ad_approved_admin'].format(id=ad_id, branch=branch), reply_markup=keyboards.get_admin_panel_keyboard(lang))
     await state.clear()
 
 @router.callback_query(F.data.startswith("reject_"))
 async def reject_ad(callback: CallbackQuery):
+    lang = await get_user_language(callback.from_user.id)
     ad_id = int(callback.data.split("_")[1])
     await update_ad_status(ad_id, "rejected")
     ad = await get_ad_by_id(ad_id)
-    await callback.message.bot.send_message(ad['user_id'], f"❌ <b>Afsuski...</b>\n\nSizning e'loningiz (ID: {ad_id}) rad etildi. Ma'lumotlarni tekshirib qaytadan urinib ko'ring.", parse_mode="HTML")
-    await callback.message.edit_text(f"❌ E'lon {ad_id} rad etildi.")
+    
+    user_lang = await get_user_language(ad['user_id'])
+    await callback.message.bot.send_message(ad['user_id'], STRINGS[user_lang]['ad_rejected_user'].format(id=ad_id), parse_mode="HTML")
+    await callback.message.edit_text(STRINGS[lang]['ad_rejected_admin'].format(id=ad_id))
     await callback.answer()
 
 @router.callback_query(F.data.startswith("setprice_"))
 async def admin_set_price(callback: CallbackQuery, state: FSMContext):
+    lang = await get_user_language(callback.from_user.id)
     req_id = int(callback.data.split("_")[1])
     await state.update_data(req_id=req_id)
     await state.set_state(AdminState.setting_price)
-    await callback.message.answer("💰 <b>Tasdiqlangan narxni kiriting (mln so'mda):</b>", parse_mode="HTML")
+    await callback.message.answer(STRINGS[lang]['prompt_set_price'], parse_mode="HTML")
     await callback.answer()
 
 @router.message(AdminState.setting_price)
 async def process_admin_price(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     if message.from_user.id != config.ADMIN_ID: return
     
     data = await state.get_data()
@@ -273,6 +300,7 @@ async def process_admin_price(message: Message, state: FSMContext):
     await update_price_request(req_id, price)
     req = await get_price_request(req_id)
     
-    await message.bot.send_message(req['user_id'], f"📢 <b>Admin tomonidan tasdiqlangan narx:</b>\n\n📱 Model: {req['model']}\n💰 Yakuniy narx: <b>{price} mln so'm</b>\n\nSotishni xohlasangiz 'Telefon sotish' bo'limiga o'ting! 🚀", parse_mode="HTML")
-    await message.answer("✅ Foydalanuvchiga narx yuborildi.", reply_markup=keyboards.get_main_menu())
+    user_lang = await get_user_language(req['user_id'])
+    await message.bot.send_message(req['user_id'], STRINGS[user_lang]['price_sent_user'].format(model=req['model'], price=price), parse_mode="HTML")
+    await message.answer(STRINGS[lang]['price_sent_admin'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
     await state.clear()

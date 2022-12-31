@@ -8,29 +8,37 @@ from config import config
 
 router = Router()
 
-@router.message(F.text == "🛍 Telefon sotib olish")
+from database import search_ads, get_user_language, get_all_branches
+from config import config
+from strings import STRINGS
+
+router = Router()
+
+@router.message(F.text.in_(["🛍 Telefon sotib olish", "🛍 Купить телефон"]))
 async def start_buy(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     await state.set_state(BuyPhone.model)
-    await message.answer("📲 <b>Qaysi modeldagi iPhone qidiryapsiz?</b>", parse_mode="HTML", reply_markup=get_iphone_models_keyboard())
+    await message.answer(STRINGS[lang]['prompt_buy_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
 
 @router.message(BuyPhone.model)
 async def process_buy_model(message: Message, state: FSMContext):
-    if message.text == "⬅️ Orqaga":
+    lang = await get_user_language(message.from_user.id)
+    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
         await state.clear()
-        await message.answer("🏠 Asosiy menyu", reply_markup=get_main_menu())
+        await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
         return
 
     await state.update_data(model=message.text)
     await state.set_state(BuyPhone.branch)
-    from database import get_all_branches
     branches = await get_all_branches()
-    await message.answer("🏢 <b>Qaysi filialdan sotib olmoqchisiz?</b>", parse_mode="HTML", reply_markup=get_branches_keyboard(branches))
+    await message.answer(STRINGS[lang]['prompt_buy_branch'], parse_mode="HTML", reply_markup=get_branches_keyboard(branches, lang))
 
 @router.message(BuyPhone.branch)
 async def process_buy_branch(message: Message, state: FSMContext):
-    if message.text == "⬅️ Orqaga":
+    lang = await get_user_language(message.from_user.id)
+    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
         await state.set_state(BuyPhone.model)
-        await message.answer("📲 iPhone modelini tanlang:", reply_markup=get_iphone_models_keyboard())
+        await message.answer(STRINGS[lang]['prompt_buy_model'], reply_markup=get_iphone_models_keyboard(lang))
         return
 
     branch = message.text
@@ -40,20 +48,21 @@ async def process_buy_branch(message: Message, state: FSMContext):
     results = await search_ads(model=model, branch=branch)
     
     if not results:
-        await message.answer(f"❌ Afsuski, <b>{branch}</b> filialida <b>{model}</b> topilmadi.", parse_mode="HTML", reply_markup=get_main_menu())
+        await message.answer(STRINGS[lang]['no_results'].format(branch=branch, model=model), parse_mode="HTML", reply_markup=get_main_menu(lang))
         await state.clear()
     else:
-        await message.answer(f"🔎 <b>{branch}</b> filialidagi <b>{model}</b> modellari:", parse_mode="HTML")
+        await message.answer(STRINGS[lang]['results_title'].format(branch=branch, model=model), parse_mode="HTML")
         ids = []
+        s = STRINGS[lang]
         for row in results:
             summary = (
                 f"🆔 <b>ID: {row['id']}</b>\n"
-                f"📱 <b>Model:</b> {row['model']}\n"
-                f"💾 <b>Xotira:</b> {row['storage']}\n"
-                f"🔋 <b>Batareya:</b> {row['battery']}%\n"
-                f"🛠 <b>Holati:</b> {row['condition']}\n"
-                f"💰 <b>Narxi:</b> {row['price']}\n"
-                f"📍 <b>Filial:</b> {row['branch']}"
+                f"📱 <b>{s['lbl_model']}:</b> {row['model']}\n"
+                f"💾 <b>{s['lbl_memory']}:</b> {row['storage']}\n"
+                f"🔋 <b>{s['lbl_battery']}:</b> {row['battery']}%\n"
+                f"🛠 <b>{s['lbl_condition']}:</b> {row['condition']}\n"
+                f"💰 <b>{s['lbl_price']}:</b> {row['price']}\n"
+                f"📍 <b>{s['btn_branches'].replace('🏢 ', '')}:</b> {row['branch']}"
             )
             photo_list = [p for p in row['photos'].split(",") if p] if row['photos'] else []
             if photo_list:
@@ -67,22 +76,31 @@ async def process_buy_branch(message: Message, state: FSMContext):
         
         await state.update_data(available_ids=ids)
         await state.set_state(BuyPhone.select_id)
-        await message.answer("📝 <b>Sotib olmoqchi bo'lgan telefon ID sini yozing:</b>", parse_mode="HTML")
+        await message.answer(STRINGS[lang]['prompt_select_id'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
 
 @router.message(BuyPhone.select_id)
 async def process_select_id(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
+        await state.set_state(BuyPhone.branch)
+        branches = await get_all_branches()
+        await message.answer(STRINGS[lang]['prompt_buy_branch'], reply_markup=get_branches_keyboard(branches, lang))
+        return
+
     data = await state.get_data()
     if message.text not in data.get('available_ids', []):
-        await message.answer("❌ Noto'g'ri ID. Iltimos, yuqoridagi ro'yxatdan ID tanlang:")
+        await message.answer(STRINGS[lang]['err_id'])
         return
 
     await state.update_data(selected_id=message.text)
     await state.set_state(BuyPhone.confirm)
-    await message.answer(f"❓ <b>ID {message.text} bo'lgan telefonni buyurtma qilishni tasdiqlaysizmi?</b>", parse_mode="HTML", reply_markup=get_confirm_keyboard())
+    await message.answer(STRINGS[lang]['confirm_buy'].format(id=message.text), parse_mode="HTML", reply_markup=get_confirm_keyboard(lang))
 
 @router.message(BuyPhone.confirm)
 async def process_buy_confirm(message: Message, state: FSMContext):
-    if message.text == "✅ Tasdiqlash":
+    lang = await get_user_language(message.from_user.id)
+    s = STRINGS[lang]
+    if message.text == s['btn_confirm']:
         data = await state.get_data()
         if config.ADMIN_ID:
             await message.bot.send_message(
@@ -91,8 +109,12 @@ async def process_buy_confirm(message: Message, state: FSMContext):
                 parse_mode="HTML"
             )
         
-        await message.answer("✅ <b>Buyurtmangiz qabul qilindi!</b>\nAdmin tez orada siz bilan bog'lanadi.", parse_mode="HTML", reply_markup=get_main_menu())
+        await message.answer(s['buy_success'], parse_mode="HTML", reply_markup=get_main_menu(lang))
+    elif message.text == s['btn_back']:
+        await state.set_state(BuyPhone.select_id)
+        await message.answer(s['prompt_select_id'], reply_markup=get_back_keyboard(lang))
+        return
     else:
-        await message.answer("🚫 <b>Bekor qilindi.</b>", parse_mode="HTML", reply_markup=get_main_menu())
+        await message.answer(s['msg_cancelled'], parse_mode="HTML", reply_markup=get_main_menu(lang))
     
     await state.clear()
