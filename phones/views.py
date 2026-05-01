@@ -166,7 +166,7 @@ class AdminDashboardView(ListView):
         if not request.session.get('is_markab_admin'):
             if request.method == 'POST' and request.POST.get('password') == 'MARKAB777':
                 request.session['is_markab_admin'] = True
-                return super().dispatch(request, *args, **kwargs)
+                return redirect(request.path)
             return render(request, 'phones/admin_login.html')
         return super().dispatch(request, *args, **kwargs)
 
@@ -176,6 +176,11 @@ class AdminAddPhoneView(CreateView):
     template_name = 'phones/admin_add.html'
     success_url = reverse_lazy('phones:admin_dashboard')
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('is_markab_admin'):
+            return redirect('phones:admin_dashboard')
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         form.instance.is_approved = True
         messages.success(self.request, "Mahsulot muvaffaqiyatli qo'shildi!")
@@ -184,6 +189,11 @@ class AdminAddPhoneView(CreateView):
 class AdminDeletePhoneView(DeleteView):
     model = Phone
     success_url = reverse_lazy('phones:admin_dashboard')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('is_markab_admin'):
+            return redirect('phones:admin_dashboard')
+        return super().dispatch(request, *args, **kwargs)
     
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
