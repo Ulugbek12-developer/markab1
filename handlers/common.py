@@ -1,6 +1,6 @@
 import os
 from aiogram import Router, F
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from keyboards import get_main_menu, get_branches_keyboard, get_language_keyboard, get_subscription_keyboard
@@ -95,7 +95,7 @@ async def cmd_branches(message: Message):
     text += prompt
     await message.answer(text, parse_mode="HTML", reply_markup=get_branches_keyboard(branches, lang))
 
-@router.message(F.text == "Malika")
+@router.message(F.text == "Malika", StateFilter(None))
 async def branch_malika(message: Message):
     lang = await get_user_language(message.from_user.id)
     text = "📍 <b>Malika filiali lokatsiyasi:</b>\n\nhttps://maps.google.com/maps?q=41.339919,69.270824&ll=41.339919,69.270824&z=16"
@@ -103,7 +103,7 @@ async def branch_malika(message: Message):
         text = "📍 <b>Локация филиала Малика:</b>\n\nhttps://maps.google.com/maps?q=41.339919,69.270824&ll=41.339919,69.270824&z=16"
     await message.answer(text, parse_mode="HTML")
 
-@router.message(F.text == "Chilonzor")
+@router.message(F.text == "Chilonzor", StateFilter(None))
 async def branch_chilonzor(message: Message):
     lang = await get_user_language(message.from_user.id)
     text = "📍 <b>Chilonzor filiali lokatsiyasi:</b>\n\nhttps://maps.google.com/maps?q=41.274714,69.203840&ll=41.274714,69.203840&z=16"
