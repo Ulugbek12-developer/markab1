@@ -132,13 +132,14 @@ class CalculatorView(View):
         # Send Telegram Notification
         try:
             from core.telegram_bot import send_admin_notification
+            box_txt = 'Bor' if has_box else "Yo'q"
             msg = (
                 f"🧮 <b>Kalkulyatorda hisoblandi:</b>\n\n"
                 f"📱 Model: {model}\n"
                 f"💾 Xotira: {memory} GB\n"
                 f"🔋 Batareya: {battery}%\n"
                 f"🛠 Holati: {condition}\n"
-                f"📦 Karobka: {'Bor' if has_box else 'Yo\'q'}\n\n"
+                f"📦 Karobka: {box_txt}\n\n"
                 f"💰 <b>Taxminiy narx: {price_som:,.0f} so'm</b>"
             )
             send_admin_notification(msg)
