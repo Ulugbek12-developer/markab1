@@ -16,7 +16,36 @@ from strings import STRINGS
 
 router = Router()
 
-# ... (BASE_PRICES and calculate_price remain unchanged)
+BASE_PRICES = {
+    "iPhone 11": 300, "iPhone 11 Pro": 400, "iPhone 11 Pro Max": 450,
+    "iPhone 12": 400, "iPhone 12 Pro": 500, "iPhone 12 Pro Max": 550,
+    "iPhone 13": 500, "iPhone 13 Pro": 650, "iPhone 13 Pro Max": 750,
+    "iPhone 14": 650, "iPhone 14 Pro": 850, "iPhone 14 Pro Max": 950,
+    "iPhone 15": 800, "iPhone 15 Pro": 1050, "iPhone 15 Pro Max": 1150,
+    "iPhone 16": 1000, "iPhone 16 Pro": 1300, "iPhone 16 Pro Max": 1450,
+}
+
+def calculate_price(data):
+    model = data.get('model', "")
+    base = BASE_PRICES.get(model, 500)
+    
+    # Memory adjustments
+    storage = data.get('storage', "128GB")
+    if "256" in storage: base += 50
+    elif "512" in storage: base += 100
+    elif "1TB" in storage: base += 200
+    
+    # Battery adjustments
+    battery = data.get('battery_range', "90-100")
+    if "70-80" in battery: base -= 30
+    elif "60-70" in battery: base -= 60
+    
+    # Condition
+    cond = data.get('condition', "").lower()
+    if "yaxshi" in cond or "хороший" in cond: base -= 50
+    elif "ta'mir" in cond or "ремонта" in cond: base -= 150
+    
+    return round(base / 100, 1) # Return in millions
 
 @router.message(F.text.in_(["💰 Narxlatish", "💰 Оценка"]))
 async def start_price(message: Message, state: FSMContext):
