@@ -149,9 +149,11 @@ async def admin_add_photos(message: Message, state: FSMContext):
             color='Noma\'lum',
             price=price_val,
             condition=django_cond,
+            is_approved=True,
             seller_phone=str(data.get('contact', '')),
             image=image_rel_path
         )
+        with open('sync_debug.log', 'a') as f: f.write(f"DEBUG: SUCCESS! Product created in Django with ID: {phone_obj.id}\n")
         with open('sync_debug.log', 'a') as f: f.write(f"DEBUG: Sync Bot -> Web App success! ID: {phone_obj.id}\n")
     except Exception as e:
         import traceback
