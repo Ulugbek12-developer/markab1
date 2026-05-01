@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-94nng-4qh43jq4!n+&c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['markab.pythonanywhere.com', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['markab2.pythonanywhere.com', 'localhost', '127.0.0.1', '*']
 
 
 

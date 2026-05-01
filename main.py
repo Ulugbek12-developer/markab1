@@ -27,6 +27,15 @@ async def main():
     # Include Routers
     dp.include_router(get_handlers_router())
 
+    # Set WebApp Menu Button
+    from aiogram.types import MenuButtonWebApp, WebAppInfo
+    await bot.set_chat_menu_button(
+        menu_button=MenuButtonWebApp(
+            text="🌐 Mini App",
+            web_app=WebAppInfo(url="https://markab2.pythonanywhere.com/")
+        )
+    )
+
     # Start Polling
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     await dp.start_polling(bot)
