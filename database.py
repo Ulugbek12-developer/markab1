@@ -1,0 +1,188 @@
+import aiosqlite
+from config import config
+
+async def init_db():
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS ads (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                brand TEXT,
+                model TEXT,
+                photos TEXT,
+                battery TEXT,
+                storage TEXT,
+                condition TEXT,
+                region TEXT,
+                box TEXT,
+                price TEXT,
+                contact TEXT,
+                branch TEXT,
+                status TEXT DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS price_requests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                model TEXT,
+                photos TEXT,
+                battery_range TEXT,
+                storage TEXT,
+                condition TEXT,
+                region TEXT,
+                box TEXT,
+                calculated_price TEXT,
+                admin_price TEXT,
+                status TEXT DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS branches (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE,
+                location TEXT
+            )
+        """)
+        
+        # Seed initial branches if empty
+        async with db.execute("SELECT COUNT(*) FROM branches") as cursor:
+            count = await cursor.fetchone()
+            if count[0] == 0:
+                initial_branches = [
+                    ("Malika A7", "📍 Malika A7"),
+                    ("Malika B23", "📍 Malika B23"),
+                    ("Abu Saxiy 12", "📍 Abu Saxiy 12"),
+                    ("Fleshka 45", "📍 Fleshka 45"),
+                    ("Chilonzor", "📍 Chilonzor"),
+                    ("Yunusobod", "📍 Yunusobod"),
+                    ("Sergeli", "📍 Sergeli")
+                ]
+                await db.executemany("INSERT INTO branches (name, location) VALUES (?, ?)", initial_branches)
+
+        # Migrations
+        columns = [
+            ("branch", "TEXT"),
+            ("region", "TEXT"),
+            ("box", "TEXT"),
+            ("status", "TEXT DEFAULT 'pending'"),
+            ("price", "TEXT")
+        ]
+        
+        for col_name, col_type in columns:
+            try:
+                await db.execute(f"ALTER TABLE ads ADD COLUMN {col_name} {col_type}")
+            except Exception:
+                pass
+
+        await db.commit()
+
+async def get_all_branches():
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute("SELECT * FROM branches") as cursor:
+            return await cursor.fetchall()
+
+async def add_branch(name: str, location: str = ""):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        await db.execute("INSERT OR IGNORE INTO branches (name, location) VALUES (?, ?)", (name, location))
+        await db.commit()
+
+async def delete_branch(name: str):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        await db.execute("DELETE FROM branches WHERE name = ?", (name,))
+        await db.commit()
+
+async def delete_ad(ad_id: int):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        await db.execute("DELETE FROM ads WHERE id = ?", (ad_id,))
+        await db.commit()
+
+async def add_ad(data: dict):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        cursor = await db.execute("""
+            INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            data.get('user_id'),
+            data.get('brand', 'iPhone'),
+            data.get('model'),
+            ",".join(data.get('photos', [])),
+            data.get('battery'),
+            data.get('storage'),
+            data.get('condition'),
+            data.get('region'),
+            data.get('box'),
+            data.get('price'),
+            data.get('contact'),
+            data.get('branch')
+        ))
+        ad_id = cursor.lastrowid
+        await db.commit()
+        return ad_id
+
+async def add_price_request(data: dict):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        cursor = await db.execute("""
+            INSERT INTO price_requests (user_id, model, photos, battery_range, storage, condition, region, box, calculated_price)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            data.get('user_id'),
+            data.get('model'),
+            ",".join(data.get('photos', [])),
+            data.get('battery_range'),
+            data.get('storage'),
+            data.get('condition'),
+            data.get('region'),
+            data.get('box'),
+            data.get('calculated_price')
+        ))
+        req_id = cursor.lastrowid
+        await db.commit()
+        return req_id
+
+async def update_price_request(req_id: int, admin_price: str):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        await db.execute("UPDATE price_requests SET admin_price = ?, status = 'responded' WHERE id = ?", (admin_price, req_id))
+        await db.commit()
+
+async def get_price_request(req_id: int):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute("SELECT * FROM price_requests WHERE id = ?", (req_id,)) as cursor:
+            return await cursor.fetchone()
+
+async def update_ad_status(ad_id: int, status: str, branch: str = None):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        if branch:
+            await db.execute("UPDATE ads SET status = ?, branch = ? WHERE id = ?", (status, branch, ad_id))
+        else:
+            await db.execute("UPDATE ads SET status = ? WHERE id = ?", (status, ad_id))
+        await db.commit()
+
+async def get_ad_by_id(ad_id: int):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute("SELECT * FROM ads WHERE id = ?", (ad_id,)) as cursor:
+            return await cursor.fetchone()
+
+async def search_ads(model=None, branch=None):
+    async with aiosqlite.connect(config.DB_NAME) as db:
+        db.row_factory = aiosqlite.Row
+        query = "SELECT * FROM ads WHERE status = 'approved'"
+        params = []
+        if model:
+            query += " AND model = ?"
+            params.append(model)
+        if branch:
+            query += " AND branch = ?"
+            params.append(branch)
+        
+        query += " ORDER BY created_at DESC"
+        
+        async with db.execute(query, params) as cursor:
+            return await cursor.fetchall()

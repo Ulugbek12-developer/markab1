@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}E'lon yuborildi - Markab{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align: center; padding-top: 60px;">
+    <div style="font-size: 80px; margin-bottom: 20px;">🚀</div>
+    <h2>E'lon yuborildi!</h2>
+    <p style="font-size: 16px; margin-bottom: 30px;">Sizning e'loningiz moderatorlar tomonidan ko'rib chiqilgandan so'ng saytga chiqariladi.</p>
+    
+    <a href="{% url 'phones:home' %}" class="btn btn-primary">Bosh sahifaga qaytish</a>
+</div>
+{% endblock %}

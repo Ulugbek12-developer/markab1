@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-8 pb-16 md:pt-24 md:pb-32">
+    <!-- Background Glow -->
+    <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-brand/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[400px] h-[400px] bg-brand/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+            <div class="flex-1 text-center md:text-left animate-fade-in order-2 md:order-1">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-brand/10 border border-brand/20 text-brand text-[10px] md:text-xs font-bold tracking-widest uppercase mb-6 animate-pulse">
+                    Yangi Avlod Texnologiyalari
+                </span>
+                <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight mb-6 tracking-tighter">
+                    MUKAMMALIK <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-light">HIS ETING</span>
+                </h1>
+                <p class="text-gray-400 text-base md:text-xl mb-10 max-w-xl mx-auto md:mx-0">
+                    Markab Electronics — dunyodagi eng ilg'or smartfonlar va premium aksessuarlar markazi. Sifat, kafolat va tezkor yetkazib berish.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+                    <a href="{% url 'phones:filter' %}" class="btn-glow bg-brand hover:bg-brand-hover text-white px-8 py-4 rounded-full font-bold text-lg w-full sm:w-auto text-center">
+                        Hoziroq sotib olish
+                    </a>
+                    <a href="{% url 'users:sell' %}" class="px-8 py-4 rounded-full font-bold text-lg border border-white/10 hover:bg-white/5 transition-colors w-full sm:w-auto text-center">
+                        Telefoningizni soting
+                    </a>
+                </div>
+            </div>
+            <div class="flex-1 relative order-1 md:order-2 w-full max-w-md mx-auto">
+                <div class="relative w-full aspect-square md:aspect-auto flex justify-center">
+                    <img src="{% static 'images/hero_phone.png' %}" alt="Premium Smartphone" class="w-full h-auto max-h-[300px] md:max-h-none object-contain relative z-10 animate-float drop-shadow-[0_0_50px_rgba(195,39,77,0.3)]">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Brands Section -->
+<section class="py-12 border-y border-white/5 bg-white/5 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            <span class="text-2xl font-bold tracking-widest">APPLE</span>
+            <span class="text-2xl font-bold tracking-widest">SAMSUNG</span>
+            <span class="text-2xl font-bold tracking-widest">XIAOMI</span>
+            <span class="text-2xl font-bold tracking-widest">HONOR</span>
+        </div>
+    </div>
+</section>
+
+
+<!-- Products Section -->
+<section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-8 text-center md:text-left">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 uppercase">SO'NGGI E'LONLAR</h2>
+                <p class="text-gray-400 max-w-md mx-auto md:mx-0">Bizning katalogimizdan o'zingizga mos smartfonni toping.</p>
+            </div>
+            <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide w-full md:w-auto justify-center md:justify-start">
+                <a href="?" class="flex-shrink-0 px-6 py-2 rounded-full text-xs font-bold border transition-all {% if not request.GET.model %}bg-brand border-brand text-white shadow-lg shadow-brand/20{% else %}border-white/10 text-gray-400 hover:border-white/20{% endif %}">Barchasi</a>
+                <a href="?model=13 Pro" class="flex-shrink-0 px-6 py-2 rounded-full text-xs font-bold border border-white/10 text-gray-400 hover:border-white/20 transition-all {% if request.GET.model == '13 Pro' %}bg-brand border-brand text-white shadow-lg shadow-brand/20{% endif %}">iPhone 13 Pro</a>
+                <a href="?model=14 Pro" class="flex-shrink-0 px-6 py-2 rounded-full text-xs font-bold border border-white/10 text-gray-400 hover:border-white/20 transition-all {% if request.GET.model == '14 Pro' %}bg-brand border-brand text-white shadow-lg shadow-brand/20{% endif %}">iPhone 14 Pro</a>
+                <a href="?model=15 Pro Max" class="flex-shrink-0 px-6 py-2 rounded-full text-xs font-bold border border-white/10 text-gray-400 hover:border-white/20 transition-all {% if request.GET.model == '15 Pro Max' %}bg-brand border-brand text-white shadow-lg shadow-brand/20{% endif %}">iPhone 15 Pro Max</a>
+            </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for phone in phones %}
+            <div class="group relative">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-brand to-brand-light rounded-3xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500"></div>
+                <a href="{% url 'phones:detail' phone.pk %}" class="relative block bg-dark-card border border-white/5 rounded-3xl p-4 transition-all duration-500 group-hover:-translate-y-2 overflow-hidden">
+                    <!-- Product Image -->
+                    <div class="relative aspect-[4/5] rounded-2xl overflow-hidden mb-6 bg-black">
+                        {% if phone.image %}
+                        <img src="{{ phone.image.url }}" alt="{{ phone.model_name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        {% else %}
+                        <div class="w-full h-full bg-white/5 flex items-center justify-center">
+                            <span class="text-gray-600">Rasm mavjud emas</span>
+                        </div>
+                        {% endif %}
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 rounded-full bg-brand/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">Premium</span>
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">{{ phone.get_model_name_display }}</h3>
+                            <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">{{ phone.memory }}GB • {{ phone.battery_health }}% • {{ phone.condition|title }}</p>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                            <div class="text-xl font-black text-brand">{{ phone.price }} <span class="text-[10px] font-bold text-gray-500">SO'M</span></div>
+                            <div class="w-10 h-10 rounded-full bg-white/5 group-hover:bg-brand flex items-center justify-center transition-colors">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-span-full py-20 text-center glass rounded-3xl border-dashed">
+                <p class="text-gray-500 font-medium">Hozircha hech qanday e'lonlar mavjud emas.</p>
+                <a href="{% url 'users:sell' %}" class="text-brand font-bold mt-4 inline-block hover:underline">Birinchi bo'lib e'lon bering &rarr;</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+{% endblock %}
+

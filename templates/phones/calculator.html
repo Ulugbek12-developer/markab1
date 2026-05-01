@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Narx Kalkulyatori - Markab Electronics{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-2xl">
+    <div class="text-center mb-12 animate-fade-in">
+        <h2 class="text-4xl font-black tracking-tight mb-4 uppercase">Narx Kalkulyatori</h2>
+        <p class="text-gray-400">Telefoningizni necha pulga sotishingiz mumkinligini bizning aqlli tizimimiz orqali bilib oling.</p>
+    </div>
+
+    {% if result %}
+    <div class="mb-12 relative group animate-fade-in">
+        <div class="absolute -inset-1 bg-gradient-to-r from-brand to-brand-light rounded-[32px] opacity-20 blur-xl"></div>
+        <div class="relative bg-dark-card border-2 border-brand/50 rounded-[32px] p-8 text-center">
+            <h4 class="text-xs font-black uppercase tracking-[0.2em] text-gray-500 mb-4">Taxminiy bozor narxi</h4>
+            <h2 class="text-5xl font-black text-brand mb-4 tracking-tighter">{{ result }} <span class="text-lg">SO'M</span></h2>
+            <p class="text-xs text-gray-500 mb-8">* Yakuniy narx mutaxassis ko'rigidan so'ng aniqlanadi.</p>
+            <a href="{% url 'users:sell' %}" class="btn-glow bg-brand hover:bg-brand-hover text-white px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest inline-block">
+                E'lon berish
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="glass rounded-[32px] p-8 border border-white/5">
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div class="space-y-2">
+                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Smartfon Modeli</label>
+                <select name="model" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand focus:ring-1 focus:ring-brand outline-none transition-all appearance-none">
+                    <option value="11">iPhone 11</option>
+                    <option value="12">iPhone 12</option>
+                    <option value="13">iPhone 13</option>
+                    <option value="13 Pro">iPhone 13 Pro</option>
+                    <option value="14 Pro">iPhone 14 Pro</option>
+                    <option value="15 Pro Max">iPhone 15 Pro Max</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Xotira hajmi</label>
+                    <select name="memory" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none appearance-none">
+                        <option value="128">128 GB</option>
+                        <option value="256">256 GB</option>
+                        <option value="512">512 GB</option>
+                        <option value="1024">1 TB</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Batareya (%)</label>
+                    <input type="number" name="battery" value="100" min="50" max="100" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Tashqi holati</label>
+                <select name="condition" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none appearance-none">
+                    <option value="ideal">Ideal (Yangi kabi)</option>
+                    <option value="medium">Yaxshi (Kichik qirilgan joyi bor)</option>
+                    <option value="bad">O'rtacha (Aniq qirilgan yoki urilgan)</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
+                <div class="relative flex items-center">
+                    <input type="checkbox" name="has_box" checked class="w-6 h-6 rounded-lg bg-white/5 border-white/10 text-brand focus:ring-brand">
+                </div>
+                <label class="text-sm font-bold text-gray-300">Karobka va barcha hujjatlari mavjud</label>
+            </div>
+
+            <button type="submit" class="w-full bg-white text-black hover:bg-brand hover:text-white py-5 rounded-2xl font-black text-lg transition-all duration-300 uppercase tracking-tighter">
+                HISOB-KITOB QILISH
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

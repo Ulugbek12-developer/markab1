@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Smartfonlar Filtrlash - Markab Electronics{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <div class="flex flex-col lg:flex-row gap-12">
+        <!-- Sidebar Filter -->
+        <aside class="w-full lg:w-80 flex-shrink-0">
+            <div class="sticky top-28">
+                <div class="glass rounded-[32px] p-8 border border-white/5">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-xl font-extrabold tracking-tight uppercase">SARALASH</h2>
+                        <a href="{% url 'phones:filter' %}" class="text-[10px] font-bold text-brand hover:underline uppercase tracking-widest">Tozalash</a>
+                    </div>
+                    
+                    <form method="GET" class="space-y-8">
+                        <!-- Model -->
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Model</label>
+                            <select name="model" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white focus:border-brand outline-none appearance-none transition-all">
+                                <option value="">Barcha Modellar</option>
+                                <option value="11" {% if request.GET.model == '11' %}selected{% endif %}>iPhone 11</option>
+                                <option value="12" {% if request.GET.model == '12' %}selected{% endif %}>iPhone 12</option>
+                                <option value="13" {% if request.GET.model == '13' %}selected{% endif %}>iPhone 13</option>
+                                <option value="13 Pro" {% if request.GET.model == '13 Pro' %}selected{% endif %}>iPhone 13 Pro</option>
+                                <option value="14 Pro" {% if request.GET.model == '14 Pro' %}selected{% endif %}>iPhone 14 Pro</option>
+                                <option value="15 Pro Max" {% if request.GET.model == '15 Pro Max' %}selected{% endif %}>iPhone 15 Pro Max</option>
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Narx oralig'i</label>
+                            <div class="flex items-center gap-3">
+                                <input type="number" name="min_price" value="{{ request.GET.min_price }}" placeholder="0" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-brand outline-none">
+                                <span class="text-gray-600">—</span>
+                                <input type="number" name="max_price" value="{{ request.GET.max_price }}" placeholder="Max" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:border-brand outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Battery Health -->
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Batareya holati</label>
+                            <select name="battery" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white focus:border-brand outline-none appearance-none transition-all">
+                                <option value="">Hammasi</option>
+                                <option value="90+" {% if request.GET.battery == '90+' %}selected{% endif %}>90% va undan yuqori</option>
+                                <option value="80-90" {% if request.GET.battery == '80-90' %}selected{% endif %}>80% - 90%</option>
+                                <option value="70-80" {% if request.GET.battery == '70-80' %}selected{% endif %}>70% - 80%</option>
+                            </select>
+                        </div>
+
+                        <!-- Sorting -->
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Saralash turi</label>
+                            <select name="sort" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white focus:border-brand outline-none appearance-none transition-all">
+                                <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Eng yangilari</option>
+                                <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Arzonroqdan</option>
+                                <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Qimmatroqdan</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-brand/20">
+                            FILTRLASH
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Product Grid -->
+        <div class="flex-1">
+            <div class="mb-8">
+                <h2 class="text-4xl font-black tracking-tight uppercase">NATIJALAR <span class="text-brand ml-2">({{ phones|length }})</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                {% for phone in phones %}
+                <div class="group relative animate-fade-in" style="animation-delay: {{ forloop.counter0|add:1 }}00ms">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-brand to-brand-light rounded-3xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500"></div>
+                    <a href="{% url 'phones:detail' phone.pk %}" class="relative block bg-dark-card border border-white/5 rounded-3xl p-4 transition-all duration-500 group-hover:-translate-y-2 overflow-hidden">
+                        <!-- Product Image -->
+                        <div class="relative aspect-[4/5] rounded-2xl overflow-hidden mb-6 bg-black">
+                            {% if phone.image %}
+                            <img src="{{ phone.image.url }}" alt="{{ phone.model_name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            {% else %}
+                            <div class="w-full h-full bg-white/5 flex items-center justify-center">
+                                <span class="text-gray-600">Rasm mavjud emas</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Details -->
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">{{ phone.get_model_name_display }}</h3>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">{{ phone.memory }}GB • {{ phone.battery_health }}%</p>
+                            </div>
+                            
+                            <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                                <div class="text-xl font-black text-brand">{{ phone.price }} <span class="text-[10px] font-bold text-gray-500 uppercase">so'm</span></div>
+                                <div class="w-10 h-10 rounded-full bg-white/5 group-hover:bg-brand flex items-center justify-center transition-colors">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-24 text-center glass rounded-3xl border-dashed">
+                    <svg class="w-16 h-16 mx-auto mb-6 text-gray-600 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <p class="text-gray-500 font-bold text-xl">Afsuski, hech narsa topilmadi.</p>
+                    <p class="text-gray-600 mt-2">Boshqa filtrlar bilan urinib ko'ring.</p>
+                    <a href="{% url 'phones:filter' %}" class="text-brand font-black mt-8 inline-block hover:underline uppercase tracking-widest text-sm">Barchasini ko'rish</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

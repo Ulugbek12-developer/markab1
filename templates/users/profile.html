@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mening Profilim - Markab Electronics{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-2xl">
+    <!-- Profile Header -->
+    <div class="text-center mb-12 animate-fade-in">
+        <div class="relative inline-block mb-6">
+            <div class="absolute -inset-1 bg-gradient-to-r from-brand to-brand-light rounded-full blur opacity-20"></div>
+            <div class="relative w-24 h-24 bg-dark-card border border-white/10 rounded-full flex items-center justify-center text-4xl shadow-2xl">
+                👤
+            </div>
+        </div>
+        <h2 class="text-3xl font-black tracking-tight uppercase">Mening Profilim</h2>
+        <p class="text-gray-500 mt-2">Xush kelibsiz, Markab Electronics foydalanuvchisi</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 gap-6 mb-12">
+        <div class="glass rounded-3xl p-8 text-center border border-white/5 hover:border-brand/30 transition-all group">
+            <h1 class="text-5xl font-black text-brand mb-2 group-hover:scale-110 transition-transform">{{ listings_count }}</h1>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">E'lonlarim</p>
+        </div>
+        <div class="glass rounded-3xl p-8 text-center border border-white/5 hover:border-brand/30 transition-all group">
+            <h1 class="text-5xl font-black text-brand mb-2 group-hover:scale-110 transition-transform">{{ orders_count }}</h1>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Buyurtmalarim</p>
+        </div>
+    </div>
+
+    <!-- Menu Actions -->
+    <div class="space-y-4">
+        <a href="#" class="flex items-center justify-between glass rounded-2xl p-6 border border-white/5 hover:bg-white/5 transition-all group">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">⚙️</div>
+                <span class="font-bold text-gray-300 group-hover:text-white transition-colors">Sozlamalar</span>
+            </div>
+            <span class="text-gray-600 group-hover:translate-x-1 transition-transform">❯</span>
+        </a>
+        <a href="#" class="flex items-center justify-between glass rounded-2xl p-6 border border-white/5 hover:bg-white/5 transition-all group">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">❓</div>
+                <span class="font-bold text-gray-300 group-hover:text-white transition-colors">Yordam markazi</span>
+            </div>
+            <span class="text-gray-600 group-hover:translate-x-1 transition-transform">❯</span>
+        </a>
+        <a href="#" class="flex items-center justify-between glass rounded-2xl p-6 border border-white/5 hover:bg-red-500/10 transition-all group">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">🚪</div>
+                <span class="font-bold text-red-500">Tizimdan chiqish</span>
+            </div>
+            <span class="text-red-500 group-hover:translate-x-1 transition-transform">❯</span>
+        </a>
+    </div>
+
+    <div class="text-center mt-16">
+        <div class="inline-block px-4 py-1 rounded-full bg-white/5 border border-white/5 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+            Markab Premium v1.2.0
+        </div>
+    </div>
+</div>
+{% endblock %}
+

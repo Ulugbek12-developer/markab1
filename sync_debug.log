@@ -1,0 +1,102 @@
+DEBUG: Syncing iPhone 12 Pro to Web App...
+DEBUG: Sync Bot -> Web App error: invalid literal for int() with base 10: '3mln'
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\handlers\admin.py", line 107, in admin_add_photos
+    price=int(str(data.get('price', 0)).replace(' ', '').replace(',', '')),
+          ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3mln'
+
+DEBUG: Syncing iPhone 12 Pro to Web App...
+DEBUG: Sync Bot -> Web App error: You cannot call this from an async context - use a thread or sync_to_async.
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\handlers\admin.py", line 116, in admin_add_photos
+    Phone.objects.create(
+    ~~~~~~~~~~~~~~~~~~~~^
+        model_name=model_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        seller_phone=str(data.get('contact', ''))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\base.py", line 874, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\base.py", line 966, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\base.py", line 1167, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, insert_fields, returning_fields, raw
+    )
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\base.py", line 1218, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\sql\compiler.py", line 1923, in execute_sql
+    with self.connection.cursor() as cursor:
+         ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Hp\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\asyncio.py", line 24, in inner
+    raise SynchronousOnlyOperation(message)
+django.core.exceptions.SynchronousOnlyOperation: You cannot call this from an async context - use a thread or sync_to_async.
+
+DEBUG: Syncing iPhone 12 Pro to Web App...
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 34, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: Sync Bot -> Web App success!
+DEBUG: Syncing iPhone 12 Pro to Web App...
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 34, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: Sync Bot -> Web App success! ID: 11

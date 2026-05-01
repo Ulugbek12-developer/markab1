@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Muvaffaqiyatli - Markab{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align: center; padding-top: 60px;">
+    <div style="font-size: 80px; margin-bottom: 20px;">✅</div>
+    <h2>Rahmat!</h2>
+    <p style="font-size: 16px; margin-bottom: 30px;">Sizning buyurtmangiz qabul qilindi. Tez orada siz bilan bog'lanamiz.</p>
+    
+    <a href="{% url 'phones:home' %}" class="btn btn-primary">Bosh sahifaga qaytish</a>
+</div>
+{% endblock %}
