@@ -12,9 +12,9 @@ class Settings(BaseSettings):
     CHANNEL_ID: str = "@markab_electronics"
 
     model_config = SettingsConfigDict(
-        env_file=".env", 
+        env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"),
         env_file_encoding="utf-8",
-        extra="ignore" # Ignore extra fields to prevent validation errors
+        extra="ignore"
     )
 
 config = Settings()
