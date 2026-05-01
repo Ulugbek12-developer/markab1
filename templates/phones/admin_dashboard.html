@@ -4,59 +4,77 @@
 {% block title %}Admin Dashboard - Markab Electronics{% endblock %}
 
 {% block content %}
-<div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 py-4">
     <div>
-        <h1 class="text-3xl font-extrabold mb-2">ADMIN <span class="text-brand">DASHBOARD</span></h1>
-        <p class="text-gray-400">Jami mahsulotlar: {{ phones.count }} ta</p>
+        <h1 class="text-5xl font-black mb-3 tracking-tighter">ADMIN <span class="text-brand">DASHBOARD</span></h1>
+        <div class="flex items-center space-x-4">
+            <span class="bg-brand/10 text-brand px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-brand/20">
+                {{ phones.count }} ta mahsulot
+            </span>
+            <span class="text-gray-500 text-xs font-bold uppercase tracking-widest">Markab Premium System</span>
+        </div>
     </div>
-    <a href="{% url 'phones:admin_add' %}" class="bg-brand hover:bg-brand-hover text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 btn-glow inline-flex items-center justify-center">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+    <a href="{% url 'phones:admin_add' %}" class="bg-brand hover:bg-brand-hover text-white px-10 py-5 rounded-2xl font-black transition-all shadow-2xl shadow-brand/30 btn-glow inline-flex items-center justify-center text-sm tracking-widest uppercase">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
         YANGI QO'SHISH
     </a>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
     {% for phone in phones %}
-    <div class="glass p-6 rounded-3xl border-white/5 relative overflow-hidden group">
-        <div class="flex items-start justify-between mb-4">
-            <div>
-                <h3 class="text-lg font-bold">{{ phone.get_model_name_display }}</h3>
-                <p class="text-brand text-sm font-bold">{{ phone.price|floatformat:0 }} so'm</p>
-            </div>
-            <div class="bg-white/5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-400">
+    <div class="glass p-8 rounded-[40px] border-white/5 relative overflow-hidden group hover:border-brand/30 transition-all duration-500">
+        <!-- Floating Branch Badge -->
+        <div class="absolute top-6 right-6 z-10">
+            <span class="bg-white/5 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 border border-white/10">
                 {{ phone.get_branch_display }}
+            </span>
+        </div>
+
+        <!-- Product Image Placeholder or Image -->
+        <div class="w-full h-48 bg-white/5 rounded-3xl mb-8 flex items-center justify-center overflow-hidden">
+            {% if phone.image %}
+                <img src="{{ phone.image.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ phone.model_name }}">
+            {% else %}
+                <svg class="w-12 h-12 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            {% endif %}
+        </div>
+
+        <div class="mb-8">
+            <h3 class="text-xl font-black mb-2 tracking-tight group-hover:text-brand transition-colors">{{ phone.get_model_name_display }}</h3>
+            <div class="text-2xl font-black text-white flex items-baseline">
+                {{ phone.price|floatformat:0 }} 
+                <span class="text-xs text-gray-500 ml-2 uppercase font-bold tracking-widest">so'm</span>
             </div>
         </div>
 
-        <div class="space-y-2 mb-6">
-            <div class="flex items-center text-sm text-gray-400">
-                <span class="w-20">Xotira:</span>
-                <span class="text-white">{{ phone.memory }}GB</span>
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1">Xotira</p>
+                <p class="text-sm font-bold">{{ phone.memory }}GB</p>
             </div>
-            <div class="flex items-center text-sm text-gray-400">
-                <span class="w-20">Batareya:</span>
-                <span class="text-white">{{ phone.battery_health }}%</span>
-            </div>
-            <div class="flex items-center text-sm text-gray-400">
-                <span class="w-20">Holati:</span>
-                <span class="text-white">{{ phone.get_condition_display }}</span>
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1">Batareya</p>
+                <p class="text-sm font-bold">{{ phone.battery_health }}%</p>
             </div>
         </div>
 
-        <div class="flex space-x-3">
-            <a href="{% url 'phones:detail' phone.pk %}" class="flex-1 bg-white/5 hover:bg-white/10 text-white text-center py-3 rounded-xl transition-all text-sm font-medium">
+        <div class="flex space-x-4">
+            <a href="{% url 'phones:detail' phone.pk %}" class="flex-1 bg-white/5 hover:bg-white/10 text-white text-center py-4 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-white/5">
                 Ko'rish
             </a>
             <a href="{% url 'phones:admin_delete' phone.pk %}" 
                onclick="return confirm('Haqiqatdan ham o\'chirmoqchimisiz?')"
-               class="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 text-center py-3 rounded-xl transition-all text-sm font-medium">
+               class="flex-1 bg-red-500/5 hover:bg-red-500/10 text-red-500 text-center py-4 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-red-500/10">
                 O'chirish
             </a>
         </div>
     </div>
     {% empty %}
-    <div class="col-span-full glass p-12 rounded-3xl text-center">
-        <p class="text-gray-400">Hozircha mahsulotlar yo'q.</p>
+    <div class="col-span-full glass p-20 rounded-[50px] text-center">
+        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+        </div>
+        <p class="text-gray-500 font-bold tracking-widest uppercase text-sm">Hozircha mahsulotlar mavjud emas</p>
     </div>
     {% endfor %}
 </div>
