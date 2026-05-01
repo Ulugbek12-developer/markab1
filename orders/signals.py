@@ -6,13 +6,14 @@ from core.telegram_bot import send_admin_notification
 @receiver(post_save, sender=Order)
 def notify_admin_new_order(sender, instance, created, **kwargs):
     if created:
+        status_txt = 'Ha' if instance.is_installment else "Yo'q"
         message = (
             f"🆕 <b>Yangi Buyurtma!</b>\n\n"
             f"👤 <b>Mijoz:</b> {instance.customer_name}\n"
             f"📞 <b>Telefon:</b> {instance.customer_phone}\n"
             f"📱 <b>Mahsulot:</b> {instance.phone.get_model_name_display()} ({instance.phone.memory}GB)\n"
             f"💰 <b>Narxi:</b> {instance.phone.price:,.0f} so'm\n"
-            f"💳 <b>Muddatli to'lov:</b> {'Ha' if instance.is_installment else 'Yo\'q'}\n"
+            f"💳 <b>Muddatli to'lov:</b> {status_txt}\n"
         )
         if instance.is_installment:
             message += f"📅 <b>Muddati:</b> {instance.installment_months} oy\n"
