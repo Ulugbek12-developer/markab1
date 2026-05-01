@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Markab Electronics{% endblock %}
+
+{% block content %}
+<div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+        <h1 class="text-3xl font-extrabold mb-2">ADMIN <span class="text-brand">DASHBOARD</span></h1>
+        <p class="text-gray-400">Jami mahsulotlar: {{ phones.count }} ta</p>
+    </div>
+    <a href="{% url 'phones:admin_add' %}" class="bg-brand hover:bg-brand-hover text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 btn-glow inline-flex items-center justify-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        YANGI QO'SHISH
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for phone in phones %}
+    <div class="glass p-6 rounded-3xl border-white/5 relative overflow-hidden group">
+        <div class="flex items-start justify-between mb-4">
+            <div>
+                <h3 class="text-lg font-bold">{{ phone.get_model_name_display }}</h3>
+                <p class="text-brand text-sm font-bold">{{ phone.price|floatformat:0 }} so'm</p>
+            </div>
+            <div class="bg-white/5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                {{ phone.get_branch_display }}
+            </div>
+        </div>
+
+        <div class="space-y-2 mb-6">
+            <div class="flex items-center text-sm text-gray-400">
+                <span class="w-20">Xotira:</span>
+                <span class="text-white">{{ phone.memory }}GB</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-400">
+                <span class="w-20">Batareya:</span>
+                <span class="text-white">{{ phone.battery_health }}%</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-400">
+                <span class="w-20">Holati:</span>
+                <span class="text-white">{{ phone.get_condition_display }}</span>
+            </div>
+        </div>
+
+        <div class="flex space-x-3">
+            <a href="{% url 'phones:detail' phone.pk %}" class="flex-1 bg-white/5 hover:bg-white/10 text-white text-center py-3 rounded-xl transition-all text-sm font-medium">
+                Ko'rish
+            </a>
+            <a href="{% url 'phones:admin_delete' phone.pk %}" 
+               onclick="return confirm('Haqiqatdan ham o\'chirmoqchimisiz?')"
+               class="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 text-center py-3 rounded-xl transition-all text-sm font-medium">
+                O'chirish
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full glass p-12 rounded-3xl text-center">
+        <p class="text-gray-400">Hozircha mahsulotlar yo'q.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

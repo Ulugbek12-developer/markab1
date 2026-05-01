@@ -9,10 +9,11 @@ def notify_admin_new_phone(sender, instance, created, **kwargs):
         message = (
             f"📱 <b>Yangi Mahsulot Qo'shildi!</b>\n\n"
             f"🔹 <b>Model:</b> {instance.get_model_name_display()}\n"
+            f"🏢 <b>Filial:</b> {instance.get_branch_display()}\n"
             f"💾 <b>Xotira:</b> {instance.memory} GB\n"
             f"🔋 <b>Batareya:</b> {instance.battery_health}%\n"
             f"🎨 <b>Rangi:</b> {instance.color}\n"
-            f"💰 <b>Narxi:</b> {instance.price:,.0f} so'm\n"
+            f"💰 <b>Narxi:</b> {float(instance.price):,.0f} so'm\n"
             f"📝 <b>Holati:</b> {instance.get_condition_display()}\n"
         )
         if instance.seller_phone:

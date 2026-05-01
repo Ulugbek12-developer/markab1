@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Kirish - Markab Electronics{% endblock %}
+
+{% block content %}
+<div class="min-h-[60vh] flex items-center justify-center">
+    <div class="glass p-8 rounded-3xl w-full max-w-md border-white/10 shadow-2xl">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold mb-2">ADMIN <span class="text-brand">PANEL</span></h1>
+            <p class="text-gray-400 text-sm">Boshqaruv tizimiga kirish uchun parolni kiriting</p>
+        </div>
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Parol</label>
+                <input type="password" name="password" required 
+                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-brand transition-all text-white"
+                       placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-brand/20 btn-glow">
+                KIRISH
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

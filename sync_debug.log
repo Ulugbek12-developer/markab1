@@ -100,3 +100,52 @@ Traceback (most recent call last):
 sqlite3.OperationalError: no such table: ads
 
 DEBUG: Sync Bot -> Web App success! ID: 11
+DEBUG: Syncing iPhone 13 Pro to Web App...
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 34, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: Sync Bot -> Web App success! ID: 12
+DEBUG: Syncing iPhone 14 Pro to Web App...
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 34, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: Sync Bot -> Web App success! ID: 13
+DEBUG: Syncing iPhone 14 Pro to Web App...
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 34, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: SUCCESS! Product created in Django with ID: 14
+DEBUG: Sync Bot -> Web App success! ID: 14

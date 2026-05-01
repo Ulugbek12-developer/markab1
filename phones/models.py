@@ -44,7 +44,13 @@ class Phone(models.Model):
         ('17 Pro Max', 'iPhone 17 Pro Max'),
     ]
 
+    BRANCH_CHOICES = [
+        ('malika', 'Malika'),
+        ('chilonzor', 'Chilonzor'),
+    ]
+
     model_name = models.CharField(max_length=50, choices=MODEL_CHOICES)
+    branch = models.CharField(max_length=20, choices=BRANCH_CHOICES, default='malika')
     memory = models.CharField(max_length=10, choices=MEMORY_CHOICES)
     battery_health = models.IntegerField(default=100)
     condition = models.CharField(max_length=20, choices=CONDITION_CHOICES)

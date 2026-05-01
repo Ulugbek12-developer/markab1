@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, View
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, View, CreateView, DeleteView, TemplateView
+from django.urls import reverse_lazy
+from django.contrib import messages
 from .models import Phone
 from django.db.models import Q
 
@@ -26,6 +28,7 @@ class FilterView(ListView):
         battery = self.request.GET.get('battery')
         memory = self.request.GET.get('memory')
         condition = self.request.GET.get('condition')
+        branch = self.request.GET.get('branch')
         sort = self.request.GET.get('sort')
 
         if model:
@@ -38,6 +41,8 @@ class FilterView(ListView):
             queryset = queryset.filter(memory=memory)
         if condition:
             queryset = queryset.filter(condition=condition)
+        if branch:
+            queryset = queryset.filter(branch=branch)
         
         if battery:
             if battery == '70-80':
@@ -150,3 +155,35 @@ class CalculatorView(View):
             'result': f"{price_som:,.0f}".replace(',', ' '),
             'posted_data': request.POST
         })
+
+class AdminDashboardView(ListView):
+    model = Phone
+    template_name = 'phones/admin_dashboard.html'
+    context_object_name = 'phones'
+
+    def dispatch(self, request, *args, **kwargs):
+        # Oddiy parol tekshiruvi (Session orqali)
+        if not request.session.get('is_markab_admin'):
+            if request.method == 'POST' and request.POST.get('password') == 'MARKAB777':
+                request.session['is_markab_admin'] = True
+                return super().dispatch(request, *args, **kwargs)
+            return render(request, 'phones/admin_login.html')
+        return super().dispatch(request, *args, **kwargs)
+
+class AdminAddPhoneView(CreateView):
+    model = Phone
+    fields = ['model_name', 'branch', 'memory', 'battery_health', 'condition', 'price', 'color', 'region', 'has_box', 'image', 'description']
+    template_name = 'phones/admin_add.html'
+    success_url = reverse_lazy('phones:admin_dashboard')
+
+    def form_valid(self, form):
+        form.instance.is_approved = True
+        messages.success(self.request, "Mahsulot muvaffaqiyatli qo'shildi!")
+        return super().form_valid(form)
+
+class AdminDeletePhoneView(DeleteView):
+    model = Phone
+    success_url = reverse_lazy('phones:admin_dashboard')
+    
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)

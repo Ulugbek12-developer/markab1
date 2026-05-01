@@ -158,7 +158,7 @@ async def process_confirm(message: Message, state: FSMContext):
         data['storage'] = data['memory']
         ad_id = await add_ad(data)
         
-        if config.ADMIN_ID:
+        if config.ADMIN_ID != 0:
             admin_summary = f"🆕 <b>YANGI E'LON (ID: {ad_id})</b>\n\nUser: {message.from_user.full_name}\n" + \
                             f"Model: {data['model']}\nHotira: {data['memory']}\nYomkost: {data['battery']}%\n" + \
                             f"Narxi: {data['price']}\nAloqa: {data['contact']}"
