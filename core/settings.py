@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-94nng-4qh43jq4!n+&clw=-zz81z5+)x+!+zq^t-qn&scmq0kh'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-94nng-4qh43jq4!n+&clw=-zz81z5+)x+!+zq^t-qn&scmq0kh')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # O'zingiz tekshirib olishingiz uchun hozircha True qoldiramiz
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['markab.pythonanywhere.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['markab.pythonanywhere.com', 'localhost', '127.0.0.1', '*']
 
 
 

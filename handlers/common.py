@@ -1,3 +1,4 @@
+import os
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
@@ -5,16 +6,26 @@ from aiogram.fsm.context import FSMContext
 from keyboards import get_main_menu, get_branches_keyboard, get_language_keyboard, get_subscription_keyboard
 from database import update_user_language, get_user_language, get_all_branches
 from strings import STRINGS
+from config import config
 
 router = Router()
 
-CHANNEL_ID = "@markab_electronics"
+CHANNEL_ID = config.CHANNEL_ID
 
 async def check_user_sub(bot, user_id):
+    # If the user is the bot administrator, bypass the check
+    if user_id == config.ADMIN_ID:
+        return True
+        
     try:
         member = await bot.get_chat_member(chat_id=CHANNEL_ID, user_id=user_id)
-        return member.status in ["member", "administrator", "creator"]
-    except Exception:
+        # Status can be 'creator', 'administrator', 'member' or 'restricted'
+        return member.status in ["member", "administrator", "creator", "restricted"]
+    except Exception as e:
+        if "member list is inaccessible" in str(e):
+            print(f"⚠️ DIQQAT: Botni {CHANNEL_ID} kanaliga ADMIN qilib qo'shing!")
+        else:
+            print(f"Error checking subscription for {user_id} in {CHANNEL_ID}: {e}")
         return False
 
 @router.message(CommandStart())
@@ -53,7 +64,7 @@ async def cmd_info(message: Message):
             "🤖 <b>MobiTrade iPhone Bot</b> 🌟\n\n"
             "✅ Faqat original iPhone qurilmalari\n"
             "✅ Professional baholash tizimi\n"
-            "✅ 7 ta filial bo'ylab xizmat ko'rsatish\n"
+            "✅ 2 ta filial bo'ylab xizmat ko'rsatish\n"
             "🛠 <i>Muammolar bo'lsa:</i> @markab_admin 👨‍💻"
         )
     else:
@@ -61,7 +72,7 @@ async def cmd_info(message: Message):
             "🤖 <b>MobiTrade iPhone Bot</b> 🌟\n\n"
             "✅ Только оригинальные устройства iPhone\n"
             "✅ Профессиональная система оценки\n"
-            "✅ Обслуживание в 7 филиалах\n"
+            "✅ Обслуживание в 2 филиалах\n"
             "🛠 <i>Если возникли проблемы:</i> @markab_admin 👨‍💻"
         )
     await message.answer(text, parse_mode="HTML", disable_web_page_preview=True)
@@ -83,6 +94,22 @@ async def cmd_branches(message: Message):
     
     text += prompt
     await message.answer(text, parse_mode="HTML", reply_markup=get_branches_keyboard(branches, lang))
+
+@router.message(F.text == "Malika")
+async def branch_malika(message: Message):
+    lang = await get_user_language(message.from_user.id)
+    text = "📍 <b>Malika filiali lokatsiyasi:</b>\n\nhttps://maps.google.com/maps?q=41.339919,69.270824&ll=41.339919,69.270824&z=16"
+    if lang == 'ru':
+        text = "📍 <b>Локация филиала Малика:</b>\n\nhttps://maps.google.com/maps?q=41.339919,69.270824&ll=41.339919,69.270824&z=16"
+    await message.answer(text, parse_mode="HTML")
+
+@router.message(F.text == "Chilonzor")
+async def branch_chilonzor(message: Message):
+    lang = await get_user_language(message.from_user.id)
+    text = "📍 <b>Chilonzor filiali lokatsiyasi:</b>\n\nhttps://maps.google.com/maps?q=41.274714,69.203840&ll=41.274714,69.203840&z=16"
+    if lang == 'ru':
+        text = "📍 <b>Локация филиала Чиланзар:</b>\n\nhttps://maps.google.com/maps?q=41.274714,69.203840&ll=41.274714,69.203840&z=16"
+    await message.answer(text, parse_mode="HTML")
 
 @router.message(F.text.in_(["⬅️ Orqaga", "⬅️ Назад"]))
 async def cmd_back(message: Message, state: FSMContext):

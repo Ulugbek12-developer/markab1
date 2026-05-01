@@ -60,20 +60,13 @@ async def init_db():
             )
         """)
 
-        # Seed initial branches if empty
-        async with db.execute("SELECT COUNT(*) FROM branches") as cursor:
-            count = await cursor.fetchone()
-            if count[0] == 0:
-                initial_branches = [
-                    ("Malika A7", "📍 Malika A7"),
-                    ("Malika B23", "📍 Malika B23"),
-                    ("Abu Saxiy 12", "📍 Abu Saxiy 12"),
-                    ("Fleshka 45", "📍 Fleshka 45"),
-                    ("Chilonzor", "📍 Chilonzor"),
-                    ("Yunusobod", "📍 Yunusobod"),
-                    ("Sergeli", "📍 Sergeli")
-                ]
-                await db.executemany("INSERT INTO branches (name, location) VALUES (?, ?)", initial_branches)
+        # Seed initial branches
+        await db.execute("DELETE FROM branches") # Clear old branches
+        initial_branches = [
+            ("Malika", "https://maps.google.com/maps?q=41.339919,69.270824&ll=41.339919,69.270824&z=16"),
+            ("Chilonzor", "https://maps.google.com/maps?q=41.274714,69.203840&ll=41.274714,69.203840&z=16")
+        ]
+        await db.executemany("INSERT INTO branches (name, location) VALUES (?, ?)", initial_branches)
         columns = [
             ("branch", "TEXT"),
             ("region", "TEXT"),
