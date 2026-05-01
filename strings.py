@@ -27,6 +27,7 @@ STRINGS = {
         'btn_back_to_admin': "⬅️ Admin menyuga qaytish",
         'btn_set_price': "✍️ Narx yozish",
         'btn_approve': "✅ Tasdiqlash",
+        'btn_counter': "🔄 Qarshi taklif",
         'btn_reject': "❌ Rad etish",
         'msg_deleted': "🗑 Mahsulot o'chirildi.",
         'msg_cancelled': "❌ Bekor qilindi.",
@@ -97,6 +98,9 @@ STRINGS = {
         'prompt_set_price': "💰 <b>Tasdiqlangan narxni kiriting (mln so'mda):</b>",
         'price_sent_user': "📢 <b>Admin tomonidan tasdiqlangan narx:</b>\n\n📱 Model: {model}\n💰 Yakuniy narx: <b>{price} mln so'm</b>\n\nSotishni xohlasangiz 'Telefon sotish' bo'limiga o'ting! 🚀",
         'price_sent_admin': "✅ Foydalanuvchiga narx yuborildi.",
+        'prompt_counter_price': "✍️ Mijozga taklif qilmoqchi bo'lgan narxingizni yozing (masalan: 450$):",
+        'counter_sent_user': "📢 <b>Sizning e'loningiz bo'yicha admin taklifi:</b>\n\nAdmin siz aytgan narxga ololmaydi, lekin <b>{price}</b> narxni taklif qiladi.\n\nRozimisiz? Rozilik uchun admin bilan bog'laning: @markab_admin",
+        'counter_sent_admin': "✅ Mijozga qarshi taklif yuborildi.",
     },
     'ru': {
         'start_welcome': "Здравствуйте! Добро пожаловать в бот Markab Electronics.\nПожалуйста, выберите язык:",
@@ -126,6 +130,7 @@ STRINGS = {
         'btn_back_to_admin': "⬅️ Вернуться в админ-меню",
         'btn_set_price': "✍️ Написать цену",
         'btn_approve': "✅ Одобрить",
+        'btn_counter': "🔄 Встречное предложение",
         'btn_reject': "❌ Отклонить",
         'msg_deleted': "🗑 Товар удален.",
         'msg_cancelled': "❌ Отменено.",
@@ -196,5 +201,8 @@ STRINGS = {
         'prompt_set_price': "💰 <b>Введите утвержденную цену (в млн сум):</b>",
         'price_sent_user': "📢 <b>Цена, утвержденная админом:</b>\n\n📱 Модель: {model}\n💰 Итоговая цена: <b>{price} млн сум</b>\n\nЕсли хотите продать, перейдите в раздел 'Продать телефон'! 🚀",
         'price_sent_admin': "✅ Цена отправлена пользователю.",
+        'prompt_counter_price': "✍️ Введите цену, которую хотите предложить клиенту (например: 450$):",
+        'counter_sent_user': "📢 <b>Предложение админа по вашему объявлению:</b>\n\nАдмин не может купить по вашей цене, но предлагает <b>{price}</b>.\n\nСогласны? Свяжитесь с админом для подтверждения: @markab_admin",
+        'counter_sent_admin': "✅ Встречное предложение отправлено пользователю.",
     }
 }

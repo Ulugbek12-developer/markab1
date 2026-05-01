@@ -34,6 +34,7 @@ class AdminAuth(StatesGroup):
 class AdminState(StatesGroup):
     setting_price = State()
     setting_branch = State()
+    counter_price = State()
 
 class AdminAddProduct(StatesGroup):
     model = State()

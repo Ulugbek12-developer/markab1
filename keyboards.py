@@ -140,6 +140,7 @@ def get_admin_keyboard(ad_id: int, lang):
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(text=s['btn_approve'], callback_data=f"approve_{ad_id}"),
+        InlineKeyboardButton(text=s['btn_counter'], callback_data=f"counter_{ad_id}"),
         InlineKeyboardButton(text=s['btn_reject'], callback_data=f"reject_{ad_id}")
     )
     return builder.as_markup()

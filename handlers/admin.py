@@ -304,3 +304,33 @@ async def process_admin_price(message: Message, state: FSMContext):
     await message.bot.send_message(req['user_id'], STRINGS[user_lang]['price_sent_user'].format(model=req['model'], price=price), parse_mode="HTML")
     await message.answer(STRINGS[lang]['price_sent_admin'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
     await state.clear()
+
+@router.callback_query(F.data.startswith("counter_"))
+async def counter_offer_start(callback: CallbackQuery, state: FSMContext):
+    lang = await get_user_language(callback.from_user.id)
+    ad_id = int(callback.data.split("_")[1])
+    await state.update_data(ad_id=ad_id)
+    await state.set_state(AdminState.counter_price)
+    await callback.message.answer(STRINGS[lang]['prompt_counter_price'], parse_mode="HTML")
+    await callback.answer()
+
+@router.message(AdminState.counter_price)
+async def process_counter_price(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.from_user.id != config.ADMIN_ID: return
+    
+    data = await state.get_data()
+    ad_id = data['ad_id']
+    price = message.text
+    
+    ad = await get_ad_by_id(ad_id)
+    if ad:
+        user_lang = await get_user_language(ad['user_id'])
+        await message.bot.send_message(
+            ad['user_id'], 
+            STRINGS[user_lang]['counter_sent_user'].format(price=price), 
+            parse_mode="HTML"
+        )
+        await message.answer(STRINGS[lang]['counter_sent_admin'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
+    
+    await state.clear()
