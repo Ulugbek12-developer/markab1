@@ -10,13 +10,8 @@ class CheckoutView(View):
         months = request.GET.get('months', '')
         
         branches = [
-            ("Malika A7", "📍 Malika A7"),
-            ("Malika B23", "📍 Malika B23"),
-            ("Abu Saxiy 12", "📍 Abu Saxiy 12"),
-            ("Fleshka 45", "📍 Fleshka 45"),
+            ("Malika", "📍 Malika"),
             ("Chilonzor", "📍 Chilonzor"),
-            ("Yunusobod", "📍 Yunusobod"),
-            ("Sergeli", "📍 Sergeli")
         ]
         
         return render(request, 'orders/checkout.html', {

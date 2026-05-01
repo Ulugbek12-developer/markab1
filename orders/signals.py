@@ -12,7 +12,7 @@ def notify_admin_new_order(sender, instance, created, **kwargs):
             f"👤 <b>Mijoz:</b> {instance.customer_name}\n"
             f"📞 <b>Telefon:</b> {instance.customer_phone}\n"
             f"📱 <b>Mahsulot:</b> {instance.phone.get_model_name_display()} ({instance.phone.memory}GB)\n"
-            f"💰 <b>Narxi:</b> {instance.phone.price:,.0f} so'm\n"
+            f"💰 <b>Narxi:</b> {float(instance.phone.price):,.0f} so'm\n"
             f"💳 <b>Muddatli to'lov:</b> {status_txt}\n"
         )
         if instance.is_installment:
