@@ -81,6 +81,7 @@ async def admin_add_price(message: Message, state: FSMContext):
 
 @router.message(AdminAddProduct.photos, F.photo)
 async def admin_add_photos(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     photo_id = message.photo[-1].file_id
     data = await state.get_data()
     data['photos'] = [photo_id]
@@ -135,13 +136,19 @@ async def admin_add_photos(message: Message, state: FSMContext):
             await message.bot.download_file(file.file_path, local_full_path)
             image_rel_path = f"phones/{local_filename}"
 
+        # Map condition to Django choices
+        bot_cond = str(data.get('condition', '')).lower()
+        if 'ideal' in bot_cond or 'yangi' in bot_cond: django_cond = 'ideal'
+        elif 'yaxshi' in bot_cond or 'medium' in bot_cond: django_cond = 'medium'
+        else: django_cond = 'bad'
+
         phone_obj = await sync_to_async(Phone.objects.create)(
             model_name=model_name,
             memory=memory,
             battery_health=battery_val,
             color='Noma\'lum',
             price=price_val,
-            condition='yangi' if data.get('condition') == 'ideal' else 'ishlatilgan',
+            condition=django_cond,
             seller_phone=str(data.get('contact', '')),
             image=image_rel_path
         )
