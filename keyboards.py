@@ -23,7 +23,7 @@ def get_main_menu(lang):
     builder.row(KeyboardButton(text=s['btn_sell']), KeyboardButton(text=s['btn_buy']))
     builder.row(KeyboardButton(text=s['btn_price']), KeyboardButton(text=s['btn_branches']))
     builder.row(
-        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markab.pythonanywhere.com/")),
+        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markab2.pythonanywhere.com/")),
         KeyboardButton(text=s['btn_help'])
     )
     builder.row(KeyboardButton(text=s['btn_admin']))
