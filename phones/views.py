@@ -289,13 +289,15 @@ from bot_setup import bot, dp
 from aiogram.types import Update
 import json
 
+from asgiref.sync import async_to_sync
+
 @csrf_exempt
-async def telegram_webhook(request):
+def telegram_webhook(request):
     if request.method == "POST":
         try:
             update_data = json.loads(request.body.decode('utf-8'))
             update = Update.model_validate(update_data, context={"bot": bot})
-            await dp.feed_update(bot, update)
+            async_to_sync(dp.feed_update)(bot, update)
         except Exception as e:
             print(f"Webhook error: {e}")
         return HttpResponse("OK")
