@@ -17,5 +17,4 @@ urlpatterns = [
     path('toggle-booking/<int:pk>/', views.ToggleBookingView.as_view(), name='toggle_booking'),
     path('search/', views.SearchView.as_view(), name='search'),
     path('catalog/', views.FilterView.as_view(), name='filter'),
-    path('webhook/telegram/', views.telegram_webhook, name='telegram_webhook'),
 ]

@@ -150,9 +150,6 @@ class SellView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "E'loningiz qabul qilindi va tekshiruvdan so'ng saytga chiqadi!")
         return super().form_valid(form)
 
-from django.utils import timezone
-from datetime import timedelta
-
 class ToggleBookingView(View):
     def post(self, request, pk):
         listing = get_object_or_404(Listing, pk=pk)
@@ -282,23 +279,3 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
         if not created:
             favorite.delete()
         return redirect(request.META.get('HTTP_REFERER', 'phones:home'))
-
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from bot_setup import bot, dp
-from aiogram.types import Update
-import json
-
-from asgiref.sync import async_to_sync
-
-@csrf_exempt
-def telegram_webhook(request):
-    if request.method == "POST":
-        try:
-            update_data = json.loads(request.body.decode('utf-8'))
-            update = Update.model_validate(update_data, context={"bot": bot})
-            async_to_sync(dp.feed_update)(bot, update)
-        except Exception as e:
-            print(f"Webhook error: {e}")
-        return HttpResponse("OK")
-    return HttpResponse("This endpoint is for Telegram Webhooks.")

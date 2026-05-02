@@ -12,10 +12,14 @@ try:
 except Exception:
     pass
 
-# Session with Proxy for PythonAnywhere
-session = AiohttpSession(proxy="http://proxy.server:3128")
+# Proxy only for PythonAnywhere Free accounts
+if os.environ.get('PYTHONANYWHERE_DOMAIN'):
+    from aiogram.client.session.aiohttp import AiohttpSession
+    session = AiohttpSession(proxy="http://proxy.server:3128")
+    bot = Bot(token=config.BOT_TOKEN.get_secret_value(), session=session)
+else:
+    bot = Bot(token=config.BOT_TOKEN.get_secret_value())
 
-bot = Bot(token=config.BOT_TOKEN.get_secret_value(), session=session)
 dp = Dispatcher(storage=MemoryStorage())
 
 # Include all routers

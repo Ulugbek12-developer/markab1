@@ -7,10 +7,18 @@ from database import init_db
 async def main():
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     
-    # Initialize DB (creates tables if they don't exist)
-    await init_db()
-
-    print(f"Polling started for bot...")
+    # Set WebApp Menu Button (O'zingizning havolangizni shu yerga yozing)
+    from aiogram.types import MenuButtonWebApp, WebAppInfo
+    WEBAPP_URL = "https://markab2.pythonanywhere.com/" # <-- SHU YERNI O'ZGARTIRING
+    
+    await bot.set_chat_menu_button(
+        menu_button=MenuButtonWebApp(
+            text="🌐 Mini App",
+            web_app=WebAppInfo(url=WEBAPP_URL)
+        )
+    )
+    
+    print(f"Polling started for bot... Mini App: {WEBAPP_URL}")
     
     # Start polling
     await dp.start_polling(bot)
