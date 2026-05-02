@@ -4,43 +4,29 @@
 {% block title %}Admin Kirish — Markab Electronics{% endblock %}
 
 {% block content %}
-<div class="min-h-[80vh] flex items-center justify-center py-12 px-4">
-    <div class="card p-10 w-full max-w-md relative overflow-hidden shadow-card-hover">
-        <!-- Top gradient line -->
-        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand to-brand-light shadow-gold"></div>
+<div style="min-height:80vh; display:flex; align-items:center; justify-content:center; padding:24px 16px;">
+    <div class="card" style="padding:32px; width:100%; max-width:360px; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, white, rgba(255,255,255,0.3));"></div>
 
-        <div class="text-center mb-10">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-brand/10 border border-brand/20 rounded-2xl mb-5">
-                <span class="text-3xl">🔐</span>
-            </div>
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight mb-1">Admin Panel</h1>
-            <p class="text-gray-400 text-sm font-medium">Faqat vakolatli shaxslar uchun</p>
+        <div class="text-center" style="margin-bottom:32px;">
+            <div style="width:56px; height:56px; background:rgba(255,255,255,0.15); border-radius:16px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:28px;">🔐</div>
+            <h1 style="font-size:22px; font-weight:900; color:white;">Admin Panel</h1>
+            <p style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:4px;">Faqat vakolatli shaxslar uchun</p>
         </div>
 
-        {% if request.method == 'POST' %}
-        <div class="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-4 mb-6 text-sm font-semibold text-center">
-            ❌ Noto'g'ri parol! Qayta urinib ko'ring.
-        </div>
-        {% endif %}
-
-        <form method="POST" class="space-y-5">
+        <form method="POST" class="space-y-4">
             {% csrf_token %}
             <div>
-                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">🔑 Admin Paroli</label>
-                <input type="password" name="password" required autofocus
-                       class="input-field text-center text-xl tracking-[0.4em] font-bold"
-                       placeholder="••••••••">
+                <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🔑 Parol</label>
+                <input type="password" name="password" required autofocus class="input-field" style="text-align:center; font-size:18px; letter-spacing:0.3em; padding:14px;" placeholder="••••••••">
             </div>
-
-            <button type="submit" class="btn-primary w-full font-black uppercase tracking-widest">
-                🚀 Tizimga Kirish
+            <button type="submit" style="width:100%; background:white; color:#C0143C; padding:14px; border-radius:14px; font-weight:900; font-size:14px; border:none; cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;">
+                🚀 Kirish
             </button>
         </form>
 
-        <div class="mt-8 pt-6 border-t border-surface-border text-center">
-            <a href="{% url 'phones:home' %}" class="text-xs text-gray-400 hover:text-brand transition-colors font-bold uppercase tracking-widest">
-                ← Saytga qaytish
-            </a>
+        <div style="margin-top:24px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.1); text-align:center;">
+            <a href="{% url 'phones:home' %}" style="font-size:11px; color:rgba(255,255,255,0.5); text-decoration:none; font-weight:700;">← Saytga qaytish</a>
         </div>
     </div>
 </div>

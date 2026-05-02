@@ -4,130 +4,92 @@
 {% block title %}Qidiruv — Markab Electronics{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 py-10">
+<div class="max-w-lg mx-auto px-4 py-6">
 
     <!-- Search Bar -->
-    <div class="text-center mb-10 animate-fade-in">
-        <h1 class="text-4xl font-black text-gray-900 tracking-tight mb-3">🔍 Nima Qidiramiz?</h1>
-        <p class="text-gray-500 mb-8">Model nomini yozing va toping</p>
+    <div class="text-center mb-8 animate-fade-in">
+        <h1 style="font-size:22px; font-weight:900; color:white; margin-bottom:8px;">🔍 Qidiruv</h1>
+        <form method="GET" action="{% url 'phones:search' %}" class="relative">
+            <input type="text" name="q" id="search-input"
+                   value="{{ request.GET.q }}"
+                   placeholder="iPhone 15 Pro..."
+                   autofocus autocomplete="off"
+                   style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 56px 14px 18px; color:white; font-size:15px; font-weight:600; outline:none; box-sizing:border-box;"
+                   oninput="showSuggestions(this.value)">
+            <button type="submit"
+                    style="position:absolute; right:6px; top:50%; transform:translateY(-50%); width:40px; height:40px; background:white; color:#C0143C; border-radius:12px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px;">
+                🔍
+            </button>
 
-        <form method="GET" action="{% url 'phones:search' %}" class="relative max-w-2xl mx-auto">
-            <div class="relative">
-                <input type="text" name="q" id="search-input"
-                       value="{{ request.GET.q }}"
-                       placeholder="iPhone 15 Pro, iPhone 14..."
-                       autofocus
-                       autocomplete="off"
-                       class="w-full bg-white border-2 border-brand/40 focus:border-brand rounded-2xl px-6 py-4 pr-16 text-gray-900 text-lg font-medium outline-none transition-all shadow-gold placeholder:text-gray-400"
-                       oninput="showSuggestions(this.value)">
-
-                <button type="submit"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-brand rounded-xl flex items-center justify-center hover:bg-brand-hover transition-colors shadow-gold">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Autocomplete suggestions -->
-            <div id="suggestions"
-                 class="absolute z-20 top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-card-hover border border-surface-border overflow-hidden hidden">
-            </div>
+            <!-- Suggestions -->
+            <div id="suggestions" style="display:none; position:absolute; z-index:20; top:100%; left:0; right:0; margin-top:6px; background:rgba(128,13,40,0.95); border-radius:16px; border:1px solid rgba(255,255,255,0.2); overflow:hidden; backdrop-filter:blur(10px);"></div>
         </form>
     </div>
 
     <!-- Results -->
-    <div class="animate-fade-in">
-        {% if request.GET.q %}
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-surface-border">
-            <h3 class="font-bold text-gray-500 text-sm">
-                Natija: <span class="text-gray-900 font-black">"{{ request.GET.q }}"</span>
-            </h3>
-            <span class="badge-premium">{{ phones|length }} ta topildi</span>
-        </div>
+    {% if request.GET.q %}
+    <div class="mb-4 animate-fade-in" style="display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-size:13px; color:rgba(255,255,255,0.6);">
+            Natija: <span style="color:white; font-weight:700;">"{{ request.GET.q }}"</span>
+        </span>
+        <span class="badge-premium" style="font-size:10px;">{{ phones|length }} ta</span>
+    </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {% for phone in phones %}
-            <div class="card card-hover group overflow-hidden animate-fade-in">
-                <div class="relative aspect-[4/5] bg-surface-bg overflow-hidden rounded-t-3xl">
+    <div class="grid grid-cols-2 gap-3">
+        {% for phone in phones %}
+        <a href="{% url 'phones:detail' phone.pk %}" class="block animate-fade-in" style="text-decoration:none;">
+            <div style="background:rgba(255,255,255,0.1); border-radius:18px; border:1px solid rgba(255,255,255,0.12); overflow:hidden;">
+                <div style="aspect-ratio:1/1; background:rgba(0,0,0,0.12); overflow:hidden;">
                     {% if phone.image %}
-                    <img src="{{ phone.image.url }}" alt="{{ phone.get_model_name_display }}"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ phone.image.url }}" style="width:100%; height:100%; object-fit:cover;">
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center">
-                        <span class="text-6xl opacity-20">📱</span>
-                    </div>
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;"><span style="font-size:40px; opacity:0.3;">📱</span></div>
                     {% endif %}
                 </div>
-                <div class="p-4">
-                    <h3 class="font-black text-gray-900 mb-1">{{ phone.get_model_name_display }}</h3>
-                    <p class="text-xs text-gray-400 mb-3">{{ phone.memory }}GB · 🔋{{ phone.battery_health }}%</p>
-                    <div class="flex items-center justify-between">
-                        <div class="font-black text-lg text-brand">{{ phone.price|floatformat:0 }} <span class="text-xs text-gray-400">so'm</span></div>
-                        <a href="{% url 'phones:detail' phone.pk %}"
-                           class="w-9 h-9 bg-brand rounded-xl flex items-center justify-center shadow-gold hover:shadow-gold-lg transition-all">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
-                    </div>
+                <div style="padding:10px 12px;">
+                    <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px;">{{ phone.get_model_name_display }}</div>
+                    <div style="font-size:10px; color:rgba(255,255,255,0.45); margin-bottom:4px;">{{ phone.memory }}GB · 🔋{{ phone.battery_health }}%</div>
+                    <div style="font-size:14px; font-weight:900; color:white;">{{ phone.price|floatformat:0 }} <span style="font-size:9px; color:rgba(255,255,255,0.45);">so'm</span></div>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-span-full py-20 text-center">
-                <div class="text-6xl mb-4">😔</div>
-                <p class="text-gray-600 font-bold text-lg">Hech narsa topilmadi</p>
-                <p class="text-gray-400 text-sm mt-2">Boshqa kalit so'z bilan qidirib ko'ring</p>
-                <a href="{% url 'phones:filter' %}" class="btn-primary inline-block mt-6 text-sm">
-                    Katalogni ko'rish
-                </a>
-            </div>
-            {% endfor %}
+        </a>
+        {% empty %}
+        <div class="col-span-2 py-16 text-center">
+            <div style="font-size:48px; margin-bottom:12px;">😔</div>
+            <p style="color:rgba(255,255,255,0.7); font-weight:700;">Topilmadi</p>
         </div>
-
-        {% else %}
-        <div class="py-20 text-center">
-            <div class="text-7xl mb-6">🔎</div>
-            <p class="text-gray-500 font-bold text-xl mb-2">Qidiruvni boshlash uchun model nomini kiriting.</p>
-            <p class="text-gray-400 text-sm">Masalan: "iPhone 15 Pro", "iPhone 14 Pro Max"...</p>
-        </div>
-        {% endif %}
+        {% endfor %}
     </div>
+
+    {% else %}
+    <div class="py-16 text-center animate-fade-in">
+        <div style="font-size:56px; margin-bottom:12px;">🔎</div>
+        <p style="color:rgba(255,255,255,0.7); font-weight:700; font-size:16px;">Model nomini kiriting</p>
+        <p style="color:rgba(255,255,255,0.4); font-size:12px; margin-top:6px;">Masalan: "iPhone 15 Pro"</p>
+    </div>
+    {% endif %}
 </div>
 
 <script>
-const suggestions = [
-    "iPhone 11", "iPhone 12", "iPhone 12 Pro", "iPhone 13", "iPhone 13 Pro",
-    "iPhone 13 Pro Max", "iPhone 14", "iPhone 14 Pro", "iPhone 14 Pro Max",
-    "iPhone 15", "iPhone 15 Pro", "iPhone 15 Pro Max", "iPhone 16", "iPhone 16 Pro"
-];
+const suggestions = ["iPhone 11","iPhone 12","iPhone 12 Pro","iPhone 13","iPhone 13 Pro","iPhone 13 Pro Max","iPhone 14","iPhone 14 Pro","iPhone 14 Pro Max","iPhone 15","iPhone 15 Pro","iPhone 15 Pro Max","iPhone 16","iPhone 16 Pro"];
 
 function showSuggestions(val) {
     const box = document.getElementById('suggestions');
-    if (!val || val.length < 2) { box.classList.add('hidden'); return; }
-
+    if (!val || val.length < 2) { box.style.display='none'; return; }
     const filtered = suggestions.filter(s => s.toLowerCase().includes(val.toLowerCase()));
-    if (!filtered.length) { box.classList.add('hidden'); return; }
-
+    if (!filtered.length) { box.style.display='none'; return; }
     box.innerHTML = filtered.slice(0, 5).map(s =>
-        `<div onclick="selectSuggestion('${s}')"
-              class="px-5 py-3 text-gray-900 font-medium hover:bg-brand/10 hover:text-brand cursor-pointer transition-colors border-b border-surface-border last:border-0 text-left text-sm">
-            🔍 ${s}
-         </div>`
+        `<div onclick="selectSuggestion('${s}')" style="padding:12px 16px; color:white; font-weight:600; font-size:13px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.08); transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">${s}</div>`
     ).join('');
-    box.classList.remove('hidden');
+    box.style.display='block';
 }
-
 function selectSuggestion(val) {
     document.getElementById('search-input').value = val;
-    document.getElementById('suggestions').classList.add('hidden');
+    document.getElementById('suggestions').style.display='none';
     document.querySelector('form').submit();
 }
-
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('form')) {
-        document.getElementById('suggestions').classList.add('hidden');
-    }
+document.addEventListener('click', e => {
+    if (!e.target.closest('form')) document.getElementById('suggestions').style.display='none';
 });
 </script>
 {% endblock %}

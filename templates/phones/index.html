@@ -6,159 +6,153 @@
 {% block content %}
 
 <!-- Hero Section -->
-<section class="relative overflow-hidden pt-8 pb-12 md:pt-16 md:pb-20">
-    <!-- Decorative blobs -->
-    <div class="absolute -top-20 -right-20 w-96 h-96 bg-brand/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-brand-light/10 rounded-full blur-3xl pointer-events-none"></div>
+<section class="relative overflow-hidden px-4 pt-6 pb-10">
+    <!-- Decorative -->
+    <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full blur-3xl pointer-events-none" style="background:rgba(255,255,255,0.08);"></div>
 
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-        <div class="max-w-3xl animate-fade-in">
-            <div class="badge-premium mb-6 inline-flex">
-                ✨ Uzbekistondagi eng yirik iPhone do'koni
+    <div class="max-w-lg mx-auto text-center animate-fade-in">
+        <div class="badge-premium mb-4 inline-flex text-xs">
+            ✨ #1 iPhone Do'koni
+        </div>
+        <h1 style="font-size:2.2rem; font-weight:900; line-height:1.1; letter-spacing:-0.03em; color:white; margin-bottom:16px;">
+            Premium<br>
+            <span style="color:rgba(255,255,255,0.6);">iPhone</span><br>
+            Bozori
+        </h1>
+        <p style="color:rgba(255,255,255,0.65); font-size:14px; margin-bottom:24px; line-height:1.6;">
+            Original iPhone qurilmalar, muddatli to'lov va professional xizmat
+        </p>
+
+        <!-- Hero Image -->
+        <div style="margin:0 auto 24px; width:200px; height:200px; background:rgba(255,255,255,0.08); border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,255,255,0.15); box-shadow:0 0 60px rgba(0,0,0,0.2);">
+            <span style="font-size:80px;">📱</span>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <a href="{% url 'phones:filter' %}" class="btn-primary text-center text-sm font-black tracking-wide uppercase">
+                🛍️ Hoziroq sotib olish
+            </a>
+            <a href="{% url 'phones:calculator' %}" class="btn-secondary text-center text-sm font-bold">
+                📊 Telefoningizni narxlash
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section style="padding:16px 0; border-top:1px solid rgba(255,255,255,0.1); border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.1);">
+    <div class="max-w-lg mx-auto px-4">
+        <div class="grid grid-cols-3 gap-2 text-center">
+            <div>
+                <div style="font-size:22px; font-weight:900; color:white;">500+</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:600;">Sotuv</div>
             </div>
-            <h1 class="text-5xl md:text-7xl font-black leading-[1.05] mb-6 tracking-tight text-gray-900">
-                Premium<br>
-                <span class="text-gradient">iPhone</span><br>
-                Bozori
-            </h1>
-            <p class="text-gray-500 text-lg md:text-xl mb-10 max-w-2xl leading-relaxed">
-                Markab Electronics — original iPhone qurilmalar, muddatli to'lov imkoniyati va professional xizmat. Malika va Chilonzor filiallari.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{% url 'phones:filter' %}" class="btn-primary text-center text-sm font-black tracking-wide uppercase shadow-gold">
-                    🛍️ Hoziroq sotib olish
-                </a>
-                <a href="{% url 'phones:calculator' %}" class="btn-secondary text-center text-sm font-bold">
-                    📊 Telefoningizni narxlash
-                </a>
+            <div style="border-left:1px solid rgba(255,255,255,0.15); border-right:1px solid rgba(255,255,255,0.15);">
+                <div style="font-size:22px; font-weight:900; color:white;">2</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:600;">Filial</div>
+            </div>
+            <div>
+                <div style="font-size:22px; font-weight:900; color:white;">100%</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:600;">Original</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Stats Bar -->
-<section class="py-6 border-y border-surface-border bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-3 gap-4 text-center">
+<!-- Products -->
+<section class="py-8 px-4">
+    <div class="max-w-lg mx-auto">
+        <div class="flex items-center justify-between mb-6">
             <div>
-                <div class="text-2xl font-black text-brand">500+</div>
-                <div class="text-xs text-gray-500 font-medium mt-1">Muvaffaqiyatli sotuv</div>
+                <h2 style="font-size:20px; font-weight:900; color:white; margin-bottom:4px;">So'nggi E'lonlar</h2>
+                <p style="font-size:12px; color:rgba(255,255,255,0.5);">Eng yaxshi narxlar</p>
             </div>
-            <div class="border-x border-surface-border">
-                <div class="text-2xl font-black text-brand">2</div>
-                <div class="text-xs text-gray-500 font-medium mt-1">Filial</div>
-            </div>
-            <div>
-                <div class="text-2xl font-black text-brand">100%</div>
-                <div class="text-xs text-gray-500 font-medium mt-1">Original qurilmalar</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Products Section -->
-<section class="py-12 md:py-16">
-    <div class="max-w-7xl mx-auto px-4">
-        <!-- Section Header -->
-        <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-10 gap-6">
-            <div>
-                <h2 class="text-3xl md:text-4xl font-black tracking-tight mb-2 text-gray-900">So'nggi E'lonlar</h2>
-                <p class="text-gray-500">Barcha telefon modellarimizdan o'zingizga mosini tanlang</p>
-            </div>
-            <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                <a href="{% url 'phones:filter' %}" class="flex-shrink-0 px-5 py-2 rounded-full text-xs font-bold bg-brand text-white shadow-gold">Barchasi →</a>
-            </div>
+            <a href="{% url 'phones:filter' %}" style="background:white; color:#C0143C; padding:8px 16px; border-radius:12px; font-size:11px; font-weight:800; text-decoration:none;">
+                Barchasi →
+            </a>
         </div>
 
-        <!-- Products Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Grid 2 columns for mobile -->
+        <div class="grid grid-cols-2 gap-3">
             {% for phone in phones %}
-            <div class="card card-hover group animate-fade-in overflow-hidden">
-                <!-- Image -->
-                <div class="relative aspect-[4/5] bg-surface-bg overflow-hidden rounded-t-3xl">
-                    {% if phone.image %}
-                    <img src="{{ phone.image.url }}" alt="{{ phone.get_model_name_display }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    {% else %}
-                    <div class="w-full h-full flex items-center justify-center">
-                        <span class="text-6xl opacity-20">📱</span>
-                    </div>
-                    {% endif %}
+            <a href="{% url 'phones:detail' phone.pk %}" class="block animate-fade-in" style="text-decoration:none;">
+                <div style="background:rgba(255,255,255,0.1); border-radius:20px; border:1px solid rgba(255,255,255,0.15); overflow:hidden; transition:all 0.3s;">
 
-                    <!-- Badge -->
-                    <div class="absolute top-3 left-3">
-                        <span class="px-2.5 py-1 rounded-full bg-brand/90 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-wide shadow-gold">
-                            Premium ✨
-                        </span>
-                    </div>
-
-                    {% if phone.is_booked %}
-                    <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center">
-                        <span class="px-4 py-2 bg-white rounded-xl font-black text-gray-900 text-sm shadow-lg">🔒 Bron qilingan</span>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <!-- Info -->
-                <div class="p-5">
-                    <h3 class="text-base font-black text-gray-900 mb-1">{{ phone.get_model_name_display }}</h3>
-                    <p class="text-xs text-gray-400 mb-4">{{ phone.memory }}GB · 🔋{{ phone.battery_health }}% · {{ phone.condition|title }}</p>
-
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="text-xs text-gray-400 font-medium">Narxi</div>
-                            <div class="text-xl font-black text-gray-900">{{ phone.price|floatformat:0 }} <span class="text-xs font-bold text-gray-400">so'm</span></div>
+                    <!-- Image -->
+                    <div style="aspect-ratio:1/1; background:rgba(0,0,0,0.15); overflow:hidden; position:relative;">
+                        {% if phone.image %}
+                        <img src="{{ phone.image.url }}" alt="{{ phone.get_model_name_display }}"
+                             style="width:100%; height:100%; object-fit:cover;">
+                        {% else %}
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                            <span style="font-size:48px; opacity:0.3;">📱</span>
                         </div>
-                        <a href="{% url 'phones:detail' phone.pk %}" 
-                           class="w-10 h-10 rounded-2xl bg-brand flex items-center justify-center shadow-gold group-hover:shadow-gold-lg transition-all duration-300 group-hover:scale-110">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
+                        {% endif %}
+
+                        {% if phone.is_booked %}
+                        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center;">
+                            <span style="background:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:800; color:#333;">🔒 Bron</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Info -->
+                    <div style="padding:10px 12px;">
+                        <div style="font-size:13px; font-weight:800; color:white; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            {{ phone.get_model_name_display }}
+                        </div>
+                        <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-bottom:6px;">
+                            {{ phone.memory }}GB · 🔋{{ phone.battery_health }}%
+                        </div>
+                        <div style="font-size:15px; font-weight:900; color:white;">
+                            {{ phone.price|floatformat:0 }} <span style="font-size:10px; color:rgba(255,255,255,0.5);">so'm</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
             {% empty %}
-            <div class="col-span-full py-24 text-center">
-                <div class="text-6xl mb-4">📭</div>
-                <p class="text-gray-500 font-medium text-lg">Hozircha e'lonlar mavjud emas</p>
-                <p class="text-gray-400 text-sm mt-2">Tez orada yangi telefonlar qo'shiladi</p>
+            <div class="col-span-2 py-16 text-center">
+                <div style="font-size:48px; margin-bottom:12px;">📭</div>
+                <p style="color:rgba(255,255,255,0.7); font-weight:700; font-size:16px;">Hozircha e'lonlar yo'q</p>
+                <p style="color:rgba(255,255,255,0.4); font-size:12px; margin-top:8px;">Tez orada yangi telefonlar qo'shiladi</p>
             </div>
             {% endfor %}
         </div>
 
         {% if phones %}
-        <div class="text-center mt-10">
-            <a href="{% url 'phones:filter' %}" class="btn-secondary inline-flex items-center gap-2">
-                Barchasi ko'rish
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        <div class="text-center mt-6">
+            <a href="{% url 'phones:filter' %}" class="btn-secondary inline-flex items-center gap-2 text-sm">
+                Barchasini ko'rish →
             </a>
         </div>
         {% endif %}
     </div>
 </section>
 
-<!-- Features Section -->
-<section class="py-12 bg-white border-y border-surface-border">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="text-center group">
-                <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
-                    <span class="text-2xl">✅</span>
+<!-- Features -->
+<section style="padding:32px 0; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.08);">
+    <div class="max-w-lg mx-auto px-4">
+        <div class="grid grid-cols-3 gap-3">
+            <div class="text-center">
+                <div style="width:48px; height:48px; background:rgba(255,255,255,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
+                    <span style="font-size:22px;">✅</span>
                 </div>
-                <h3 class="font-black text-gray-900 mb-2">100% Original</h3>
-                <p class="text-gray-500 text-sm">Barcha telefonlar original va sertifikatlangan</p>
+                <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px;">Original</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.4);">100% sertifikat</div>
             </div>
-            <div class="text-center group">
-                <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
-                    <span class="text-2xl">💳</span>
+            <div class="text-center">
+                <div style="width:48px; height:48px; background:rgba(255,255,255,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
+                    <span style="font-size:22px;">💳</span>
                 </div>
-                <h3 class="font-black text-gray-900 mb-2">Muddatli To'lov</h3>
-                <p class="text-gray-500 text-sm">3, 6, 12 oylik qulay to'lov rejalari</p>
+                <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px;">Muddatli</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.4);">3-12 oy</div>
             </div>
-            <div class="text-center group">
-                <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
-                    <span class="text-2xl">📍</span>
+            <div class="text-center">
+                <div style="width:48px; height:48px; background:rgba(255,255,255,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
+                    <span style="font-size:22px;">📍</span>
                 </div>
-                <h3 class="font-black text-gray-900 mb-2">2 ta Filial</h3>
-                <p class="text-gray-500 text-sm">Malika va Chilonzor filiallarida xizmat</p>
+                <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px;">2 Filial</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.4);">Malika, Chilonzor</div>
             </div>
         </div>
     </div>
