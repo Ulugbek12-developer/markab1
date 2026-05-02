@@ -1,9 +1,18 @@
 from django.contrib import admin
-from .models import Phone
+from .models import Category, Listing, Favorite
 
-@admin.register(Phone)
-class PhoneAdmin(admin.ModelAdmin):
-    list_display = ('model_name', 'memory', 'battery_health', 'price', 'is_approved', 'created_at')
-    list_filter = ('model_name', 'condition', 'is_approved')
-    search_fields = ('model_name', 'description')
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+
+@admin.register(Listing)
+class ListingAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'price', 'location', 'is_approved', 'created_at')
+    list_filter = ('category', 'condition', 'is_approved', 'location')
+    search_fields = ('title', 'description', 'model_name')
     list_editable = ('price', 'is_approved')
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'listing', 'created_at')

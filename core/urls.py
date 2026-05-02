@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from users import views as user_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,8 @@ urlpatterns = [
     path('', include('phones.urls')),
     path('orders/', include('orders.urls')),
     path('users/', include('users.urls')),
+    path('register/', user_views.RegisterView.as_view(), name='register'),
+    path('', include('django.contrib.auth.urls')),
 ]
 
 if settings.DEBUG:

@@ -19,11 +19,19 @@ def get_subscription_keyboard(lang):
 
 def get_main_menu(lang):
     s = STRINGS[lang]
+    # PythonAnywhere URL from settings
+    base_url = "http://markab2.pythonanywhere.com"
     builder = ReplyKeyboardBuilder()
-    builder.row(KeyboardButton(text=s['btn_sell']), KeyboardButton(text=s['btn_buy']))
-    builder.row(KeyboardButton(text=s['btn_price']), KeyboardButton(text=s['btn_branches']))
     builder.row(
-        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markab2.pythonanywhere.com/")),
+        KeyboardButton(text=s['btn_sell'], web_app=WebAppInfo(url=f"{base_url}/sell/")), 
+        KeyboardButton(text=s['btn_buy'], web_app=WebAppInfo(url=f"{base_url}/"))
+    )
+    builder.row(
+        KeyboardButton(text=s['btn_price'], web_app=WebAppInfo(url=f"{base_url}/price/")), 
+        KeyboardButton(text=s['btn_branches'])
+    )
+    builder.row(
+        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url=base_url)),
         KeyboardButton(text=s['btn_help'])
     )
     builder.row(KeyboardButton(text=s['btn_admin']))

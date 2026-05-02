@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Ro'yxatdan o'tish | Markab{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-10">
+    <div class="bg-white rounded-3xl p-8 card-shadow border border-slate-100">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-black text-slate-900 mb-2">Yangi Profil</h1>
+            <p class="text-slate-500 font-medium">Platformamizga qo'shiling</p>
+        </div>
+
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div>
+                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                    {% if field.name == 'username' %}Foydalanuvchi nomi
+                    {% elif 'password' in field.name and '2' in field.name or 'confirmation' in field.name %}Parolni tasdiqlang
+                    {% elif 'password' in field.name %}Parol
+                    {% else %}{{ field.label }}{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="text-xs text-red-500 font-bold mt-1 ml-1">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+
+            <button type="submit" class="w-full btn-primary py-5 text-lg shadow-2xl shadow-blue-200 mt-6">
+                Ro'yxatdan o'tish
+            </button>
+
+            <div class="text-center mt-6">
+                <p class="text-slate-400 text-sm">Profilingiz bormi? <a href="/login" class="text-blue-600 font-bold">Kirish</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Styling Django forms */
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        background-color: #f8fafc; /* bg-slate-50 */
+        border: 1px solid #e2e8f0; /* border-slate-200 */
+        border-radius: 1rem; /* rounded-2xl */
+        padding: 1rem 1rem; /* px-4 py-4 */
+        font-weight: 700; /* font-bold */
+        color: #334155; /* text-slate-700 */
+        transition: all 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px #3b82f6; /* focus:ring-2 focus:ring-blue-500 */
+    }
+</style>
+{% endblock %}

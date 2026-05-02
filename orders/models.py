@@ -1,8 +1,8 @@
 from django.db import models
-from phones.models import Phone
+from phones.models import Listing
 
 class Order(models.Model):
-    phone = models.ForeignKey(Phone, on_delete=models.CASCADE, related_name='orders')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='orders')
     customer_name = models.CharField(max_length=100)
     customer_phone = models.CharField(max_length=20)
     is_installment = models.BooleanField(default=False)

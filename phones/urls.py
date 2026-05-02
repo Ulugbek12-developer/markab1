@@ -5,12 +5,11 @@ app_name = 'phones'
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    path('filter/', views.FilterView.as_view(), name='filter'),
-    path('search/', views.SearchView.as_view(), name='search'),
-    path('phone/<int:pk>/', views.PhoneDetailView.as_view(), name='detail'),
-    path('phone/<int:pk>/book/', views.BookPhoneView.as_view(), name='book'),
-    path('calculator/', views.CalculatorView.as_view(), name='calculator'),
-    path('markab-admin/', views.AdminDashboardView.as_view(), name='admin_dashboard'),
-    path('markab-admin/add/', views.AdminAddPhoneView.as_view(), name='admin_add'),
-    path('markab-admin/delete/<int:pk>/', views.AdminDeletePhoneView.as_view(), name='admin_delete'),
+    path('listing/<int:pk>/', views.ListingDetailView.as_view(), name='detail'),
+    path('sell/', views.SellView.as_view(), name='sell'),
+    path('price/', views.PriceView.as_view(), name='price'),
+    path('favorites/', views.FavoritesView.as_view(), name='favorites'),
+    path('favorite/<int:pk>/toggle/', views.ToggleFavoriteView.as_view(), name='toggle_favorite'),
+    path('store-panel/', views.StorePanelView.as_view(), name='store_panel'),
+    path('installment-request/<int:pk>/', views.InstallmentRequestView.as_view(), name='installment_request'),
 ]

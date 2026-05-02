@@ -1,160 +1,132 @@
 {% extends 'base.html' %}
-{% load static %}
 
-{% block title %}Markab Electronics — Premium iPhone Do'koni{% endblock %}
+{% block title %}Markab | Premium Marketplace{% endblock %}
 
 {% block content %}
-
-<!-- Hero Section -->
-<section class="relative overflow-hidden px-4 pt-6 pb-10">
-    <!-- Decorative -->
-    <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full blur-3xl pointer-events-none" style="background:rgba(255,255,255,0.08);"></div>
-
-    <div class="max-w-lg mx-auto text-center animate-fade-in">
-        <div class="badge-premium mb-4 inline-flex text-xs">
-            ✨ #1 iPhone Do'koni
-        </div>
-        <h1 style="font-size:2.2rem; font-weight:900; line-height:1.1; letter-spacing:-0.03em; color:white; margin-bottom:16px;">
-            Premium<br>
-            <span style="color:rgba(255,255,255,0.6);">iPhone</span><br>
-            Bozori
+<div class="space-y-8">
+    <!-- Hero Section -->
+    <section class="relative rounded-3xl overflow-hidden bg-blue-600 h-48 md:h-64 flex flex-col items-center justify-center text-white p-6 shadow-xl">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+        <h1 class="text-3xl md:text-5xl font-black mb-4 text-center z-10 animate-fade-in">
+            Orzuingizdagi gadjetni toping
         </h1>
-        <p style="color:rgba(255,255,255,0.65); font-size:14px; margin-bottom:24px; line-height:1.6;">
-            Original iPhone qurilmalar, muddatli to'lov va professional xizmat
-        </p>
+        <form action="{% url 'phones:home' %}" method="GET" class="relative w-full max-w-xl z-10">
+            <input 
+                type="text" 
+                name="q"
+                placeholder="Telefonlar, noutbuklar qidirish..." 
+                class="w-full h-14 pl-12 pr-4 rounded-2xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-lg border-none"
+                value="{{ request.GET.q|default:'' }}"
+            >
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-blue-500 p-2 rounded-xl text-white hover:bg-blue-400 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
+        </form>
+    </section>
 
-        <!-- Hero Image -->
-        <div style="margin:0 auto 24px; width:200px; height:200px; background:rgba(255,255,255,0.08); border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,255,255,0.15); box-shadow:0 0 60px rgba(0,0,0,0.2);">
-            <span style="font-size:80px;">📱</span>
-        </div>
-
-        <div class="flex flex-col gap-3">
-            <a href="{% url 'phones:filter' %}" class="btn-primary text-center text-sm font-black tracking-wide uppercase">
-                🛍️ Hoziroq sotib olish
-            </a>
-            <a href="{% url 'phones:calculator' %}" class="btn-secondary text-center text-sm font-bold">
-                📊 Telefoningizni narxlash
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Stats -->
-<section style="padding:16px 0; border-top:1px solid rgba(255,255,255,0.1); border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.1);">
-    <div class="max-w-lg mx-auto px-4">
-        <div class="grid grid-cols-3 gap-2 text-center">
-            <div>
-                <div style="font-size:22px; font-weight:900; color:white;">500+</div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:600;">Sotuv</div>
-            </div>
-            <div style="border-left:1px solid rgba(255,255,255,0.15); border-right:1px solid rgba(255,255,255,0.15);">
-                <div style="font-size:22px; font-weight:900; color:white;">2</div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:600;">Filial</div>
-            </div>
-            <div>
-                <div style="font-size:22px; font-weight:900; color:white;">100%</div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:600;">Original</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Products -->
-<section class="py-8 px-4">
-    <div class="max-w-lg mx-auto">
+    <!-- Branches Section -->
+    <section class="mb-12">
         <div class="flex items-center justify-between mb-6">
-            <div>
-                <h2 style="font-size:20px; font-weight:900; color:white; margin-bottom:4px;">So'nggi E'lonlar</h2>
-                <p style="font-size:12px; color:rgba(255,255,255,0.5);">Eng yaxshi narxlar</p>
-            </div>
-            <a href="{% url 'phones:filter' %}" style="background:white; color:#C0143C; padding:8px 16px; border-radius:12px; font-size:11px; font-weight:800; text-decoration:none;">
-                Barchasi →
-            </a>
+            <h2 class="text-xl font-black text-slate-900">Bizning Filiallarimiz</h2>
         </div>
-
-        <!-- Grid 2 columns for mobile -->
-        <div class="grid grid-cols-2 gap-3">
-            {% for phone in phones %}
-            <a href="{% url 'phones:detail' phone.pk %}" class="block animate-fade-in" style="text-decoration:none;">
-                <div style="background:rgba(255,255,255,0.1); border-radius:20px; border:1px solid rgba(255,255,255,0.15); overflow:hidden; transition:all 0.3s;">
-
-                    <!-- Image -->
-                    <div style="aspect-ratio:1/1; background:rgba(0,0,0,0.15); overflow:hidden; position:relative;">
-                        {% if phone.image %}
-                        <img src="{{ phone.image.url }}" alt="{{ phone.get_model_name_display }}"
-                             style="width:100%; height:100%; object-fit:cover;">
-                        {% else %}
-                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-                            <span style="font-size:48px; opacity:0.3;">📱</span>
-                        </div>
-                        {% endif %}
-
-                        {% if phone.is_booked %}
-                        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center;">
-                            <span style="background:white; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:800; color:#333;">🔒 Bron</span>
-                        </div>
-                        {% endif %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Branch 1 -->
+            <div class="bg-white rounded-3xl p-6 card-shadow border border-slate-100 flex flex-col h-full">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </div>
-
-                    <!-- Info -->
-                    <div style="padding:10px 12px;">
-                        <div style="font-size:13px; font-weight:800; color:white; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                            {{ phone.get_model_name_display }}
-                        </div>
-                        <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-bottom:6px;">
-                            {{ phone.memory }}GB · 🔋{{ phone.battery_health }}%
-                        </div>
-                        <div style="font-size:15px; font-weight:900; color:white;">
-                            {{ phone.price|floatformat:0 }} <span style="font-size:10px; color:rgba(255,255,255,0.5);">so'm</span>
-                        </div>
+                    <div>
+                        <h3 class="font-black text-slate-900 text-lg">Asosiy Filial</h3>
+                        <p class="text-sm text-slate-500 mt-1">Toshkent sh., Yunusobod tumani, Amir Temur ko'chasi 123-uy</p>
                     </div>
                 </div>
-            </a>
-            {% empty %}
-            <div class="col-span-2 py-16 text-center">
-                <div style="font-size:48px; margin-bottom:12px;">📭</div>
-                <p style="color:rgba(255,255,255,0.7); font-weight:700; font-size:16px;">Hozircha e'lonlar yo'q</p>
-                <p style="color:rgba(255,255,255,0.4); font-size:12px; margin-top:8px;">Tez orada yangi telefonlar qo'shiladi</p>
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3 rounded-xl transition-colors">
+                        Xaritada ko'rish
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
+                </div>
+            </div>
+            <!-- Branch 2 -->
+            <div class="bg-white rounded-3xl p-6 card-shadow border border-slate-100 flex flex-col h-full">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-slate-900 text-lg">Chilonzor Filiali</h3>
+                        <p class="text-sm text-slate-500 mt-1">Toshkent sh., Chilonzor tumani, Muqimiy ko'chasi 45-uy</p>
+                    </div>
+                </div>
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3 rounded-xl transition-colors">
+                        Xaritada ko'rish
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Listings Feed -->
+    <section>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-black text-slate-900">Siz uchun tavsiyalar</h2>
+            <span class="text-sm text-slate-400 font-bold">{{ listings.count }} ta e'lon</span>
+        </div>
+
+        {% if listings %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for listing in listings %}
+            <div class="hover-lift">
+                <a href="{% url 'phones:detail' listing.id %}">
+                    <div class="card-shadow bg-white rounded-3xl overflow-hidden group border border-slate-100 flex flex-col h-full">
+                        <div class="relative h-48 overflow-hidden bg-slate-100">
+                            {% if listing.image %}
+                                <img src="{{ listing.image.url }}" alt="{{ listing.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            {% else %}
+                                <div class="w-full h-full flex items-center justify-center text-slate-300">Rasm yo'q</div>
+                            {% endif %}
+                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-xl text-[10px] font-black text-blue-600 uppercase tracking-wider">
+                                {{ listing.category.name }}
+                            </div>
+                            <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST" class="absolute top-3 right-3">
+                                {% csrf_token %}
+                                <button type="submit" class="p-2 rounded-xl bg-white/90 backdrop-blur text-slate-400 hover:text-red-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <h3 class="font-bold text-slate-900 line-clamp-1 mb-1 group-hover:text-blue-600 transition-colors">
+                                {{ listing.title }}
+                            </h3>
+                            <div class="flex items-center gap-1 text-slate-400 text-xs mb-4">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                {{ listing.location }}
+                            </div>
+                            <div class="mt-auto flex items-center justify-between">
+                                <span class="text-lg font-black text-blue-600">
+                                    {{ listing.price|floatformat:0 }} so'm
+                                </span>
+                                <span class="text-[10px] text-slate-400 font-bold">
+                                    {{ listing.created_at|date:"d.m.Y" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
             {% endfor %}
         </div>
-
-        {% if phones %}
-        <div class="text-center mt-6">
-            <a href="{% url 'phones:filter' %}" class="btn-secondary inline-flex items-center gap-2 text-sm">
-                Barchasini ko'rish →
-            </a>
+        {% else %}
+        <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+            <p class="text-slate-400 font-bold">Hech narsa topilmadi.</p>
+            <a href="{% url 'phones:home' %}" class="text-blue-600 text-sm mt-2 inline-block">Barcha e'lonlarni ko'rish</a>
         </div>
         {% endif %}
-    </div>
-</section>
-
-<!-- Features -->
-<section style="padding:32px 0; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.08);">
-    <div class="max-w-lg mx-auto px-4">
-        <div class="grid grid-cols-3 gap-3">
-            <div class="text-center">
-                <div style="width:48px; height:48px; background:rgba(255,255,255,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
-                    <span style="font-size:22px;">✅</span>
-                </div>
-                <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px;">Original</div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.4);">100% sertifikat</div>
-            </div>
-            <div class="text-center">
-                <div style="width:48px; height:48px; background:rgba(255,255,255,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
-                    <span style="font-size:22px;">💳</span>
-                </div>
-                <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px;">Muddatli</div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.4);">3-12 oy</div>
-            </div>
-            <div class="text-center">
-                <div style="width:48px; height:48px; background:rgba(255,255,255,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
-                    <span style="font-size:22px;">📍</span>
-                </div>
-                <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px;">2 Filial</div>
-                <div style="font-size:10px; color:rgba(255,255,255,0.4);">Malika, Chilonzor</div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+</div>
 {% endblock %}
