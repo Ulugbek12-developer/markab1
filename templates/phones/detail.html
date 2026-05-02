@@ -159,70 +159,23 @@
                             
                             <button type="button" @click="submitRequest" :disabled="isLoading || buyerPhone.length < 9" class="w-full bg-primary text-white font-black py-5 rounded-2xl text-lg transition-all hover:bg-accent shadow-xl shadow-red-100 disabled:opacity-50">
                                 <span x-show="!isLoading">Rasmiylashtirish</span>
-                    selectedCity: '',
-                    months: null,
-                    buyerPhone: '',
-                    isLoading: false,
-                    isSubmitted: false,
-                    
-                    regions: [
-                        'Toshkent sh.', 'Toshkent vil.', 'Samarqand', 'Buxoro', 
-                        'Andijon', 'Farg\'ona', 'Namangan', 'Qashqadaryo', 
-                        'Surxondaryo', 'Navoiy', 'Jizzax', 'Sirdaryo', 'Xorazm', 'Qoraqalpog\'iston'
-                    ],
-                    
-                    cityData: {
-                        'Toshkent sh.': ['Chilonzor', 'Yunusobod', 'Mirzo Ulug\'bek', 'Yashnobod', 'Sergeli', 'Olmazor'],
-                        'Toshkent vil.': ['Chirchiq', 'Angren', 'Olmaliq', 'Zangiota', 'Qibray', 'Yangiyo\'l'],
-                        'Samarqand': ['Samarqand sh.', 'Kattaqo\'rg\'on', 'Urgut', 'Toyloq'],
-                        'Buxoro': ['Buxoro sh.', 'G\'ijduvon', 'Vobkent', 'Kogon'],
-                        'default': ['Markaziy tuman', 'Boshqa tumanlar']
-                    },
-                    
-                    getCities() {
-                        return this.cityData[this.selectedRegion] || this.cityData['default'];
-                    },
-                    
-                    calculateMonthly() {
-                        let total = this.basePrice;
-                        if (this.months === 3) total = total * 1.10;
-                        else if (this.months === 6) total = total * 1.15;
-                        else if (this.months === 12) total = total * 1.25;
-                        return Math.round(total / this.months);
-                    },
-                    
-                    formatPrice(num) {
-                        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    },
-                    
-                    submitRequest() {
-                        this.isLoading = true;
-                        
-                        const formData = new FormData();
-                        formData.append('region', this.selectedRegion);
-                        formData.append('city', this.selectedCity);
-                        formData.append('months', this.months);
-                        formData.append('monthly', this.formatPrice(this.calculateMonthly()));
-                        formData.append('phone', this.buyerPhone);
-                        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-                        
-                        fetch('{% url "phones:installment_request" listing.id %}', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            this.isLoading = false;
-                            this.isSubmitted = true;
-                        })
-                        .catch(err => {
-                            this.isLoading = false;
-                            alert('Xatolik yuz berdi. Iltimos qayta urinib ko\'ring.');
-                        });
-                    }
-                }
-            }
-            </script>
+                                <span x-show="isLoading" class="flex items-center justify-center gap-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    Yuborilmoqda...
+                                </span>
+                            </button>
+                        </div>
+
+                        <div x-show="isSubmitted" class="py-4 text-green-600 font-black flex flex-col items-center gap-3">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            So'rovingiz qabul qilindi!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -245,5 +198,94 @@
         </div>
     </section>
     {% endif %}
+
+    <script>
+    function toggleBooking() {
+        fetch('{% url "phones:toggle_booking" listing.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload();
+            }
+        })
+        .catch(err => {
+            alert('Xatolik yuz berdi');
+        });
+    }
+
+    function installmentCalculator() {
+        return {
+            basePrice: {{ listing.price }},
+            selectedRegion: '',
+            selectedCity: '',
+            months: null,
+            buyerPhone: '',
+            isLoading: false,
+            isSubmitted: false,
+            
+            regions: [
+                'Toshkent sh.', 'Toshkent vil.', 'Samarqand', 'Buxoro', 
+                'Andijon', 'Farg\'ona', 'Namangan', 'Qashqadaryo', 
+                'Surxondaryo', 'Navoiy', 'Jizzax', 'Sirdaryo', 'Xorazm', 'Qoraqalpog\'iston'
+            ],
+            
+            cityData: {
+                'Toshkent sh.': ['Chilonzor', 'Yunusobod', 'Mirzo Ulug\'bek', 'Yashnobod', 'Sergeli', 'Olmazor'],
+                'Toshkent vil.': ['Chirchiq', 'Angren', 'Olmaliq', 'Zangiota', 'Qibray', 'Yangiyo\'l'],
+                'Samarqand': ['Samarqand sh.', 'Kattaqo\'rg\'on', 'Urgut', 'Toyloq'],
+                'Buxoro': ['Buxoro sh.', 'G\'ijduvon', 'Vobkent', 'Kogon'],
+                'default': ['Markaziy tuman', 'Boshqa tumanlar']
+            },
+            
+            getCities() {
+                return this.cityData[this.selectedRegion] || this.cityData['default'];
+            },
+            
+            calculateMonthly() {
+                let total = this.basePrice;
+                if (this.months === 3) total = total * 1.10;
+                else if (this.months === 6) total = total * 1.15;
+                else if (this.months === 12) total = total * 1.25;
+                return Math.round(total / this.months);
+            },
+            
+            formatPrice(num) {
+                if (!num) return "0";
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            },
+            
+            submitRequest() {
+                this.isLoading = true;
+                
+                const formData = new FormData();
+                formData.append('region', this.selectedRegion);
+                formData.append('city', this.selectedCity);
+                formData.append('months', this.months);
+                formData.append('monthly', this.calculateMonthly());
+                formData.append('phone', this.buyerPhone);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                
+                fetch('{% url "phones:installment_request" listing.id %}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.isLoading = false;
+                    this.isSubmitted = true;
+                })
+                .catch(err => {
+                    this.isLoading = false;
+                    alert('Xatolik yuz berdi. Iltimos qayta urinib ko\'ring.');
+                });
+            }
+        }
+    }
+    </script>
 </div>
 {% endblock %}

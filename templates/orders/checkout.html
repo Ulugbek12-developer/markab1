@@ -117,29 +117,6 @@
     </div>
 </div>
 
-<script>
-function checkoutApp() {
-    return {
-        basePrice: {{ listing.price }},
-        paymentType: '{{ payment_type }}',
-        months: 6,
-        initialPayment: 0,
-        deliveryType: 'pickup',
-        getRemaining() { return Math.max(0, this.basePrice - (this.initialPayment || 0)); },
-        getInterest() {
-            let rate = 0;
-            if (this.months === 3) rate = 0.10;
-            else if (this.months === 6) rate = 0.15;
-            else if (this.months === 12) rate = 0.25;
-            return Math.round(this.getRemaining() * rate);
-        },
-        getTotal() { return this.getRemaining() + this.getInterest(); },
-        getMonthly() { return Math.round(this.getTotal() / this.months); },
-        formatPrice(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
-    }
-}
-</script>
-{% endblock %}
 
 <script>
 function checkoutApp() {
