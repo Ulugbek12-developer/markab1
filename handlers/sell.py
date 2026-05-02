@@ -107,6 +107,22 @@ async def process_region(message: Message, state: FSMContext):
         await message.answer(STRINGS[lang]['prompt_condition'], reply_markup=get_condition_keyboard(lang))
         return
 
+    if message.text in ["Boshqa", "Другое"]:
+        from states import SellPhone as SP
+        await state.set_state(SP.box)  # temp jump — we'll handle via manual text
+        # Actually set a manual_region flag
+        await state.update_data(manual_region=True)
+        from keyboards import get_back_keyboard as gbk
+        await message.answer("🌍 <b>Region nomini yozing:</b>", parse_mode="HTML", reply_markup=gbk(lang))
+        # Use a sub-state trick: store that we need manual region
+        await state.set_state(SellPhone.region)  # keep in region state to catch text
+        await state.update_data(awaiting_manual_region=True)
+        return
+
+    data = await state.get_data()
+    if data.get('awaiting_manual_region'):
+        await state.update_data(awaiting_manual_region=False)
+
     await state.update_data(region=message.text)
     await state.set_state(SellPhone.box)
     await message.answer(STRINGS[lang]['prompt_box'], parse_mode="HTML", reply_markup=get_box_keyboard(lang))

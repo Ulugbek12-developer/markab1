@@ -27,22 +27,32 @@ def calculate_price(data):
     base = BASE_PRICES.get(model, 500)
     
     # Memory adjustments
-    storage = data.get('storage', "128GB")
+    storage = str(data.get('storage', "128GB"))
     if "256" in storage: base += 50
     elif "512" in storage: base += 100
     elif "1TB" in storage: base += 200
     
-    # Battery adjustments
-    battery = data.get('battery_range', "90-100")
-    if "70-80" in battery: base -= 30
-    elif "60-70" in battery: base -= 60
+    # Battery adjustments (now numeric)
+    try:
+        battery_val = int(str(data.get('battery', data.get('battery_range', '90'))).split('-')[0])
+        if battery_val >= 90: pass  # no deduction
+        elif battery_val >= 80: base -= 30
+        elif battery_val >= 70: base -= 60
+        elif battery_val >= 60: base -= 100
+        else: base -= 150
+    except:
+        pass
     
     # Condition
-    cond = data.get('condition', "").lower()
+    cond = str(data.get('condition', "")).lower()
     if "yaxshi" in cond or "хороший" in cond: base -= 50
     elif "ta'mir" in cond or "ремонта" in cond: base -= 150
     
-    return round(base / 100, 1) # Return in millions
+    # Box
+    box = str(data.get('box', '')).lower()
+    if "йоʻқ" in box or 'нет' in box: base -= 30
+    
+    return round(base / 100, 1)  # Return in millions (so'm)
 
 @router.message(F.text.in_(["💰 Narxlatish", "💰 Оценка"]))
 async def start_price(message: Message, state: FSMContext):
@@ -244,5 +254,15 @@ async def process_confirm(message: Message, state: FSMContext):
         admin_text = f"🆕 <b>YANGI NARXLASH SO'ROVI (ID: {req_id})</b>\n\n" + summary_for_admin
         await message.bot.send_photo(config.ADMIN_ID, data['photos'][0], caption=admin_text, parse_mode="HTML", reply_markup=get_price_admin_keyboard(req_id, lang))
 
-    await message.answer(s['price_success'], parse_mode="HTML", reply_markup=get_main_menu(lang))
+    # Show auto price to user immediately
+    price_msg = (
+        f"📊 <b>Telefoningizning taxminiy narxi:</b>\n\n"
+        f"📱 <b>Model:</b> {data.get('model')}\n"
+        f"🔋 <b>Batareya:</b> {data.get('battery')}%\n"
+        f"💾 <b>Xotira:</b> {data.get('storage')}\n\n"
+        f"💰 <b>Taxminiy narx: {recommended_price} mln so'm</b>\n\n"
+        f"⚠️ <i>Bu narx taxminiy bo'lib, mutaxassisimiz ko'rib chiqib aniq narxni sizga yuboradi.</i>"
+    )
+    await message.answer(price_msg, parse_mode="HTML", reply_markup=get_main_menu(lang))
     await state.clear()
+
