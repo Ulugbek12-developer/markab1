@@ -1,105 +1,128 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sotib olish - Markab Electronics{% endblock %}
+{% block title %}Buyurtma Berish — Markab Electronics{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-12 max-w-xl">
-    <div class="text-center mb-12 animate-fade-in">
-        <h2 class="text-4xl font-black tracking-tight mb-4 uppercase">Buyurtma Berish</h2>
-        <p class="text-gray-500">Ma'lumotlarni to'ldiring va bizning operatorlarimiz siz bilan bog'lanishadi.</p>
+<div class="max-w-xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+    <div class="text-center mb-8 animate-fade-in">
+        <div class="badge-premium mb-4 inline-flex">🛒 Buyurtma</div>
+        <h1 class="text-3xl font-black text-gray-900 tracking-tight mb-2">Buyurtma Berish</h1>
+        <p class="text-gray-500 text-sm">Ma'lumotlarni to'ldiring va operatorlarimiz siz bilan bog'lanadi</p>
     </div>
-    
-    <!-- Order Summary -->
-    <div class="glass rounded-3xl p-6 border border-white/5 mb-8 flex items-center gap-6 animate-fade-in">
-        <div class="w-20 h-20 bg-black rounded-2xl overflow-hidden border border-white/10 flex-shrink-0">
+
+    <!-- Product Summary -->
+    <div class="card p-5 mb-6 flex items-center gap-5 animate-fade-in">
+        <div class="w-20 h-20 bg-surface-bg rounded-2xl overflow-hidden border border-surface-border flex-shrink-0">
             {% if phone.image %}
-            <img src="{{ phone.image.url }}" class="w-full h-full object-cover">
+            <img src="{{ phone.image.url }}" class="w-full h-full object-cover" alt="{{ phone.get_model_name_display }}">
             {% else %}
-            <div class="w-full h-full flex items-center justify-center text-gray-700">📱</div>
+            <div class="w-full h-full flex items-center justify-center text-3xl">📱</div>
             {% endif %}
         </div>
         <div>
-            <h3 class="text-lg font-bold text-white mb-1 uppercase tracking-tight">{{ phone.get_model_name_display }}</h3>
-            <p class="text-xl font-black text-brand">{{ phone.price }} <span class="text-[10px] font-bold text-gray-500 uppercase">so'm</span></p>
+            <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Tanlangan mahsulot</div>
+            <h3 class="text-lg font-black text-gray-900">{{ phone.get_model_name_display }}</h3>
+            <p class="text-xl font-black text-brand">{{ phone.price|floatformat:0 }} <span class="text-xs text-gray-400 font-bold">so'm</span></p>
         </div>
     </div>
 
     <!-- Form -->
-    <div class="glass rounded-[32px] p-8 border border-white/5 animate-fade-in" style="animation-delay: 200ms">
-        <form method="POST" class="space-y-8">
+    <div class="card p-7 animate-fade-in">
+        <form method="POST" class="space-y-5">
             {% csrf_token %}
-            <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">F.I.O</label>
-                <input type="text" name="name" placeholder="Ismingizni kiriting" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none transition-all">
+
+            <!-- Name -->
+            <div>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">👤 F.I.O</label>
+                <input type="text" name="name" placeholder="Ismingizni kiriting" required
+                       class="input-field" id="checkout-name">
             </div>
 
-            <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Telefon raqam</label>
-                <input type="tel" name="phone" placeholder="+998" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none transition-all">
+            <!-- Phone -->
+            <div>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">📱 Telefon raqam</label>
+                <input type="tel" name="phone" placeholder="+998 90 123 45 67" required
+                       class="input-field" id="checkout-phone">
             </div>
 
-            <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-4">
-                <input type="checkbox" name="is_installment" id="inst_check" class="w-6 h-6 rounded-lg bg-white/5 border-white/10 text-brand focus:ring-brand" {% if payment_type == 'installment' %}checked{% endif %}>
-                <label for="inst_check" class="text-sm font-bold text-gray-300">Muddatli to'lovga olish</label>
+            <!-- Installment toggle -->
+            <div class="flex items-center gap-4 p-4 bg-brand/5 rounded-2xl border border-brand/20 cursor-pointer">
+                <input type="checkbox" name="is_installment" id="inst_check"
+                       class="w-5 h-5 rounded accent-brand cursor-pointer"
+                       {% if payment_type == 'installment' %}checked{% endif %}>
+                <label for="inst_check" class="text-sm font-bold text-gray-700 cursor-pointer">
+                    📅 Muddatli to'lovga olish
+                </label>
             </div>
 
-            <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">To'lov muddati (oy)</label>
-                <select name="months" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none appearance-none transition-all">
-                    <option value="" {% if not months %}selected{% endif %}>Naqd (To'liq to'lov)</option>
-                    <option value="3" {% if months == '3' %}selected{% endif %}>3 oy (Kafolatlangan)</option>
-                    <option value="6" {% if months == '6' %}selected{% endif %}>6 oy (Premium)</option>
-                    <option value="12" {% if months == '12' %}selected{% endif %}>12 oy (Qulay)</option>
+            <!-- Months -->
+            <div>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">🗓️ To'lov muddati (oy)</label>
+                <select name="months" class="input-field" id="checkout-months">
+                    <option value="" {% if not months %}selected{% endif %}>💵 Naqd (To'liq to'lov)</option>
+                    <option value="3" {% if months == '3' %}selected{% endif %}>📅 3 oy</option>
+                    <option value="6" {% if months == '6' %}selected{% endif %}>📅 6 oy</option>
+                    <option value="12" {% if months == '12' %}selected{% endif %}>📅 12 oy</option>
                 </select>
             </div>
 
-            <!-- Delivery Type Selection -->
-            <div x-data="{ delType: 'pickup' }" class="space-y-6">
+            <!-- Delivery Type -->
+            <div x-data="{ delType: 'pickup' }">
                 <input type="hidden" name="delivery_type" :value="delType">
-                
-                <div class="space-y-3">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Yetkazib berish usuli</label>
-                    <div class="flex gap-4">
-                        <button type="button" @click="delType = 'pickup'" :class="delType === 'pickup' ? 'bg-brand border-brand shadow-lg shadow-brand/30' : 'bg-white/5 border-white/10 text-gray-400'" class="flex-1 py-4 rounded-2xl border font-black text-[10px] tracking-widest transition-all">
-                            KELIB OLISH
-                        </button>
-                        <button type="button" @click="delType = 'delivery'" :class="delType === 'delivery' ? 'bg-brand border-brand shadow-lg shadow-brand/30' : 'bg-white/5 border-white/10 text-gray-400'" class="flex-1 py-4 rounded-2xl border font-black text-[10px] tracking-widest transition-all">
-                            DASTAVKA
-                        </button>
-                    </div>
+
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">🚀 Yetkazib berish usuli</label>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button type="button" @click="delType = 'pickup'"
+                            :class="delType === 'pickup' ? 'bg-brand text-white shadow-gold border-brand' : 'bg-white text-gray-600 border-surface-border'"
+                            class="py-3.5 rounded-2xl border-2 font-bold text-sm transition-all">
+                        🏬 Kelib Olish
+                    </button>
+                    <button type="button" @click="delType = 'delivery'"
+                            :class="delType === 'delivery' ? 'bg-brand text-white shadow-gold border-brand' : 'bg-white text-gray-600 border-surface-border'"
+                            class="py-3.5 rounded-2xl border-2 font-bold text-sm transition-all">
+                        🚗 Dastavka
+                    </button>
                 </div>
 
-                <!-- Pick up Locations -->
-                <div x-show="delType === 'pickup'" x-data="{ selectedBranch: '' }" x-transition class="space-y-4">
+                <!-- Branch Selection -->
+                <div x-show="delType === 'pickup'" x-transition x-data="{ selectedBranch: '' }" class="space-y-2">
                     <input type="hidden" name="branch" :value="selectedBranch">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Filialni tanlang</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        {% for b_id, b_name in branches %}
-                        <button type="button" @click="selectedBranch = '{{ b_id }}'" :class="selectedBranch === '{{ b_id }}' ? 'bg-brand/20 border-brand text-brand' : 'bg-white/5 border-white/5 text-gray-400'" class="py-3 px-4 rounded-xl border text-[10px] font-bold text-center transition-all">
-                            {{ b_name }}
+                    <label class="block text-xs font-bold text-gray-500 mb-2">📍 Filialni tanlang</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" @click="selectedBranch = 'malika'"
+                                :class="selectedBranch === 'malika' ? 'bg-brand/10 border-brand text-brand' : 'bg-surface-bg border-surface-border text-gray-600'"
+                                class="py-3 px-4 rounded-xl border-2 text-sm font-bold text-center transition-all">
+                            🏬 Malika
                         </button>
-                        {% endfor %}
+                        <button type="button" @click="selectedBranch = 'chilonzor'"
+                                :class="selectedBranch === 'chilonzor' ? 'bg-brand/10 border-brand text-brand' : 'bg-surface-bg border-surface-border text-gray-600'"
+                                class="py-3 px-4 rounded-xl border-2 text-sm font-bold text-center transition-all">
+                            🏬 Chilonzor
+                        </button>
                     </div>
                 </div>
 
                 <!-- Delivery Address -->
-                <div x-show="delType === 'delivery'" x-transition class="space-y-3">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Manzilingiz (Lokatsiya)</label>
-                    <textarea name="address" placeholder="To'liq manzilingizni kiriting..." class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand outline-none transition-all h-32"></textarea>
+                <div x-show="delType === 'delivery'" x-transition class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-500 mb-2">📍 Manzilingiz</label>
+                    <textarea name="address" placeholder="To'liq manzilingizni kiriting..." rows="3"
+                              class="input-field resize-none"></textarea>
                 </div>
             </div>
 
-            <div class="pt-4">
-                <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-white py-5 rounded-2xl font-black text-lg transition-all duration-300 uppercase tracking-tighter shadow-xl shadow-brand/20">
-                    BUYURTMANI TASDIQLASH
+            <!-- Submit -->
+            <div class="pt-2">
+                <button type="submit" class="btn-primary w-full font-black uppercase tracking-wide text-sm">
+                    ✅ Buyurtmani Tasdiqlash
                 </button>
-                <p class="text-center mt-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-                    Operatorimiz 15 daqiqa ichida bog'lanadi
+                <p class="text-center mt-4 text-xs font-medium text-gray-400">
+                    ⏱ Operatorimiz 15 daqiqa ichida bog'lanadi
                 </p>
             </div>
         </form>
     </div>
 </div>
 {% endblock %}
-

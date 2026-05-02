@@ -1,81 +1,133 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Qidiruv - Markab Electronics{% endblock %}
+{% block title %}Qidiruv — Markab Electronics{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-12 max-w-4xl">
-    <!-- Search Bar Section -->
-    <div class="text-center mb-16 animate-fade-in">
-        <h2 class="text-3xl font-black tracking-tight mb-8 uppercase">Nima qidiramiz?</h2>
-        <form method="GET" action="{% url 'phones:search' %}" class="relative max-w-2xl mx-auto group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-brand to-brand-light rounded-3xl opacity-20 blur group-focus-within:opacity-40 transition-opacity"></div>
+<div class="max-w-4xl mx-auto px-4 py-10">
+
+    <!-- Search Bar -->
+    <div class="text-center mb-10 animate-fade-in">
+        <h1 class="text-4xl font-black text-gray-900 tracking-tight mb-3">🔍 Nima Qidiramiz?</h1>
+        <p class="text-gray-500 mb-8">Model nomini yozing va toping</p>
+
+        <form method="GET" action="{% url 'phones:search' %}" class="relative max-w-2xl mx-auto">
             <div class="relative">
-                <input type="text" name="q" value="{{ request.GET.q }}" placeholder="iPhone 15 Pro, Samsung S24..." autofocus
-                    class="w-full bg-dark-card border border-white/10 rounded-3xl px-8 py-5 text-lg text-white focus:border-brand outline-none transition-all placeholder:text-gray-600">
-                <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand rounded-2xl hover:bg-brand-hover transition-colors shadow-lg shadow-brand/20">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" name="q" id="search-input"
+                       value="{{ request.GET.q }}"
+                       placeholder="iPhone 15 Pro, iPhone 14..."
+                       autofocus
+                       autocomplete="off"
+                       class="w-full bg-white border-2 border-brand/40 focus:border-brand rounded-2xl px-6 py-4 pr-16 text-gray-900 text-lg font-medium outline-none transition-all shadow-gold placeholder:text-gray-400"
+                       oninput="showSuggestions(this.value)">
+
+                <button type="submit"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-brand rounded-xl flex items-center justify-center hover:bg-brand-hover transition-colors shadow-gold">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </button>
+            </div>
+
+            <!-- Autocomplete suggestions -->
+            <div id="suggestions"
+                 class="absolute z-20 top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-card-hover border border-surface-border overflow-hidden hidden">
             </div>
         </form>
     </div>
 
-    <!-- Results Section -->
-    <div class="animate-fade-in" style="animation-delay: 200ms">
+    <!-- Results -->
+    <div class="animate-fade-in">
         {% if request.GET.q %}
-        <div class="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
-            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest">
-                Natijalar: <span class="text-white ml-2">"{{ request.GET.q }}"</span>
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-surface-border">
+            <h3 class="font-bold text-gray-500 text-sm">
+                Natija: <span class="text-gray-900 font-black">"{{ request.GET.q }}"</span>
             </h3>
-            <span class="text-xs font-bold text-brand bg-brand/10 px-3 py-1 rounded-full border border-brand/20">{{ phones|length }} ta topildi</span>
+            <span class="badge-premium">{{ phones|length }} ta topildi</span>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {% for phone in phones %}
-            <div class="group relative">
-                <div class="absolute -inset-0.5 bg-gradient-to-r from-brand to-brand-light rounded-3xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500"></div>
-                <a href="{% url 'phones:detail' phone.pk %}" class="relative block bg-dark-card border border-white/5 rounded-3xl p-4 transition-all duration-500 group-hover:-translate-y-2 overflow-hidden">
-                    <!-- Details -->
-                    <div class="space-y-4">
-                        <div class="aspect-square bg-black rounded-2xl overflow-hidden mb-4">
-                            {% if phone.image %}
-                            <img src="{{ phone.image.url }}" class="w-full h-full object-cover">
-                            {% else %}
-                            <div class="w-full h-full flex items-center justify-center text-gray-800">📱</div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-white mb-1 tracking-tight">{{ phone.get_model_name_display }}</h3>
-                            <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">{{ phone.memory }}GB • {{ phone.battery_health }}%</p>
-                        </div>
-                        
-                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                            <div class="text-xl font-black text-brand">{{ phone.price }} <span class="text-[10px] font-bold text-gray-600 uppercase">so'm</span></div>
-                            <div class="w-10 h-10 rounded-full bg-white/5 group-hover:bg-brand flex items-center justify-center transition-colors">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            </div>
-                        </div>
+            <div class="card card-hover group overflow-hidden animate-fade-in">
+                <div class="relative aspect-[4/5] bg-surface-bg overflow-hidden rounded-t-3xl">
+                    {% if phone.image %}
+                    <img src="{{ phone.image.url }}" alt="{{ phone.get_model_name_display }}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="text-6xl opacity-20">📱</span>
                     </div>
-                </a>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h3 class="font-black text-gray-900 mb-1">{{ phone.get_model_name_display }}</h3>
+                    <p class="text-xs text-gray-400 mb-3">{{ phone.memory }}GB · 🔋{{ phone.battery_health }}%</p>
+                    <div class="flex items-center justify-between">
+                        <div class="font-black text-lg text-brand">{{ phone.price|floatformat:0 }} <span class="text-xs text-gray-400">so'm</span></div>
+                        <a href="{% url 'phones:detail' phone.pk %}"
+                           class="w-9 h-9 bg-brand rounded-xl flex items-center justify-center shadow-gold hover:shadow-gold-lg transition-all">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
             {% empty %}
-            <div class="col-span-full py-20 text-center glass rounded-[32px] border-dashed">
-                <p class="text-gray-500 font-bold text-lg">Hech narsa topilmadi.</p>
-                <p class="text-gray-600 text-sm mt-2">Boshqa kalit so'z bilan qidirib ko'ring yoki katalogimizni ko'zdan kechiring.</p>
-                <a href="{% url 'phones:home' %}" class="mt-6 inline-block text-brand font-black uppercase tracking-widest text-xs hover:underline">Bosh sahifaga qaytish</a>
+            <div class="col-span-full py-20 text-center">
+                <div class="text-6xl mb-4">😔</div>
+                <p class="text-gray-600 font-bold text-lg">Hech narsa topilmadi</p>
+                <p class="text-gray-400 text-sm mt-2">Boshqa kalit so'z bilan qidirib ko'ring</p>
+                <a href="{% url 'phones:filter' %}" class="btn-primary inline-block mt-6 text-sm">
+                    Katalogni ko'rish
+                </a>
             </div>
             {% endfor %}
         </div>
+
         {% else %}
-        <div class="py-24 text-center">
-            <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl opacity-20">
-                🔎
-            </div>
-            <p class="text-gray-500 font-bold text-xl">Qidiruvni boshlash uchun model nomini kiriting.</p>
-            <p class="text-gray-600 mt-2">Masalan: "iPhone 15 Pro", "Samsung Ultra"...</p>
+        <div class="py-20 text-center">
+            <div class="text-7xl mb-6">🔎</div>
+            <p class="text-gray-500 font-bold text-xl mb-2">Qidiruvni boshlash uchun model nomini kiriting.</p>
+            <p class="text-gray-400 text-sm">Masalan: "iPhone 15 Pro", "iPhone 14 Pro Max"...</p>
         </div>
         {% endif %}
     </div>
 </div>
-{% endblock %}
 
+<script>
+const suggestions = [
+    "iPhone 11", "iPhone 12", "iPhone 12 Pro", "iPhone 13", "iPhone 13 Pro",
+    "iPhone 13 Pro Max", "iPhone 14", "iPhone 14 Pro", "iPhone 14 Pro Max",
+    "iPhone 15", "iPhone 15 Pro", "iPhone 15 Pro Max", "iPhone 16", "iPhone 16 Pro"
+];
+
+function showSuggestions(val) {
+    const box = document.getElementById('suggestions');
+    if (!val || val.length < 2) { box.classList.add('hidden'); return; }
+
+    const filtered = suggestions.filter(s => s.toLowerCase().includes(val.toLowerCase()));
+    if (!filtered.length) { box.classList.add('hidden'); return; }
+
+    box.innerHTML = filtered.slice(0, 5).map(s =>
+        `<div onclick="selectSuggestion('${s}')"
+              class="px-5 py-3 text-gray-900 font-medium hover:bg-brand/10 hover:text-brand cursor-pointer transition-colors border-b border-surface-border last:border-0 text-left text-sm">
+            🔍 ${s}
+         </div>`
+    ).join('');
+    box.classList.remove('hidden');
+}
+
+function selectSuggestion(val) {
+    document.getElementById('search-input').value = val;
+    document.getElementById('suggestions').classList.add('hidden');
+    document.querySelector('form').submit();
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('form')) {
+        document.getElementById('suggestions').classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}
