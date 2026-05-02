@@ -15,7 +15,7 @@ async def start_buy(message: Message, state: FSMContext):
     await state.set_state(BuyPhone.model)
     await message.answer(STRINGS[lang]['prompt_buy_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
 
-@router.message(BuyPhone.model)
+@router.message(BuyPhone.model, F.text)
 async def process_buy_model(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
