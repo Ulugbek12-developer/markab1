@@ -90,6 +90,32 @@
                 </div>
             </div>
 
+            <!-- Action Buttons (Buy, Installment, Book) -->
+            <div class="space-y-3">
+                {% if listing.is_booked %}
+                    <div class="bg-amber-100 border border-amber-200 text-amber-800 p-6 rounded-3xl text-center">
+                        <div class="text-3xl mb-2">🔒</div>
+                        <p class="font-black text-lg">Bu telefon bron qilingan</p>
+                        <p class="text-sm opacity-80">Tez orada yana sotuvga chiqishi mumkin.</p>
+                    </div>
+                {% else %}
+                    <!-- Buy Now -->
+                    <a href="{% url 'orders:checkout' listing.id %}?type=cash" class="w-full bg-white border-2 border-slate-900 text-slate-900 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all hover:bg-slate-50 active:scale-95 shadow-xl shadow-slate-100">
+                        🛒 SOTIB OLISH
+                    </a>
+
+                    <!-- Installment -->
+                    <a href="{% url 'orders:checkout' listing.id %}?type=installment" class="w-full bg-pink-600 text-white py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all hover:bg-pink-700 active:scale-95 shadow-xl shadow-pink-100">
+                        💳 Muddatli to'lov (3-12 oy)
+                    </a>
+
+                    <!-- Book -->
+                    <button id="bookBtn" onclick="toggleBooking()" class="w-full bg-amber-500 text-white py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all hover:bg-amber-600 active:scale-95 shadow-xl shadow-amber-100">
+                        🔒 48 soatga Bron Qilish
+                    </button>
+                {% endif %}
+            </div>
+
             <!-- Seller & Contact -->
             <div class="bg-indigo-600 rounded-3xl p-8 text-white shadow-2xl shadow-indigo-200 space-y-6">
                 <div class="flex items-center gap-4">
@@ -113,6 +139,24 @@
                     </a>
                 </div>
             </div>
+
+            <script>
+            function toggleBooking() {
+                if(!confirm('Haqiqatdan ham bu telefonni 2 kunga bron qilmoqchimisiz?')) return;
+                
+                fetch('{% url "phones:toggle_booking" listing.id %}', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        alert(data.message);
+                        location.reload();
+                    }
+                });
+            }
+            </script>
 
             <!-- Installment Info (Interactive Calculator) -->
             <div class="bg-blue-50 border border-blue-100 rounded-3xl p-6" x-data="installmentCalculator()">

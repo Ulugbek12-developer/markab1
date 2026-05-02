@@ -7,6 +7,7 @@ class Order(models.Model):
     customer_phone = models.CharField(max_length=20)
     is_installment = models.BooleanField(default=False)
     installment_months = models.IntegerField(null=True, blank=True)
+    initial_payment = models.DecimalField(max_digits=15, decimal_places=0, default=0)
     
     DELIVERY_CHOICES = [
         ('pickup', 'Kelib olib ketish'),

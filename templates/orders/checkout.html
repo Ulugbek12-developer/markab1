@@ -1,173 +1,162 @@
 {% extends 'base.html' %}
-{% load static %}
 
-{% block title %}Buyurtma — Markab Electronics{% endblock %}
+{% block title %}Buyurtma berish | Markab{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto px-4 py-6"
-     x-data="{
-         installment: {% if payment_type == 'installment' %}true{% else %}false{% endif %},
-         months: {% if months %}{{ months }}{% else %}0{% endif %},
-         totalPrice: {{ phone.price|floatformat:0 }},
-         downPayment: 0,
-         get remaining() { return Math.max(0, this.totalPrice - this.downPayment) },
-         get withPercent() { return this.remaining * 1.04 },
-         get monthly() { return this.months > 0 ? Math.round(this.withPercent / this.months) : 0 },
-         formatNum(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') }
-     }">
-
-    <!-- Header -->
-    <div class="text-center mb-6 animate-fade-in">
-        <div class="badge-premium mb-3 inline-flex text-xs">🛒 Buyurtma</div>
-        <h1 style="font-size:22px; font-weight:900; color:white; margin-bottom:4px;">Buyurtma Berish</h1>
-        <p style="font-size:12px; color:rgba(255,255,255,0.5);">Operatorimiz 15 daqiqada bog'lanadi</p>
-    </div>
-
-    <!-- Product Summary -->
-    <div class="card p-4 mb-5 flex items-center gap-4 animate-fade-in">
-        <div style="width:64px; height:64px; background:rgba(0,0,0,0.15); border-radius:14px; overflow:hidden; flex-shrink:0; border:1px solid rgba(255,255,255,0.1);">
-            {% if phone.image %}
-            <img src="{{ phone.image.url }}" style="width:100%; height:100%; object-fit:cover;">
-            {% else %}
-            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:28px;">📱</div>
-            {% endif %}
+<div class="max-w-3xl mx-auto py-10 px-4" x-data="checkoutApp()">
+    <div class="bg-white rounded-[2.5rem] card-shadow border border-slate-100 overflow-hidden">
+        
+        <!-- Product Header -->
+        <div class="bg-slate-50 p-6 flex items-center gap-4 border-b border-slate-100">
+            <div class="w-20 h-20 bg-white rounded-2xl overflow-hidden border border-slate-100 p-1">
+                {% if listing.image %}
+                    <img src="{{ listing.image.url }}" class="w-full h-full object-contain">
+                {% endif %}
+            </div>
+            <div>
+                <h2 class="font-black text-slate-800 text-lg leading-tight">{{ listing.title }}</h2>
+                <p class="text-blue-600 font-black text-xl mt-1">{{ listing.price|floatformat:0 }} so'm</p>
+            </div>
         </div>
-        <div>
-            <div style="font-size:14px; font-weight:800; color:white;">{{ phone.get_model_name_display }}</div>
-            <div style="font-size:18px; font-weight:900; color:white;">{{ phone.price|floatformat:0 }} <span style="font-size:11px; color:rgba(255,255,255,0.5);">so'm</span></div>
-        </div>
-    </div>
 
-    <!-- Form -->
-    <div class="card p-5 animate-fade-in">
-        <form method="POST" class="space-y-4">
+        <form method="POST" class="p-8 space-y-8">
             {% csrf_token %}
-
-            <div>
-                <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">👤 F.I.O</label>
-                <input type="text" name="name" placeholder="Ismingiz" required class="input-field" style="font-size:14px; padding:12px 16px;">
-            </div>
-
-            <div>
-                <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">📱 Telefon</label>
-                <input type="tel" name="phone" placeholder="+998 90 123 45 67" required class="input-field" style="font-size:14px; padding:12px 16px;">
-            </div>
-
-            <!-- Installment Toggle -->
-            <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:rgba(255,255,255,0.06); border-radius:14px; border:1px solid rgba(255,255,255,0.1); cursor:pointer;"
-                 @click="installment = !installment">
-                <input type="checkbox" name="is_installment" id="inst_check" x-model="installment"
-                       style="width:18px; height:18px; accent-color:white; cursor:pointer;">
-                <label for="inst_check" style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.8); cursor:pointer;">💳 Muddatli to'lov</label>
-            </div>
-
-            <!-- Installment Details -->
-            <div x-show="installment" x-transition class="space-y-4">
-
-                <!-- Months -->
+            
+            <!-- Contact Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🗓️ Muddat</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" @click="months = 3"
-                                :style="months === 3 ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
-                                style="padding:12px; border-radius:14px; font-weight:800; font-size:14px; cursor:pointer; transition:all 0.2s;">
-                            3 oy
-                        </button>
-                        <button type="button" @click="months = 6"
-                                :style="months === 6 ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
-                                style="padding:12px; border-radius:14px; font-weight:800; font-size:14px; cursor:pointer; transition:all 0.2s;">
-                            6 oy
-                        </button>
-                        <button type="button" @click="months = 12"
-                                :style="months === 12 ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
-                                style="padding:12px; border-radius:14px; font-weight:800; font-size:14px; cursor:pointer; transition:all 0.2s;">
-                            12 oy
-                        </button>
-                    </div>
-                    <input type="hidden" name="months" :value="months">
+                    <label class="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">F.I.O</label>
+                    <input type="text" name="name" required placeholder="Ismingizni kiriting" class="w-full bg-slate-50 border-none rounded-xl px-4 py-3.5 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
-
-                <!-- Down Payment -->
                 <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">💰 Boshlang'ich to'lov (so'm)</label>
-                    <input type="number" name="down_payment" x-model.number="downPayment"
-                           placeholder="0" min="0" :max="totalPrice"
-                           class="input-field" style="font-size:16px; padding:12px 16px; font-weight:700;">
-                </div>
-
-                <!-- Live Calculator Result -->
-                <div x-show="months > 0" x-transition
-                     style="background:rgba(255,255,255,0.1); border-radius:16px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
-                    
-                    <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px;">📊 Hisob-kitob</div>
-
-                    <div class="space-y-2">
-                        <div style="display:flex; justify-content:space-between; font-size:13px;">
-                            <span style="color:rgba(255,255,255,0.6);">Mahsulot narxi:</span>
-                            <span style="color:white; font-weight:700;" x-text="formatNum(totalPrice) + ' so\'m'"></span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:13px;">
-                            <span style="color:rgba(255,255,255,0.6);">Boshlang'ich to'lov:</span>
-                            <span style="color:#51CF66; font-weight:700;" x-text="'- ' + formatNum(downPayment) + ' so\'m'"></span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:13px;">
-                            <span style="color:rgba(255,255,255,0.6);">Qolgan summa:</span>
-                            <span style="color:white; font-weight:700;" x-text="formatNum(remaining) + ' so\'m'"></span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:13px;">
-                            <span style="color:rgba(255,255,255,0.6);">+ 4% ustama:</span>
-                            <span style="color:#FFD700; font-weight:700;" x-text="'+ ' + formatNum(Math.round(remaining * 0.04)) + ' so\'m'"></span>
-                        </div>
-
-                        <div style="border-top:1px solid rgba(255,255,255,0.15); margin:8px 0; padding-top:8px;"></div>
-
-                        <div style="display:flex; justify-content:space-between; font-size:13px;">
-                            <span style="color:rgba(255,255,255,0.6);">Jami to'lov:</span>
-                            <span style="color:white; font-weight:800;" x-text="formatNum(Math.round(withPercent)) + ' so\'m'"></span>
-                        </div>
-                    </div>
-
-                    <!-- Monthly Payment - BIG -->
-                    <div style="margin-top:16px; background:rgba(255,255,255,0.1); border-radius:14px; padding:16px; text-align:center; border:1px solid rgba(255,255,255,0.2);">
-                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Oylik to'lov</div>
-                        <div style="font-size:28px; font-weight:900; color:white;" x-text="formatNum(monthly) + ' so\'m'"></div>
-                        <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:2px;" x-text="months + ' oy davomida'"></div>
-                    </div>
+                    <label class="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">TELEFON</label>
+                    <input type="tel" name="phone" required placeholder="+998 90 123 45 67" class="w-full bg-slate-50 border-none rounded-xl px-4 py-3.5 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
             </div>
 
-            <!-- Non-installment months (hidden) -->
-            <div x-show="!installment">
-                <input type="hidden" name="months" value="">
+            <hr class="border-slate-100">
+
+            <!-- Payment Type -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <label class="text-sm font-black text-slate-400 uppercase tracking-widest">To'lov turi</label>
+                    <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-100">
+                        <button type="button" @click="paymentType = 'cash'" :class="paymentType === 'cash' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-4 py-2 rounded-lg text-xs font-black transition-all">Naqd pul</button>
+                        <button type="button" @click="paymentType = 'installment'" :class="paymentType === 'installment' ? 'bg-blue-600 text-white' : 'text-slate-400'" class="px-4 py-2 rounded-lg text-xs font-black transition-all">Muddatli to'lov</button>
+                    </div>
+                    <input type="hidden" name="is_installment" :value="paymentType === 'installment' ? 'on' : 'off'">
+                </div>
+
+                <!-- Installment Options -->
+                <div x-show="paymentType === 'installment'" x-transition class="space-y-6 bg-blue-50/50 p-6 rounded-3xl border border-blue-50">
+                    <div>
+                        <label class="block text-xs font-bold text-blue-800 mb-3 uppercase">Muddatni tanlang</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <template x-for="m in [3, 6, 12]" :key="m">
+                                <button type="button" @click="months = m"
+                                        class="py-3 rounded-xl text-sm font-black transition-all border-2"
+                                        :class="months === m ? 'bg-white border-blue-500 text-blue-600 shadow-sm' : 'bg-white/50 border-transparent text-slate-400 hover:border-slate-200'">
+                                    <span x-text="m + ' oy'"></span>
+                                </button>
+                            </template>
+                        </div>
+                        <input type="hidden" name="months" :value="months">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-blue-800 mb-2 uppercase">Boshlang'ich to'lov (so'm)</label>
+                        <input type="number" name="initial_payment" x-model.number="initialPayment" class="w-full bg-white border-none rounded-xl px-4 py-3.5 font-black text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
+                    </div>
+
+                    <!-- Calculation Table -->
+                    <div class="bg-white rounded-2xl p-6 border border-blue-100 space-y-3">
+                        <div class="flex justify-between text-xs font-bold text-slate-400">
+                            <span>Mahsulot narxi:</span>
+                            <span class="text-slate-700" x-text="formatPrice(basePrice) + ' so\'m'"></span>
+                        </div>
+                        <div class="flex justify-between text-xs font-bold text-slate-400">
+                            <span>Boshlang'ich to'lov:</span>
+                            <span class="text-red-500" x-text="'- ' + formatPrice(initialPayment || 0) + ' so\'m'"></span>
+                        </div>
+                        <div class="flex justify-between text-xs font-bold text-slate-400">
+                            <span>Qolgan summa:</span>
+                            <span class="text-slate-700" x-text="formatPrice(getRemaining()) + ' so\'m'"></span>
+                        </div>
+                        <div class="flex justify-between text-xs font-bold text-slate-400">
+                            <span>Ustama (%):</span>
+                            <span class="text-slate-700" x-text="'+ ' + formatPrice(getInterest()) + ' so\'m'"></span>
+                        </div>
+                        <div class="pt-3 border-t border-slate-50 flex justify-between items-center">
+                            <span class="text-sm font-black text-slate-800">Jami to'lov:</span>
+                            <span class="text-lg font-black text-slate-900" x-text="formatPrice(getTotal()) + ' so\'m'"></span>
+                        </div>
+                        <div class="mt-4 bg-blue-600 rounded-2xl p-4 text-center text-white">
+                            <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1">Har oylik to'lov</p>
+                            <p class="text-2xl font-black" x-text="formatPrice(getMonthly()) + ' so\'m'"></p>
+                            <p class="text-[10px] font-medium opacity-60" x-text="months + ' oy davomida'"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Delivery -->
-            <div x-data="{ del: 'pickup' }">
-                <input type="hidden" name="delivery_type" :value="del">
-                <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🚀 Yetkazish</label>
-                <div class="grid grid-cols-2 gap-2 mb-3">
-                    <button type="button" @click="del='pickup'"
-                            :style="del==='pickup' ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
-                            style="padding:12px; border-radius:14px; font-weight:700; font-size:13px; cursor:pointer; transition:all 0.2s;">
-                        🏬 Kelib olish
+            <div>
+                <label class="block text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Yetkazib berish</label>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button type="button" @click="deliveryType = 'pickup'" :class="deliveryType === 'pickup' ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-50 text-slate-400'" class="py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2">
+                        🏠 Kelib olish
                     </button>
-                    <button type="button" @click="del='delivery'"
-                            :style="del==='delivery' ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
-                            style="padding:12px; border-radius:14px; font-weight:700; font-size:13px; cursor:pointer; transition:all 0.2s;">
-                        🚗 Dastavka
+                    <button type="button" @click="deliveryType = 'delivery'" :class="deliveryType === 'delivery' ? 'bg-blue-500 text-white shadow-lg shadow-blue-100' : 'bg-slate-50 text-slate-400'" class="py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2">
+                        🚚 Dastavka
                     </button>
+                    <input type="hidden" name="delivery_type" :value="deliveryType">
                 </div>
-
-                <div x-show="del==='delivery'" x-transition>
-                    <textarea name="address" placeholder="Manzilingiz..." rows="2" class="input-field" style="font-size:13px; padding:12px 16px; resize:none;"></textarea>
+                
+                <div x-show="deliveryType === 'delivery'" x-transition>
+                    <textarea name="address" placeholder="Yetkazib berish manzili..." class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none resize-none" rows="3"></textarea>
                 </div>
             </div>
 
-            <button type="submit"
-                    style="width:100%; background:white; color:#C0143C; padding:16px; border-radius:16px; font-weight:900; font-size:15px; border:none; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; box-shadow:0 4px 20px rgba(0,0,0,0.25); transition:all 0.2s;">
-                ✅ Buyurtmani Tasdiqlash
+            <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl text-lg shadow-2xl shadow-blue-200 transition-all hover:bg-blue-700 active:scale-[0.98]">
+                BUYURTMANI TASDIQLASH
             </button>
         </form>
     </div>
 </div>
+
+<script>
+function checkoutApp() {
+    return {
+        basePrice: {{ listing.price }},
+        paymentType: '{{ payment_type }}',
+        months: 6,
+        initialPayment: 0,
+        deliveryType: 'pickup',
+        
+        getRemaining() {
+            return Math.max(0, this.basePrice - (this.initialPayment || 0));
+        },
+        
+        getInterest() {
+            let rate = 0;
+            if (this.months === 3) rate = 0.10;
+            else if (this.months === 6) rate = 0.15;
+            else if (this.months === 12) rate = 0.25;
+            return Math.round(this.getRemaining() * rate);
+        },
+        
+        getTotal() {
+            return this.getRemaining() + this.getInterest();
+        },
+        
+        getMonthly() {
+            return Math.round(this.getTotal() / this.months);
+        },
+        
+        formatPrice(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+    }
+}
+</script>
 {% endblock %}

@@ -8,10 +8,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Listing)
 class ListingAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'price', 'location', 'is_approved', 'created_at')
-    list_filter = ('category', 'condition', 'is_approved', 'location')
+    list_display = ('title', 'category', 'price', 'location', 'is_booked', 'is_approved', 'created_at')
+    list_filter = ('category', 'condition', 'is_booked', 'is_approved', 'location')
     search_fields = ('title', 'description', 'model_name')
-    list_editable = ('price', 'is_approved')
+    list_editable = ('price', 'is_booked', 'is_approved')
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):

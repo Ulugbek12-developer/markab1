@@ -1,13 +1,22 @@
 {% extends 'base.html' %}
 
-{% block title %}Muvaffaqiyatli - Markab{% endblock %}
+{% block title %}Muvaffaqiyatli | Markab{% endblock %}
 
 {% block content %}
-<div class="container" style="text-align: center; padding-top: 60px;">
-    <div style="font-size: 80px; margin-bottom: 20px;">✅</div>
-    <h2>Rahmat!</h2>
-    <p style="font-size: 16px; margin-bottom: 30px;">Sizning buyurtmangiz qabul qilindi. Tez orada siz bilan bog'lanamiz.</p>
-    
-    <a href="{% url 'phones:home' %}" class="btn btn-primary">Bosh sahifaga qaytish</a>
+<div class="max-w-md mx-auto py-20 px-4 text-center">
+    <div class="bg-white rounded-[3rem] p-12 card-shadow border border-slate-100 space-y-6">
+        <div class="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h1 class="text-3xl font-black text-slate-900">Muvaffaqiyatli!</h1>
+        <p class="text-slate-500 font-bold leading-relaxed">
+            Buyurtmangiz qabul qilindi. Tez orada operatorlarimiz siz bilan bog'lanishadi.
+        </p>
+        <div class="pt-6">
+            <a href="{% url 'phones:home' %}" class="block w-full bg-slate-900 text-white font-black py-4 rounded-2xl shadow-xl transition-all hover:bg-slate-800 active:scale-95">
+                Asosiy sahifaga qaytish
+            </a>
+        </div>
+    </div>
 </div>
 {% endblock %}

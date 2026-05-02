@@ -84,6 +84,42 @@ class SellView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "E'loningiz qabul qilindi va tekshiruvdan so'ng saytga chiqadi!")
         return super().form_valid(form)
 
+from django.utils import timezone
+from datetime import timedelta
+
+class ToggleBookingView(View):
+    def post(self, request, pk):
+        listing = get_object_or_404(Listing, pk=pk)
+        
+        if listing.is_booked:
+            listing.is_booked = False
+            listing.booked_until = None
+            msg = "Bron bekor qilindi."
+        else:
+            listing.is_booked = True
+            listing.booked_until = timezone.now() + timedelta(hours=48)
+            msg = "Telefon 2 kunga muvaffaqiyatli bron qilindi!"
+            
+            # Bot notification
+            load_dotenv()
+            bot_token = os.environ.get('BOT_TOKEN')
+            admin_id = os.environ.get('ADMIN_ID')
+            if bot_token and admin_id:
+                text = f"🔒 <b>Yangi Bron!</b>\n\n"
+                text += f"📱 Telefon: {listing.title}\n"
+                text += f"💰 Narxi: {listing.price} so'm\n"
+                text += f"⏰ Muddat: 48 soat\n"
+                try:
+                    requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={
+                        "chat_id": admin_id,
+                        "text": text,
+                        "parse_mode": "HTML"
+                    })
+                except: pass
+                
+        listing.save()
+        return JsonResponse({"status": "success", "message": msg})
+
 class PriceView(TemplateView):
     template_name = 'phones/price.html'
 
