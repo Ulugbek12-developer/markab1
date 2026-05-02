@@ -132,7 +132,7 @@ class CalculatorView(View):
         if not has_box: base -= 50
         
         # Convert to mln so'm (approx)
-        price_som = int(base * 12700 / 100000) * 100000 # dummy conversion
+        price_som = int(base * 12700 / 100000) * 100000 
         
         # Send Telegram Notification
         try:
