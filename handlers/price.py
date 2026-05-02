@@ -159,7 +159,11 @@ async def process_box(message: Message, state: FSMContext):
     recommended_price = calculate_price(data)
     s = STRINGS[lang]
     
+    username = message.from_user.username
+    user_info = f" (@{username})" if username else ""
+    
     summary_for_admin = (
+        f"👤 <b>Mijoz:</b> <a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a>{user_info}\n"
         f"📱 <b>{s['lbl_model']}:</b> {data['model']}\n"
         f"💾 <b>{s['lbl_memory']}:</b> {data['storage']}\n"
         f"🔋 <b>{s['lbl_battery']}:</b> {data['battery_range']}%\n"

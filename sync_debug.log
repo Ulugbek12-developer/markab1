@@ -263,3 +263,17 @@ sqlite3.OperationalError: no such table: ads
 
 DEBUG: SUCCESS! Product created in Django with ID: 15
 DEBUG: Sync Bot -> Web App success! ID: 15
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 35, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+

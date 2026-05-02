@@ -11,16 +11,34 @@ class HomeView(ListView):
     context_object_name = 'phones'
     
     def get_queryset(self):
-        return Phone.objects.filter(is_approved=True)
+        from django.db.models import Q
+        from django.utils import timezone
+        import datetime
+        two_days_ago = timezone.now() - datetime.timedelta(days=2)
+        return Phone.objects.filter(is_approved=True).filter(
+            Q(is_booked=False) | Q(booked_at__lt=two_days_ago)
+        )
 
 class FilterView(ListView):
     model = Phone
     template_name = 'phones/filter.html'
     context_object_name = 'phones'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_choices'] = {
+            'models': Phone._meta.get_field('model_name').choices
+        }
+        return context
+
     def get_queryset(self):
-        queryset = Phone.objects.filter(is_approved=True)
-        
+        from django.db.models import Q
+        from django.utils import timezone
+        import datetime
+        two_days_ago = timezone.now() - datetime.timedelta(days=2)
+        queryset = Phone.objects.filter(is_approved=True).filter(
+            Q(is_booked=False) | Q(booked_at__lt=two_days_ago)
+        )
         # Get filters
         model = self.request.GET.get('model')
         min_price = self.request.GET.get('min_price')
@@ -68,11 +86,17 @@ class SearchView(ListView):
     context_object_name = 'phones'
 
     def get_queryset(self):
+        from django.db.models import Q
+        from django.utils import timezone
+        import datetime
+        two_days_ago = timezone.now() - datetime.timedelta(days=2)
         query = self.request.GET.get('q')
         if query:
             return Phone.objects.filter(
                 Q(model_name__icontains=query) | Q(description__icontains=query),
                 is_approved=True
+            ).filter(
+                Q(is_booked=False) | Q(booked_at__lt=two_days_ago)
             )
         return Phone.objects.none()
 
@@ -197,3 +221,27 @@ class AdminDeletePhoneView(DeleteView):
     
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
+
+class BookPhoneView(View):
+    def post(self, request, pk):
+        phone = get_object_or_404(Phone, pk=pk)
+        if not phone.is_available:
+            messages.error(request, "Afsuski, bu telefon allaqachon bron qilingan.")
+            return redirect('phones:detail', pk=pk)
+            
+        from django.utils import timezone
+        phone.is_booked = True
+        phone.booked_at = timezone.now()
+        phone.booked_by = "Web Mijoz"
+        phone.save()
+        messages.success(request, "✅ Telefon 2 kunga muvaffaqiyatli bron qilindi!")
+        
+        # Admin notification
+        try:
+            from core.telegram_bot import send_admin_notification
+            msg = f"📌 <b>Yangi Bron!</b>\n\n📱 Model: {phone.get_model_name_display()}\n💰 Narxi: {int(phone.price):,.0f} so'm\n🆔 ID: {phone.id}"
+            send_admin_notification(msg)
+        except Exception:
+            pass
+            
+        return redirect('phones:detail', pk=pk)

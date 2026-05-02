@@ -2,12 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from states import BuyPhone
-from keyboards import get_iphone_models_keyboard, get_branches_keyboard, get_main_menu, get_confirm_keyboard
-from database import search_ads
-from config import config
-
-router = Router()
-
+from keyboards import get_iphone_models_keyboard, get_branches_keyboard, get_main_menu, get_confirm_keyboard, get_back_keyboard, get_payment_type_keyboard, get_location_keyboard, get_installment_plan_keyboard
 from database import search_ads, get_user_language, get_all_branches
 from config import config
 from strings import STRINGS
@@ -27,42 +22,31 @@ async def process_buy_model(message: Message, state: FSMContext):
         await state.clear()
         await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
         return
-
-    await state.update_data(model=message.text)
-    await state.set_state(BuyPhone.branch)
-    branches = await get_all_branches()
-    await message.answer(STRINGS[lang]['prompt_buy_branch'], parse_mode="HTML", reply_markup=get_branches_keyboard(branches, lang))
-
-@router.message(BuyPhone.branch)
-async def process_buy_branch(message: Message, state: FSMContext):
-    lang = await get_user_language(message.from_user.id)
-    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
-        await state.set_state(BuyPhone.model)
-        await message.answer(STRINGS[lang]['prompt_buy_model'], reply_markup=get_iphone_models_keyboard(lang))
-        return
-
-    branch = message.text
-    data = await state.get_data()
-    model = data['model']
+        
+    model = message.text
+    await state.update_data(model=model)
     
-    results = await search_ads(model=model, branch=branch)
+    results = await search_ads(model=model, branch=None)
     
     if not results:
-        await message.answer(STRINGS[lang]['no_results'].format(branch=branch, model=model), parse_mode="HTML", reply_markup=get_main_menu(lang))
+        err_msg = STRINGS[lang]['no_results'].replace('{branch} filialida ', '').replace('в {branch} филиале ', '')
+        await message.answer(err_msg.format(branch='', model=model), parse_mode="HTML", reply_markup=get_main_menu(lang))
         await state.clear()
     else:
-        await message.answer(STRINGS[lang]['results_title'].format(branch=branch, model=model), parse_mode="HTML")
+        title_msg = STRINGS[lang]['results_title'].replace('{branch} filialidagi', 'Barcha filiallardagi').replace('В {branch} филиале', 'Во всех филиалах')
+        await message.answer(title_msg.format(branch='', model=model), parse_mode="HTML")
         ids = []
         s = STRINGS[lang]
         for row in results:
+            branch_name = row['branch'].capitalize() if row['branch'] else 'Malika'
             summary = (
                 f"🆔 <b>ID: {row['id']}</b>\n"
                 f"📱 <b>{s['lbl_model']}:</b> {row['model']}\n"
                 f"💾 <b>{s['lbl_memory']}:</b> {row['storage']}\n"
                 f"🔋 <b>{s['lbl_battery']}:</b> {row['battery']}%\n"
                 f"🛠 <b>{s['lbl_condition']}:</b> {row['condition']}\n"
-                f"💰 <b>{s['lbl_price']}:</b> {row['price']}\n"
-                f"📍 <b>{s['btn_branches'].replace('🏢 ', '')}:</b> {row['branch']}"
+                f"💰 <b>{s['lbl_price']}:</b> {int(row['price']):,.0f} so'm\n"
+                f"📍 <b>{s['btn_branches'].replace('🏢 ', '')}:</b> {branch_name}"
             )
             photo_list = [p for p in row['photos'].split(",") if p] if row['photos'] else []
             if photo_list:
@@ -82,9 +66,8 @@ async def process_buy_branch(message: Message, state: FSMContext):
 async def process_select_id(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
-        await state.set_state(BuyPhone.branch)
-        branches = await get_all_branches()
-        await message.answer(STRINGS[lang]['prompt_buy_branch'], reply_markup=get_branches_keyboard(branches, lang))
+        await state.set_state(BuyPhone.model)
+        await message.answer(STRINGS[lang]['prompt_buy_model'], reply_markup=get_iphone_models_keyboard(lang))
         return
 
     data = await state.get_data()

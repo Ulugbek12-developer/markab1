@@ -63,6 +63,22 @@ class Phone(models.Model):
     is_approved = models.BooleanField(default=True)
     seller_phone = models.CharField(max_length=20, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Booking System
+    is_booked = models.BooleanField(default=False)
+    booked_at = models.DateTimeField(null=True, blank=True)
+    booked_by = models.CharField(max_length=100, blank=True)
+
+    @property
+    def is_available(self):
+        if not self.is_booked:
+            return True
+        from django.utils import timezone
+        import datetime
+        # If booked, check if 2 days have passed
+        if self.booked_at and timezone.now() > self.booked_at + datetime.timedelta(days=2):
+            return True
+        return False
 
     def __str__(self):
         return f"{self.get_model_name_display()} - {self.memory}GB"

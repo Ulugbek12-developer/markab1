@@ -22,11 +22,12 @@ async def check_user_sub(bot, user_id):
         # Status can be 'creator', 'administrator', 'member' or 'restricted'
         return member.status in ["member", "administrator", "creator", "restricted"]
     except Exception as e:
-        if "member list is inaccessible" in str(e):
+        if "member list is inaccessible" in str(e) or "chat not found" in str(e).lower():
             print(f"⚠️ DIQQAT: Botni {CHANNEL_ID} kanaliga ADMIN qilib qo'shing!")
         else:
             print(f"Error checking subscription for {user_id} in {CHANNEL_ID}: {e}")
-        return False
+        # Agar bot admin qilinmagan bo'lsa, mijozlarni bloklamaslik uchun True qaytaramiz
+        return True
 
 @router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext):

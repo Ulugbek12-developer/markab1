@@ -128,6 +128,12 @@ async def process_contact(message: Message, state: FSMContext):
         return
 
     phone = message.contact.phone_number if message.contact else message.text
+    
+    # Username qo'shish (agar mavjud bo'lsa)
+    username = message.from_user.username
+    if username:
+        phone = f"{phone} (@{username})"
+        
     await state.update_data(contact=phone)
     
     data = await state.get_data()

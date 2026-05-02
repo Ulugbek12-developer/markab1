@@ -255,28 +255,32 @@ async def admin_delete_product_finish(message: Message, state: FSMContext):
 async def approve_ad(callback: CallbackQuery, state: FSMContext):
     lang = await get_user_language(callback.from_user.id)
     ad_id = int(callback.data.split("_")[1])
-    await state.update_data(ad_id=ad_id)
-    await state.set_state(AdminState.setting_branch)
-    branches = await get_all_branches()
-    await callback.message.answer(STRINGS[lang]['prompt_ad_branch'], parse_mode="HTML", reply_markup=keyboards.get_branches_keyboard(branches, lang))
-    await callback.answer()
-
-@router.message(AdminState.setting_branch)
-async def process_admin_branch(message: Message, state: FSMContext):
-    lang = await get_user_language(message.from_user.id)
-    if message.from_user.id != config.ADMIN_ID: return
     
-    data = await state.get_data()
-    ad_id = data['ad_id']
-    branch = message.text
-    
+    branch = "malika"
     await update_ad_status(ad_id, "approved", branch=branch)
     ad = await get_ad_by_id(ad_id)
     
+    # Save to Django DB
+    try:
+        from asgiref.sync import sync_to_async
+        from phones.models import Phone
+        await sync_to_async(Phone.objects.create)(
+            model_name=ad['model'],
+            memory=ad['storage'],
+            battery_health=int(ad['battery']),
+            condition=ad['condition'],
+            price=int(ad['price']),
+            seller_phone=ad['contact'],
+            branch=branch,
+            is_approved=True
+        )
+    except Exception as e:
+        print(f"Error saving to Django DB: {e}")
+    
     user_lang = await get_user_language(ad['user_id'])
-    await message.bot.send_message(ad['user_id'], STRINGS[user_lang]['ad_approved_user'].format(id=ad_id, branch=branch), parse_mode="HTML")
-    await message.answer(STRINGS[lang]['ad_approved_admin'].format(id=ad_id, branch=branch), reply_markup=keyboards.get_admin_panel_keyboard(lang))
-    await state.clear()
+    await callback.message.bot.send_message(ad['user_id'], STRINGS[user_lang]['ad_approved_user'].format(id=ad_id, branch=branch), parse_mode="HTML")
+    await callback.message.edit_text(STRINGS[lang]['ad_approved_admin'].format(id=ad_id, branch=branch))
+    await callback.answer()
 
 @router.callback_query(F.data.startswith("reject_"))
 async def reject_ad(callback: CallbackQuery):
