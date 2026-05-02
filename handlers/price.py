@@ -3,13 +3,10 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from states import PricePhone
 from keyboards import (
-    get_iphone_models_keyboard, get_battery_range_keyboard, get_memory_keyboard,
+    get_iphone_models_keyboard, get_memory_keyboard,
     get_condition_keyboard, get_region_keyboard, get_box_keyboard,
     get_main_menu, get_back_keyboard, get_price_admin_keyboard
 )
-from database import add_price_request
-from config import config
-
 from database import add_price_request, get_user_language
 from config import config
 from strings import STRINGS
