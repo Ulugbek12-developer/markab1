@@ -191,7 +191,7 @@ async def search_ads(model=None, branch=None):
                 params.append(model)
         if branch:
             query += " AND branch = ?"
-            params.append(branch)
+            params.append(branch.lower())
         
         query += " ORDER BY created_at DESC"
         
