@@ -294,3 +294,79 @@ sqlite3.OperationalError: no such table: ads
 
 DEBUG: SUCCESS! Product created in Django with ID: 17
 DEBUG: Sync Bot -> Web App success! ID: 17
+DEBUG: Syncing iPhone 14 Pro to Web App...
+DEBUG: Syncing iPhone 14 Pro to Web App...
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 35, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: SUCCESS! Product created in Django with ID: 18
+DEBUG: Sync Bot -> Web App success! ID: 18
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 35, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: SUCCESS! Product created in Django with ID: 19
+DEBUG: Sync Bot -> Web App success! ID: 19
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 35, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 35, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+
+DEBUG: Sync WebApp -> Bot DB error: no such table: ads
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\phones\signals.py", line 35, in notify_admin_new_phone
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+        INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, status)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        'approved'
+        ^^^^^^^^^^
+    ))
+    ^^
+sqlite3.OperationalError: no such table: ads
+

@@ -49,13 +49,19 @@ async def main():
 
     # Start Polling
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-    try:
-        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
-    except Exception as e:
-        import traceback
-        print(f"❌ Polling xatosi: {e}")
-        traceback.print_exc()
-
+    
+    # Auto-restart polling on network errors
+    while True:
+        try:
+            print("⏳ Polling boshlanmoqda...")
+            await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        except Exception as e:
+            import traceback
+            print(f"❌ Polling xatosi: {e}")
+            traceback.print_exc()
+            print("🔄 5 soniyadan so'ng qayta urinib ko'ramiz...")
+            await asyncio.sleep(5)
+            
 if __name__ == "__main__":
     try:
         asyncio.run(main())

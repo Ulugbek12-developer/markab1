@@ -27,7 +27,7 @@ def notify_admin_new_phone(sender, instance, created, **kwargs):
         import sqlite3
         from core.settings import BASE_DIR
         import os
-        db_path = os.path.join(BASE_DIR.parent, 'smart_market.db')
+        db_path = os.path.join(BASE_DIR, 'smart_market.db')
         
         try:
             conn = sqlite3.connect(db_path)
