@@ -54,8 +54,8 @@
                         {% endif %}
                     </div>
                     <div class="p-6 flex-1 flex flex-col">
-                        <div class="text-[10px] font-black text-primary uppercase tracking-widest mb-1">{{ phone.get_model_name_display }}</div>
-                        <h3 class="font-black text-slate-900 text-lg line-clamp-1 mb-2">{{ phone.title|default:phone.get_model_name_display }}</h3>
+                        <div class="text-[10px] font-black text-primary uppercase tracking-widest mb-1">{{ phone.model_name }}</div>
+                        <h3 class="font-black text-slate-900 text-lg line-clamp-1 mb-2">{{ phone.title|default:phone.model_name }}</h3>
                         <p class="text-[11px] font-bold text-slate-400 mb-4">{{ phone.memory }}GB • 🔋{{ phone.battery_health }}%</p>
                         <p class="text-primary font-black text-xl tracking-tight mt-auto">{{ phone.price|floatformat:0 }} so'm</p>
                     </div>
