@@ -128,55 +128,128 @@ class CalculatorView(View):
 
     def post(self, request):
         model = request.POST.get('model')
-        memory = request.POST.get('memory')
+        memory = request.POST.get('memory', '128')
         battery = int(request.POST.get('battery', 100))
         condition = request.POST.get('condition')
         has_box = request.POST.get('has_box') == 'on'
+        region = request.POST.get('region', 'll')
         
-        # Simple price logic (base prices)
-        base_prices = {
-            '11': 300, '12': 450, '13': 600, '14': 750, '15': 950, '16': 1200, '17': 1500,
-            '13 Pro': 750, '14 Pro': 900, '15 Pro': 1100, '16 Pro': 1350, '17 Pro': 1600,
-            '13 Pro Max': 850, '14 Pro Max': 1050, '15 Pro Max': 1250, '16 Pro Max': 1500, '17 Pro Max': 1800
+        # ===== MARKAB NARX JADVALI (USD) =====
+        # C-Toifa: 70-80% bat, karobkasiz, KH/J region
+        # B-Toifa: 80-90% bat, karobka bor, LL/ZA
+        # A-Toifa: 90-100% bat, ideal, LL/ZA
+        PRICE_TABLE = {
+            #              C      B      A
+            '11':        (130,   150,   180),
+            '11 Pro':    (150,   180,   220),
+            '12':        (190,   220,   260),
+            '12 Pro':    (240,   280,   330),
+            '12 Pro Max':(320,   370,   430),
+            '13':        (280,   320,   370),
+            '13 Pro':    (350,   420,   490),
+            '13 Pro Max':(500,   580,   650),
+            '14':        (350,   400,   460),
+            '14 Pro':    (450,   580,   680),
+            '14 Pro Max':(550,   650,   770),
+            '15':        (500,   570,   650),
+            '15 Pro':    (650,   750,   860),
+            '15 Pro Max':(850,   950,  1080),
+            '16':        (700,   800,   900),
+            '16 Pro':    (850,   960,  1080),
+            '16 Pro Max':(1050, 1180,  1300),
+            '17 Pro Max':(1250, 1400,  1550),
         }
         
-        base = base_prices.get(model, 500)
+        prices = PRICE_TABLE.get(model, (300, 400, 500))
         
-        # Adjustments
-        if memory == '256': base += 100
-        if memory == '512': base += 250
-        if memory == '1024': base += 450
+        # 1) BATAREYA bo'yicha toifa aniqlash
+        if battery >= 90:
+            base_price = prices[2]  # A-Toifa
+            tier = 'A'
+        elif battery >= 80:
+            base_price = prices[1]  # B-Toifa
+            tier = 'B'
+        else:
+            base_price = prices[0]  # C-Toifa
+            tier = 'C'
         
-        if battery < 85: base *= 0.9
-        if battery < 80: base *= 0.85
+        # 2) BATAREYA nozik tuzatish
+        if battery < 80:
+            base_price -= 40   # 80% dan past — qo'shimcha -40$
+        if battery >= 95:
+            base_price += 30   # 95%+ — qo'shimcha +30$
         
-        if condition == 'medium': base *= 0.85
-        if condition == 'bad': base *= 0.7
+        # 3) KAROBKA
+        if not has_box:
+            # Modelga qarab 30-80$ tushadi
+            if base_price > 800:
+                base_price -= 80
+            elif base_price > 500:
+                base_price -= 60
+            elif base_price > 300:
+                base_price -= 40
+            else:
+                base_price -= 30
         
-        if not has_box: base -= 50
+        # 4) REGION
+        # LL/A, ZA/A — eng qimmat (default)
+        # KH/A, CH/A — arzonroq
+        if region in ['kh', 'ch', 'j']:
+            base_price -= 15
         
-        # Convert to mln so'm (approx)
-        price_som = int(base * 12700 / 100000) * 100000 
+        # 5) XOTIRA (128GB bazaviy, qo'shimcha xotira uchun ustama)
+        if memory == '256':
+            base_price += 50
+        elif memory == '512':
+            base_price += 120
+        elif memory == '1024':
+            base_price += 200
         
-        # Send Telegram Notification
+        # 6) TASHQI HOLAT tuzatish
+        if condition == 'medium':
+            base_price = int(base_price * 0.92)  # -8%
+        elif condition == 'bad':
+            base_price = int(base_price * 0.82)  # -18%
+        
+        # Minimum narx
+        if base_price < 80:
+            base_price = 80
+        
+        # USD -> SO'M (1$ ≈ 12,700 so'm), 100,000 ga yaxlitlash
+        price_som = int(base_price * 12700 / 100000) * 100000
+        
+        # Narx oralig'i ko'rsatish (±5%)
+        price_low = int(price_som * 0.95 / 100000) * 100000
+        price_high = int(price_som * 1.05 / 100000) * 100000
+        
+        # Telegram xabar
         try:
             from core.telegram_bot import send_admin_notification
-            box_txt = 'Bor' if has_box else "Yo'q"
+            box_txt = '📦 Bor' if has_box else "❌ Yo'q"
+            region_names = {'ll': 'LL/A (AQSh)', 'za': 'ZA/A (Gonkong)', 'kh': 'KH/A (Koreya)', 'ch': 'CH/A (Xitoy)', 'j': 'J/A (Yaponiya)'}
+            reg_txt = region_names.get(region, region)
+            tier_names = {'A': 'A-Toifa ✨', 'B': 'B-Toifa 👍', 'C': 'C-Toifa ⚠️'}
             msg = (
-                f"🧮 <b>Kalkulyatorda hisoblandi:</b>\n\n"
-                f"📱 Model: {model}\n"
+                f"🧮 <b>NARX KALKULYATORI</b>\n\n"
+                f"📱 Model: iPhone {model}\n"
                 f"💾 Xotira: {memory} GB\n"
                 f"🔋 Batareya: {battery}%\n"
-                f"🛠 Holati: {condition}\n"
-                f"📦 Karobka: {box_txt}\n\n"
-                f"💰 <b>Taxminiy narx: {price_som:,.0f} so'm</b>"
+                f"🛠 Holat: {condition}\n"
+                f"📦 Karobka: {box_txt}\n"
+                f"🌍 Region: {reg_txt}\n"
+                f"📊 Toifa: {tier_names.get(tier, tier)}\n\n"
+                f"💰 <b>Narx: ~{base_price}$ ({price_som:,.0f} so'm)</b>"
             )
             send_admin_notification(msg)
         except Exception:
             pass
             
+        result_text = f"{price_low:,.0f} – {price_high:,.0f}".replace(',', ' ')
+        
         return render(request, 'phones/calculator.html', {
-            'result': f"{price_som:,.0f}".replace(',', ' '),
+            'result': result_text,
+            'result_usd': base_price,
+            'tier': tier,
             'posted_data': request.POST
         })
 

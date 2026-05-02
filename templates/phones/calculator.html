@@ -4,46 +4,47 @@
 {% block title %}Narx Kalkulyatori — Markab Electronics{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 py-10">
+<div class="max-w-lg mx-auto px-4 py-6">
 
     <!-- Header -->
-    <div class="text-center mb-10 animate-fade-in">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-black mb-4">
-            📊 Aqlli narxlash tizimi
-        </div>
-        <h1 class="text-4xl font-black text-gray-900 tracking-tight mb-3">Narx Kalkulyatori</h1>
-        <p class="text-gray-500 text-base">Telefoningizni necha pulga sotishingiz mumkinligini bilib oling</p>
+    <div class="text-center mb-6 animate-fade-in">
+        <div class="badge-premium mb-3 inline-flex text-xs">📊 Aqlli narxlash</div>
+        <h1 style="font-size:22px; font-weight:900; color:white; margin-bottom:4px;">Narx Kalkulyatori</h1>
+        <p style="font-size:12px; color:rgba(255,255,255,0.5);">Telefoningiz qancha turishi mumkinligini bilib oling</p>
     </div>
 
     <!-- Result -->
     {% if result %}
-    <div class="rounded-3xl p-8 text-center mb-8 animate-fade-in"
-         style="background: linear-gradient(135deg, rgba(229,57,53,0.08), rgba(239,154,154,0.05)); border: 2px solid rgba(229,57,53,0.25);">
-        <div class="text-xs font-black uppercase tracking-widest mb-3" style="color:#E53935">✅ Taxminiy bozor narxi</div>
-        <div class="text-5xl font-black text-gray-900 mb-1">{{ result }}</div>
-        <div class="text-lg font-bold text-gray-500 mb-5">so'm</div>
-        <p class="text-xs text-gray-400 mb-6">* Yakuniy narx mutaxassis ko'rigidan so'ng aniqlanadi.</p>
-        <a href="{% url 'users:sell' %}"
-           style="background:#E53935; color:white; padding: 14px 32px; border-radius:16px; font-weight:900; font-size:14px; text-decoration:none; display:inline-block; box-shadow: 0 4px 20px rgba(229,57,53,0.4);">
+    <div class="animate-fade-in" style="background:rgba(255,255,255,0.15); border-radius:20px; padding:24px; text-align:center; margin-bottom:20px; border:1.5px solid rgba(255,255,255,0.3);">
+        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.15em; margin-bottom:4px;">
+            {% if tier == 'A' %}✨ A-Toifa (Premium){% elif tier == 'B' %}👍 B-Toifa (Yaxshi){% else %}⚠️ C-Toifa{% endif %}
+        </div>
+        <div style="font-size:12px; font-weight:700; color:rgba(255,255,255,0.5); margin-bottom:8px;">~{{ result_usd }}$</div>
+        <div style="font-size:28px; font-weight:900; color:white; margin-bottom:4px;">{{ result }}</div>
+        <div style="font-size:14px; font-weight:700; color:rgba(255,255,255,0.6);">so'm</div>
+        <p style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:12px;">* Yakuniy narx mutaxassis ko'rigidan so'ng aniqlanadi</p>
+        
+        <a href="{% url 'users:sell' %}" style="display:inline-block; margin-top:16px; background:white; color:#C0143C; padding:12px 28px; border-radius:14px; font-weight:800; font-size:13px; text-decoration:none; box-shadow:0 4px 16px rgba(0,0,0,0.25);">
             📢 E'lon berish
         </a>
     </div>
     {% endif %}
 
-    <!-- Form Card -->
-    <div style="background:rgba(255,255,255,0.12); border-radius:24px; padding:32px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px);">
-        <form method="POST" class="space-y-5">
+    <!-- Form -->
+    <div class="card" style="padding:20px;">
+        <form method="POST" class="space-y-4">
             {% csrf_token %}
 
             <!-- Model -->
             <div>
-                <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; color:#9CA3AF; margin-bottom:8px;">📱 Smartfon Modeli</label>
-                <select name="model" required
-                        style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; cursor:pointer;">
-                    <option value="">Modelni tanlang</option>
+                <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">📱 Model</label>
+                <select name="model" required class="input-field" style="font-size:14px; padding:12px 16px;">
+                    <option value="">Tanlang</option>
                     <option value="11" {% if posted_data.model == '11' %}selected{% endif %}>iPhone 11</option>
+                    <option value="11 Pro" {% if posted_data.model == '11 Pro' %}selected{% endif %}>iPhone 11 Pro</option>
                     <option value="12" {% if posted_data.model == '12' %}selected{% endif %}>iPhone 12</option>
                     <option value="12 Pro" {% if posted_data.model == '12 Pro' %}selected{% endif %}>iPhone 12 Pro</option>
+                    <option value="12 Pro Max" {% if posted_data.model == '12 Pro Max' %}selected{% endif %}>iPhone 12 Pro Max</option>
                     <option value="13" {% if posted_data.model == '13' %}selected{% endif %}>iPhone 13</option>
                     <option value="13 Pro" {% if posted_data.model == '13 Pro' %}selected{% endif %}>iPhone 13 Pro</option>
                     <option value="13 Pro Max" {% if posted_data.model == '13 Pro Max' %}selected{% endif %}>iPhone 13 Pro Max</option>
@@ -55,60 +56,77 @@
                     <option value="15 Pro Max" {% if posted_data.model == '15 Pro Max' %}selected{% endif %}>iPhone 15 Pro Max</option>
                     <option value="16" {% if posted_data.model == '16' %}selected{% endif %}>iPhone 16</option>
                     <option value="16 Pro" {% if posted_data.model == '16 Pro' %}selected{% endif %}>iPhone 16 Pro</option>
+                    <option value="16 Pro Max" {% if posted_data.model == '16 Pro Max' %}selected{% endif %}>iPhone 16 Pro Max</option>
+                    <option value="17 Pro Max" {% if posted_data.model == '17 Pro Max' %}selected{% endif %}>iPhone 17 Pro Max</option>
                 </select>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="grid grid-cols-2 gap-3">
                 <!-- Memory -->
                 <div>
-                    <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; color:#9CA3AF; margin-bottom:8px;">💾 Xotira hajmi</label>
-                    <select name="memory"
-                            style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; cursor:pointer;">
+                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">💾 Xotira</label>
+                    <select name="memory" class="input-field" style="font-size:14px; padding:12px 16px;">
                         <option value="128">128 GB</option>
-                        <option value="256">256 GB</option>
-                        <option value="512">512 GB</option>
-                        <option value="1024">1 TB</option>
+                        <option value="256" {% if posted_data.memory == '256' %}selected{% endif %}>256 GB</option>
+                        <option value="512" {% if posted_data.memory == '512' %}selected{% endif %}>512 GB</option>
+                        <option value="1024" {% if posted_data.memory == '1024' %}selected{% endif %}>1 TB</option>
                     </select>
                 </div>
 
                 <!-- Battery -->
                 <div>
-                    <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; color:#9CA3AF; margin-bottom:8px;">🔋 Batareya (%)</label>
-                    <input type="number" name="battery"
-                           value="{{ posted_data.battery|default:'100' }}"
-                           min="50" max="100" required
-                           placeholder="100"
-                           style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; box-sizing:border-box;">
+                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🔋 Batareya</label>
+                    <input type="number" name="battery" value="{{ posted_data.battery|default:'100' }}" min="50" max="100" required
+                           class="input-field" style="font-size:14px; padding:12px 16px;" placeholder="100">
                 </div>
             </div>
 
-            <!-- Condition -->
-            <div>
-                <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; color:#9CA3AF; margin-bottom:8px;">🛠️ Tashqi holati</label>
-                <select name="condition"
-                        style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; cursor:pointer;">
-                    <option value="ideal">✨ Ideal (Yangi kabi)</option>
-                    <option value="medium">👍 Yaxshi (Kichik izlar bor)</option>
-                    <option value="bad">⚠️ O'rtacha (Ko'rinadigan zarba)</option>
-                </select>
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Condition -->
+                <div>
+                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🛠️ Holati</label>
+                    <select name="condition" class="input-field" style="font-size:14px; padding:12px 16px;">
+                        <option value="ideal">✨ Ideal</option>
+                        <option value="medium" {% if posted_data.condition == 'medium' %}selected{% endif %}>👍 Yaxshi</option>
+                        <option value="bad" {% if posted_data.condition == 'bad' %}selected{% endif %}>⚠️ O'rta</option>
+                    </select>
+                </div>
+
+                <!-- Region -->
+                <div>
+                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🌍 Region</label>
+                    <select name="region" class="input-field" style="font-size:14px; padding:12px 16px;">
+                        <option value="ll" {% if posted_data.region == 'll' %}selected{% endif %}>LL/A (AQSh)</option>
+                        <option value="za" {% if posted_data.region == 'za' %}selected{% endif %}>ZA/A (Gonkong)</option>
+                        <option value="kh" {% if posted_data.region == 'kh' %}selected{% endif %}>KH/A (Koreya)</option>
+                        <option value="ch" {% if posted_data.region == 'ch' %}selected{% endif %}>CH/A (Xitoy)</option>
+                        <option value="j" {% if posted_data.region == 'j' %}selected{% endif %}>J/A (Yaponiya)</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Box checkbox -->
-            <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:rgba(229,57,53,0.05); border-radius:16px; border:1.5px solid rgba(229,57,53,0.2);">
-                <input type="checkbox" name="has_box" id="has_box" checked
-                       style="width:20px; height:20px; accent-color:#E53935; cursor:pointer; flex-shrink:0;">
-                <label for="has_box" style="font-size:14px; font-weight:700; color:rgba(255,255,255,0.8); cursor:pointer;">
-                    📦 Karobka va barcha hujjatlari mavjud
-                </label>
+            <!-- Box -->
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:rgba(255,255,255,0.06); border-radius:14px; border:1px solid rgba(255,255,255,0.1);">
+                <input type="checkbox" name="has_box" id="has_box" checked style="width:18px; height:18px; accent-color:white; cursor:pointer;">
+                <label for="has_box" style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.8); cursor:pointer;">📦 Karobka va hujjatlari bor</label>
             </div>
 
-            <!-- Submit -->
-            <button type="submit"
-                    style="width:100%; background:#E53935; color:white; padding:16px; border-radius:16px; font-size:15px; font-weight:900; text-transform:uppercase; letter-spacing:0.08em; border:none; cursor:pointer; box-shadow:0 4px 24px rgba(229,57,53,0.35); transition:all 0.2s;"
-                    onmouseover="this.style.background='#C62828'" onmouseout="this.style.background='#E53935'">
+            <button type="submit" style="width:100%; background:white; color:#C0143C; padding:14px; border-radius:14px; font-weight:900; font-size:14px; border:none; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; box-shadow:0 4px 20px rgba(0,0,0,0.2);">
                 🧮 Narxni Hisoblash
             </button>
         </form>
+    </div>
+
+    <!-- Price Info -->
+    <div class="card" style="padding:16px; margin-top:12px;">
+        <div style="font-size:12px; font-weight:800; color:white; margin-bottom:8px;">💡 Narxga ta'sir qiluvchi omillar:</div>
+        <div style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.8;">
+            🔋 Batareya 80% dan past → <span style="color:#FF6B6B;">-30-50$</span><br>
+            🔋 Batareya 95%+ → <span style="color:#51CF66;">+20-40$</span><br>
+            📦 Karobkasiz → <span style="color:#FF6B6B;">-30$ dan -80$</span><br>
+            🌍 KH/CH region → <span style="color:#FF6B6B;">-10-20$</span><br>
+            💾 256GB → <span style="color:#51CF66;">+50$</span> | 512GB → <span style="color:#51CF66;">+120$</span>
+        </div>
     </div>
 </div>
 {% endblock %}
