@@ -30,18 +30,34 @@ async def process_model(message: Message, state: FSMContext):
     await state.update_data(model=message.text)
     await state.set_state(SellPhone.photos)
     await state.update_data(photos=[])
-    await message.answer(STRINGS[lang]['prompt_photos'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
+    from keyboards import get_continue_keyboard
+    await message.answer(STRINGS[lang]['prompt_photos'], parse_mode="HTML", reply_markup=get_continue_keyboard(lang))
 
 @router.message(SellPhone.photos, F.photo)
-async def process_photos(message: Message, state: FSMContext):
-    lang = await get_user_language(message.from_user.id)
+async def process_photos_photo(message: Message, state: FSMContext):
     data = await state.get_data()
     photos = data.get('photos', [])
-    photos.append(message.photo[-1].file_id)
-    await state.update_data(photos=photos)
-    
-    await state.set_state(SellPhone.battery)
-    await message.answer(STRINGS[lang]['prompt_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
+    if len(photos) < 3:
+        photos.append(message.photo[-1].file_id)
+        await state.update_data(photos=photos)
+
+@router.message(SellPhone.photos, F.text)
+async def process_photos_text(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
+        await state.set_state(SellPhone.model)
+        await message.answer(STRINGS[lang]['prompt_model'], reply_markup=get_iphone_models_keyboard(lang))
+        return
+        
+    if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
+        data = await state.get_data()
+        if not data.get('photos'):
+            await message.answer(STRINGS[lang]['prompt_photos'])
+            return
+        await state.set_state(SellPhone.battery)
+        await message.answer(STRINGS[lang]['prompt_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
+    else:
+        await message.answer(STRINGS[lang]['prompt_photos'])
 
 @router.message(SellPhone.battery)
 async def process_battery(message: Message, state: FSMContext):

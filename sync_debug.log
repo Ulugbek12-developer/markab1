@@ -370,3 +370,7 @@ Traceback (most recent call last):
     ^^
 sqlite3.OperationalError: no such table: ads
 
+DEBUG: Syncing iPhone 14 Pro to Web App...
+DEBUG: Sync WebApp -> Bot DB success!
+DEBUG: SUCCESS! Product created in Django with ID: 23
+DEBUG: Sync Bot -> Web App success! ID: 23

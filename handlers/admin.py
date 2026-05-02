@@ -79,18 +79,36 @@ async def admin_add_price(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     await state.update_data(price=message.text)
     await state.set_state(AdminAddProduct.photos)
-    await message.answer(STRINGS[lang]['prompt_admin_photos'], parse_mode="HTML")
+    await state.update_data(photos=[])
+    from keyboards import get_continue_keyboard
+    await message.answer(STRINGS[lang]['prompt_admin_photos'], parse_mode="HTML", reply_markup=get_continue_keyboard(lang))
 
 @router.message(AdminAddProduct.photos, F.photo)
-async def admin_add_photos(message: Message, state: FSMContext):
-    lang = await get_user_language(message.from_user.id)
-    photo_id = message.photo[-1].file_id
+async def admin_add_photos_photo(message: Message, state: FSMContext):
     data = await state.get_data()
-    data['photos'] = [photo_id]
-    data['status'] = 'approved' # Direct approve
-    data['user_id'] = message.from_user.id
-    
-    await add_ad(data)
+    photos = data.get('photos', [])
+    if len(photos) < 3:
+        photos.append(message.photo[-1].file_id)
+        await state.update_data(photos=photos)
+
+@router.message(AdminAddProduct.photos, F.text)
+async def admin_add_photos_text(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
+        await state.set_state(AdminAddProduct.price)
+        await message.answer(STRINGS[lang]['prompt_admin_price'], parse_mode="HTML")
+        return
+        
+    if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
+        data = await state.get_data()
+        if not data.get('photos'):
+            await message.answer(STRINGS[lang]['prompt_admin_photos'])
+            return
+            
+        data['status'] = 'approved' # Direct approve
+        data['user_id'] = message.from_user.id
+        
+        await add_ad(data)
     
     # Sync to Django (Web App)
     try:

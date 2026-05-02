@@ -81,7 +81,9 @@ def get_condition_keyboard(lang):
 def get_region_keyboard(lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
-    builder.row(KeyboardButton(text="LLA"), KeyboardButton(text="ZP"), KeyboardButton(text="CH"))
+    builder.row(KeyboardButton(text="LL/A (AQSh)"), KeyboardButton(text="ZA/A (Gonkong)"))
+    builder.row(KeyboardButton(text="KH/A (Koreya)"), KeyboardButton(text="CH/A (Xitoy)"))
+    builder.row(KeyboardButton(text="J/A (Yaponiya)"), KeyboardButton(text="Boshqa"))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
@@ -95,15 +97,21 @@ def get_box_keyboard(lang):
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
-def get_battery_range_keyboard(lang):
+def get_opened_keyboard(lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
-    builder.row(KeyboardButton(text="60-70"), KeyboardButton(text="70-80"))
-    builder.row(KeyboardButton(text="80-90"), KeyboardButton(text="90-100"))
     if lang == 'uz':
-        builder.row(KeyboardButton(text="Boshqa"), KeyboardButton(text=s['btn_back']))
+        builder.row(KeyboardButton(text="🛠 Ha, ochilgan"), KeyboardButton(text="✅ Yo'q, ochilmagan"))
     else:
-        builder.row(KeyboardButton(text="Другое"), KeyboardButton(text=s['btn_back']))
+        builder.row(KeyboardButton(text="🛠 Да, вскрывался"), KeyboardButton(text="✅ Нет, не вскрывался"))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_continue_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text="➡️ Davom etish" if lang == 'uz' else "➡️ Продолжить"))
+    builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
 def get_branches_keyboard(branches, lang):

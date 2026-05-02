@@ -24,12 +24,14 @@ class BuyPhone(StatesGroup):
 class PricePhone(StatesGroup):
     model = State()
     photos = State()
-    battery_range = State()
-    manual_battery = State()
+    battery = State()
     memory = State()
     condition = State()
     region = State()
+    manual_region = State()
     box = State()
+    is_opened = State()
+    confirm = State()
 
 class AdminAuth(StatesGroup):
     waiting_for_password = State()
