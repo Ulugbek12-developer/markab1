@@ -13,4 +13,6 @@ urlpatterns = [
     path('store-panel/', views.StorePanelView.as_view(), name='store_panel'),
     path('installment-request/<int:pk>/', views.InstallmentRequestView.as_view(), name='installment_request'),
     path('toggle-booking/<int:pk>/', views.ToggleBookingView.as_view(), name='toggle_booking'),
+    path('search/', views.SearchView.as_view(), name='search'),
+    path('catalog/', views.FilterView.as_view(), name='filter'),
 ]

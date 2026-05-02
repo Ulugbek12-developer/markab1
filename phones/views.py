@@ -21,7 +21,10 @@ class HomeView(ListView):
         search = self.request.GET.get('q')
         if search:
             queryset = queryset.filter(
-                Q(title__icontains=search) | Q(description__icontains=search)
+                Q(title__icontains=search) | 
+                Q(description__icontains=search) |
+                Q(model_name__icontains=search) |
+                Q(category__name__icontains=search)
             )
         return queryset
 
@@ -30,6 +33,23 @@ class HomeView(ListView):
         context['categories'] = Category.objects.all()
         context['active_category'] = self.request.GET.get('category', 'all')
         return context
+
+class SearchView(ListView):
+    model = Listing
+    template_name = 'phones/search.html'
+    context_object_name = 'phones'
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        if not q:
+            return Listing.objects.none()
+        return Listing.objects.filter(
+            Q(title__icontains=q) | 
+            Q(description__icontains=q) |
+            Q(model_name__icontains=q) |
+            Q(category__name__icontains=q),
+            is_approved=True
+        )
 
 class ListingDetailView(DetailView):
     model = Listing
@@ -162,6 +182,43 @@ class InstallmentRequestView(View):
                 pass
                 
         return JsonResponse({"status": "success"})
+
+class FilterView(ListView):
+    model = Listing
+    template_name = 'phones/filter.html'
+    context_object_name = 'phones'
+
+    def get_queryset(self):
+        queryset = Listing.objects.filter(is_approved=True)
+        model = self.request.GET.get('model')
+        memory = self.request.GET.get('memory')
+        sort = self.request.GET.get('sort')
+
+        if model:
+            queryset = queryset.filter(model_name__icontains=model)
+        if memory:
+            queryset = queryset.filter(memory=memory)
+        
+        if sort == 'price_asc':
+            queryset = queryset.order_by('price')
+        elif sort == 'price_desc':
+            queryset = queryset.order_by('-price')
+        
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_choices'] = {
+            'models': [
+                ('15 Pro Max', 'iPhone 15 Pro Max'),
+                ('15 Pro', 'iPhone 15 Pro'),
+                ('14 Pro Max', 'iPhone 14 Pro Max'),
+                ('13 Pro Max', 'iPhone 13 Pro Max'),
+                ('12 Pro Max', 'iPhone 12 Pro Max'),
+                ('11 Pro Max', 'iPhone 11 Pro Max'),
+            ]
+        }
+        return context
 
 class FavoritesView(LoginRequiredMixin, ListView):
     model = Favorite
