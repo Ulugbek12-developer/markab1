@@ -62,7 +62,7 @@ async def process_buy_model(message: Message, state: FSMContext):
         await state.set_state(BuyPhone.select_id)
         await message.answer(STRINGS[lang]['prompt_select_id'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
 
-@router.message(BuyPhone.select_id)
+@router.message(BuyPhone.select_id, F.text)
 async def process_select_id(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
@@ -95,7 +95,7 @@ async def process_select_id(message: Message, state: FSMContext):
     from keyboards import get_payment_type_keyboard
     await message.answer(STRINGS[lang]['prompt_payment_type'], parse_mode="HTML", reply_markup=get_payment_type_keyboard(lang))
 
-@router.message(BuyPhone.payment_type)
+@router.message(BuyPhone.payment_type, F.text)
 async def process_payment_type(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     s = STRINGS[lang]
@@ -118,7 +118,7 @@ async def process_payment_type(message: Message, state: FSMContext):
     else:
         await message.answer(s['prompt_payment_type'])
 
-@router.message(BuyPhone.location)
+@router.message(BuyPhone.location, F.text)
 async def process_location(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     s = STRINGS[lang]
@@ -159,7 +159,7 @@ async def process_location(message: Message, state: FSMContext):
     from keyboards import get_installment_plan_keyboard
     await message.answer(summary + s['prompt_plan'], parse_mode="HTML", reply_markup=get_installment_plan_keyboard(m3, m6, m12, lang))
 
-@router.message(BuyPhone.installment_plan)
+@router.message(BuyPhone.installment_plan, F.text)
 async def process_installment_plan(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     s = STRINGS[lang]
@@ -175,7 +175,7 @@ async def process_installment_plan(message: Message, state: FSMContext):
     data = await state.get_data()
     await message.answer(s['confirm_buy'].format(id=data['selected_id']), parse_mode="HTML", reply_markup=get_confirm_keyboard(lang))
 
-@router.message(BuyPhone.confirm)
+@router.message(BuyPhone.confirm, F.text)
 async def process_buy_confirm(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     s = STRINGS[lang]

@@ -31,7 +31,7 @@
     {% endif %}
 
     <!-- Form Card -->
-    <div style="background:white; border-radius:24px; padding:32px; box-shadow:0 2px 20px rgba(0,0,0,0.06); border:1px solid #F0EDEA;">
+    <div style="background:rgba(255,255,255,0.12); border-radius:24px; padding:32px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px);">
         <form method="POST" class="space-y-5">
             {% csrf_token %}
 
@@ -39,7 +39,7 @@
             <div>
                 <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; color:#9CA3AF; margin-bottom:8px;">📱 Smartfon Modeli</label>
                 <select name="model" required
-                        style="width:100%; background:#FAFAF8; border:2px solid #F0EDEA; border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:#111827; outline:none; cursor:pointer;">
+                        style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; cursor:pointer;">
                     <option value="">Modelni tanlang</option>
                     <option value="11" {% if posted_data.model == '11' %}selected{% endif %}>iPhone 11</option>
                     <option value="12" {% if posted_data.model == '12' %}selected{% endif %}>iPhone 12</option>
@@ -63,7 +63,7 @@
                 <div>
                     <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; color:#9CA3AF; margin-bottom:8px;">💾 Xotira hajmi</label>
                     <select name="memory"
-                            style="width:100%; background:#FAFAF8; border:2px solid #F0EDEA; border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:#111827; outline:none; cursor:pointer;">
+                            style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; cursor:pointer;">
                         <option value="128">128 GB</option>
                         <option value="256">256 GB</option>
                         <option value="512">512 GB</option>
@@ -78,7 +78,7 @@
                            value="{{ posted_data.battery|default:'100' }}"
                            min="50" max="100" required
                            placeholder="100"
-                           style="width:100%; background:#FAFAF8; border:2px solid #F0EDEA; border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:#111827; outline:none; box-sizing:border-box;">
+                           style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; box-sizing:border-box;">
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
             <div>
                 <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; color:#9CA3AF; margin-bottom:8px;">🛠️ Tashqi holati</label>
                 <select name="condition"
-                        style="width:100%; background:#FAFAF8; border:2px solid #F0EDEA; border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:#111827; outline:none; cursor:pointer;">
+                        style="width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:16px; padding:14px 18px; font-size:15px; font-weight:600; color:white; outline:none; cursor:pointer;">
                     <option value="ideal">✨ Ideal (Yangi kabi)</option>
                     <option value="medium">👍 Yaxshi (Kichik izlar bor)</option>
                     <option value="bad">⚠️ O'rtacha (Ko'rinadigan zarba)</option>
@@ -97,7 +97,7 @@
             <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:rgba(229,57,53,0.05); border-radius:16px; border:1.5px solid rgba(229,57,53,0.2);">
                 <input type="checkbox" name="has_box" id="has_box" checked
                        style="width:20px; height:20px; accent-color:#E53935; cursor:pointer; flex-shrink:0;">
-                <label for="has_box" style="font-size:14px; font-weight:700; color:#374151; cursor:pointer;">
+                <label for="has_box" style="font-size:14px; font-weight:700; color:rgba(255,255,255,0.8); cursor:pointer;">
                     📦 Karobka va barcha hujjatlari mavjud
                 </label>
             </div>
