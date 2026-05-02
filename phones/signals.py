@@ -9,7 +9,7 @@ def notify_admin_new_listing(sender, instance, created, **kwargs):
         message = (
             f"🚀 <b>Yangi E'lon Qo'shildi!</b>\n\n"
             f"🔹 <b>Sarlavha:</b> {instance.title}\n"
-            f"📁 <b>Kategoriya:</b> {instance.category.name if instance.category else 'Noma\'lum'}\n"
+            f"📁 <b>Kategoriya:</b> {instance.category.name if instance.category else 'Nomalum'}\n"
             f"💰 <b>Narxi:</b> {float(instance.price):,.0f} so'm\n"
             f"📍 <b>Manzil:</b> {instance.location}\n"
         )
