@@ -184,12 +184,14 @@ async def search_ads(model=None, branch=None):
         query = "SELECT id, model_name as model, memory as storage, battery_health as battery, condition, price, branch, image as photos FROM phones_phone WHERE is_approved = 1"
         params = []
         if model:
+            model = model.strip()
             query += " AND model_name = ?"
             if model.startswith('iPhone '):
-                params.append(model.replace('iPhone ', ''))
+                params.append(model.replace('iPhone ', '').strip())
             else:
                 params.append(model)
         if branch:
+            branch = branch.strip()
             query += " AND branch = ?"
             params.append(branch.lower())
         
