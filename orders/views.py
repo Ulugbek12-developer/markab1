@@ -45,7 +45,7 @@ class CheckoutView(View):
             text += f"💰 Narxi: {listing.price} so'm\n\n"
             text += f"👤 Mijoz: {name}\n"
             text += f"📞 Tel: {user_phone}\n"
-            text += f"💳 Tur: {'Muddatli to\'lov' if is_installment else 'Naqd pul'}\n"
+            text += f"💳 Tur: {'Muddatli tolov' if is_installment else 'Naqd pul'}\n"
             if is_installment:
                 text += f"🗓 Muddat: {months} oy\n"
                 text += f"💵 Boshl. to'lov: {initial_payment} so'm\n"
