@@ -20,7 +20,7 @@ def get_subscription_keyboard(lang):
 def get_main_menu(lang):
     s = STRINGS[lang]
     # PythonAnywhere URL from settings
-    base_url = "http://markab2.pythonanywhere.com"
+    base_url = "https://markab2.pythonanywhere.com"
     builder = ReplyKeyboardBuilder()
     builder.row(
         KeyboardButton(text=s['btn_sell'], web_app=WebAppInfo(url=f"{base_url}/sell/")), 
