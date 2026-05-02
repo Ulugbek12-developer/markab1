@@ -4,7 +4,17 @@
 {% block title %}Buyurtma — Markab Electronics{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto px-4 py-6">
+<div class="max-w-lg mx-auto px-4 py-6"
+     x-data="{
+         installment: {% if payment_type == 'installment' %}true{% else %}false{% endif %},
+         months: {% if months %}{{ months }}{% else %}0{% endif %},
+         totalPrice: {{ phone.price|floatformat:0 }},
+         downPayment: 0,
+         get remaining() { return Math.max(0, this.totalPrice - this.downPayment) },
+         get withPercent() { return this.remaining * 1.04 },
+         get monthly() { return this.months > 0 ? Math.round(this.withPercent / this.months) : 0 },
+         formatNum(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') }
+     }">
 
     <!-- Header -->
     <div class="text-center mb-6 animate-fade-in">
@@ -43,20 +53,92 @@
                 <input type="tel" name="phone" placeholder="+998 90 123 45 67" required class="input-field" style="font-size:14px; padding:12px 16px;">
             </div>
 
-            <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:rgba(255,255,255,0.06); border-radius:14px; border:1px solid rgba(255,255,255,0.1);">
-                <input type="checkbox" name="is_installment" id="inst_check" style="width:18px; height:18px; accent-color:white; cursor:pointer;"
-                       {% if payment_type == 'installment' %}checked{% endif %}>
+            <!-- Installment Toggle -->
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:rgba(255,255,255,0.06); border-radius:14px; border:1px solid rgba(255,255,255,0.1); cursor:pointer;"
+                 @click="installment = !installment">
+                <input type="checkbox" name="is_installment" id="inst_check" x-model="installment"
+                       style="width:18px; height:18px; accent-color:white; cursor:pointer;">
                 <label for="inst_check" style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.8); cursor:pointer;">💳 Muddatli to'lov</label>
             </div>
 
-            <div>
-                <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🗓️ Muddat</label>
-                <select name="months" class="input-field" style="font-size:14px; padding:12px 16px;">
-                    <option value="" {% if not months %}selected{% endif %}>💵 Naqd</option>
-                    <option value="3" {% if months == '3' %}selected{% endif %}>3 oy</option>
-                    <option value="6" {% if months == '6' %}selected{% endif %}>6 oy</option>
-                    <option value="12" {% if months == '12' %}selected{% endif %}>12 oy</option>
-                </select>
+            <!-- Installment Details -->
+            <div x-show="installment" x-transition class="space-y-4">
+
+                <!-- Months -->
+                <div>
+                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🗓️ Muddat</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" @click="months = 3"
+                                :style="months === 3 ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
+                                style="padding:12px; border-radius:14px; font-weight:800; font-size:14px; cursor:pointer; transition:all 0.2s;">
+                            3 oy
+                        </button>
+                        <button type="button" @click="months = 6"
+                                :style="months === 6 ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
+                                style="padding:12px; border-radius:14px; font-weight:800; font-size:14px; cursor:pointer; transition:all 0.2s;">
+                            6 oy
+                        </button>
+                        <button type="button" @click="months = 12"
+                                :style="months === 12 ? 'background:white; color:#C0143C; border:2px solid white;' : 'background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1.5px solid rgba(255,255,255,0.2);'"
+                                style="padding:12px; border-radius:14px; font-weight:800; font-size:14px; cursor:pointer; transition:all 0.2s;">
+                            12 oy
+                        </button>
+                    </div>
+                    <input type="hidden" name="months" :value="months">
+                </div>
+
+                <!-- Down Payment -->
+                <div>
+                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">💰 Boshlang'ich to'lov (so'm)</label>
+                    <input type="number" name="down_payment" x-model.number="downPayment"
+                           placeholder="0" min="0" :max="totalPrice"
+                           class="input-field" style="font-size:16px; padding:12px 16px; font-weight:700;">
+                </div>
+
+                <!-- Live Calculator Result -->
+                <div x-show="months > 0" x-transition
+                     style="background:rgba(255,255,255,0.1); border-radius:16px; padding:16px; border:1px solid rgba(255,255,255,0.15);">
+                    
+                    <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px;">📊 Hisob-kitob</div>
+
+                    <div class="space-y-2">
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:rgba(255,255,255,0.6);">Mahsulot narxi:</span>
+                            <span style="color:white; font-weight:700;" x-text="formatNum(totalPrice) + ' so\'m'"></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:rgba(255,255,255,0.6);">Boshlang'ich to'lov:</span>
+                            <span style="color:#51CF66; font-weight:700;" x-text="'- ' + formatNum(downPayment) + ' so\'m'"></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:rgba(255,255,255,0.6);">Qolgan summa:</span>
+                            <span style="color:white; font-weight:700;" x-text="formatNum(remaining) + ' so\'m'"></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:rgba(255,255,255,0.6);">+ 4% ustama:</span>
+                            <span style="color:#FFD700; font-weight:700;" x-text="'+ ' + formatNum(Math.round(remaining * 0.04)) + ' so\'m'"></span>
+                        </div>
+
+                        <div style="border-top:1px solid rgba(255,255,255,0.15); margin:8px 0; padding-top:8px;"></div>
+
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:rgba(255,255,255,0.6);">Jami to'lov:</span>
+                            <span style="color:white; font-weight:800;" x-text="formatNum(Math.round(withPercent)) + ' so\'m'"></span>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Payment - BIG -->
+                    <div style="margin-top:16px; background:rgba(255,255,255,0.1); border-radius:14px; padding:16px; text-align:center; border:1px solid rgba(255,255,255,0.2);">
+                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Oylik to'lov</div>
+                        <div style="font-size:28px; font-weight:900; color:white;" x-text="formatNum(monthly) + ' so\'m'"></div>
+                        <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:2px;" x-text="months + ' oy davomida'"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Non-installment months (hidden) -->
+            <div x-show="!installment">
+                <input type="hidden" name="months" value="">
             </div>
 
             <!-- Delivery -->
