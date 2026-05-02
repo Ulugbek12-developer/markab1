@@ -1,71 +1,78 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Narx Kalkulyatori — Markab Electronics{% endblock %}
+{% block title %}Narx Kalkulyatori | Markab{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto px-4 py-6">
+<div class="max-w-xl mx-auto px-4 py-16">
 
     <!-- Header -->
-    <div class="text-center mb-6 animate-fade-in">
-        <div class="badge-premium mb-3 inline-flex text-xs">📊 Aqlli narxlash</div>
-        <h1 style="font-size:22px; font-weight:900; color:white; margin-bottom:4px;">Narx Kalkulyatori</h1>
-        <p style="font-size:12px; color:rgba(255,255,255,0.5);">Telefoningiz qancha turishi mumkinligini bilib oling</p>
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 bg-red-50 text-primary px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            Aqlli narxlash
+        </div>
+        <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-3">Narx Kalkulyatori</h1>
+        <p class="text-slate-400 font-bold text-xs uppercase tracking-widest leading-relaxed">Telefoningiz qancha turishi mumkinligini bilib oling</p>
     </div>
 
     <!-- Result -->
     {% if result %}
-    <div class="animate-fade-in" style="background:rgba(255,255,255,0.15); border-radius:20px; padding:24px; text-align:center; margin-bottom:20px; border:1.5px solid rgba(255,255,255,0.3);">
-        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.15em; margin-bottom:4px;">
-            {% if tier == 'A' %}✨ A-Toifa (Premium){% elif tier == 'B' %}👍 B-Toifa (Yaxshi){% else %}⚠️ C-Toifa{% endif %}
+    <div class="bg-white rounded-[2.5rem] p-10 text-center mb-10 card-shadow border-4 border-red-50 relative overflow-hidden group">
+        <div class="absolute -top-12 -right-12 w-32 h-32 bg-red-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+        <div class="relative z-10">
+            <div class="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+                {% if tier == 'A' %}✨ A-Toifa (Premium){% elif tier == 'B' %}👍 B-Toifa (Yaxshi){% else %}⚠️ C-Toifa{% endif %}
+            </div>
+            <div class="text-slate-400 font-black text-sm mb-2">~{{ result_usd }}$</div>
+            <div class="text-5xl font-black text-primary tracking-tight mb-2">{{ result }}</div>
+            <div class="text-slate-400 font-black text-xs uppercase tracking-widest mb-8">O'zbek so'mida</div>
+            
+            <p class="text-[10px] text-slate-300 font-bold mb-8">* Yakuniy narx mutaxassis ko'rigidan so'ng aniqlanadi</p>
+            
+            <a href="{% url 'users:sell' %}" class="inline-flex items-center gap-3 bg-primary text-white font-black px-10 py-5 rounded-2xl shadow-2xl shadow-red-100 transition-all hover:bg-accent active:scale-95">
+                📢 E'LON BERISH
+            </a>
         </div>
-        <div style="font-size:12px; font-weight:700; color:rgba(255,255,255,0.5); margin-bottom:8px;">~{{ result_usd }}$</div>
-        <div style="font-size:28px; font-weight:900; color:white; margin-bottom:4px;">{{ result }}</div>
-        <div style="font-size:14px; font-weight:700; color:rgba(255,255,255,0.6);">so'm</div>
-        <p style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:12px;">* Yakuniy narx mutaxassis ko'rigidan so'ng aniqlanadi</p>
-        
-        <a href="{% url 'users:sell' %}" style="display:inline-block; margin-top:16px; background:white; color:#C0143C; padding:12px 28px; border-radius:14px; font-weight:800; font-size:13px; text-decoration:none; box-shadow:0 4px 16px rgba(0,0,0,0.25);">
-            📢 E'lon berish
-        </a>
     </div>
     {% endif %}
 
     <!-- Form -->
-    <div class="card" style="padding:20px;">
-        <form method="POST" class="space-y-4">
+    <div class="bg-white rounded-[2.5rem] p-10 md:p-12 card-shadow border border-slate-50">
+        <form method="POST" class="space-y-8">
             {% csrf_token %}
 
             <!-- Model -->
-            <div>
-                <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">📱 Model</label>
-                <select name="model" required class="input-field" style="font-size:14px; padding:12px 16px;">
-                    <option value="">Tanlang</option>
-                    <option value="11" {% if posted_data.model == '11' %}selected{% endif %}>iPhone 11</option>
-                    <option value="11 Pro" {% if posted_data.model == '11 Pro' %}selected{% endif %}>iPhone 11 Pro</option>
-                    <option value="12" {% if posted_data.model == '12' %}selected{% endif %}>iPhone 12</option>
-                    <option value="12 Pro" {% if posted_data.model == '12 Pro' %}selected{% endif %}>iPhone 12 Pro</option>
-                    <option value="12 Pro Max" {% if posted_data.model == '12 Pro Max' %}selected{% endif %}>iPhone 12 Pro Max</option>
-                    <option value="13" {% if posted_data.model == '13' %}selected{% endif %}>iPhone 13</option>
-                    <option value="13 Pro" {% if posted_data.model == '13 Pro' %}selected{% endif %}>iPhone 13 Pro</option>
-                    <option value="13 Pro Max" {% if posted_data.model == '13 Pro Max' %}selected{% endif %}>iPhone 13 Pro Max</option>
-                    <option value="14" {% if posted_data.model == '14' %}selected{% endif %}>iPhone 14</option>
-                    <option value="14 Pro" {% if posted_data.model == '14 Pro' %}selected{% endif %}>iPhone 14 Pro</option>
-                    <option value="14 Pro Max" {% if posted_data.model == '14 Pro Max' %}selected{% endif %}>iPhone 14 Pro Max</option>
-                    <option value="15" {% if posted_data.model == '15' %}selected{% endif %}>iPhone 15</option>
-                    <option value="15 Pro" {% if posted_data.model == '15 Pro' %}selected{% endif %}>iPhone 15 Pro</option>
-                    <option value="15 Pro Max" {% if posted_data.model == '15 Pro Max' %}selected{% endif %}>iPhone 15 Pro Max</option>
-                    <option value="16" {% if posted_data.model == '16' %}selected{% endif %}>iPhone 16</option>
-                    <option value="16 Pro" {% if posted_data.model == '16 Pro' %}selected{% endif %}>iPhone 16 Pro</option>
-                    <option value="16 Pro Max" {% if posted_data.model == '16 Pro Max' %}selected{% endif %}>iPhone 16 Pro Max</option>
-                    <option value="17 Pro Max" {% if posted_data.model == '17 Pro Max' %}selected{% endif %}>iPhone 17 Pro Max</option>
+            <div class="space-y-3">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">📱 Model</label>
+                <select name="model" required class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-5 font-black text-slate-900 focus:bg-white focus:border-primary outline-none transition-all shadow-inner appearance-none">
+                    <option value="">Modelni tanlang</option>
+                    <option value="11" {% if posted_data.model == "11" %}selected{% endif %}>iPhone 11</option>
+                    <option value="11 Pro" {% if posted_data.model == "11 Pro" %}selected{% endif %}>iPhone 11 Pro</option>
+                    <option value="12" {% if posted_data.model == "12" %}selected{% endif %}>iPhone 12</option>
+                    <option value="12 Pro" {% if posted_data.model == "12 Pro" %}selected{% endif %}>iPhone 12 Pro</option>
+                    <option value="12 Pro Max" {% if posted_data.model == "12 Pro Max" %}selected{% endif %}>iPhone 12 Pro Max</option>
+                    <option value="13" {% if posted_data.model == "13" %}selected{% endif %}>iPhone 13</option>
+                    <option value="13 Pro" {% if posted_data.model == "13 Pro" %}selected{% endif %}>iPhone 13 Pro</option>
+                    <option value="13 Pro Max" {% if posted_data.model == "13 Pro Max" %}selected{% endif %}>iPhone 13 Pro Max</option>
+                    <option value="14" {% if posted_data.model == "14" %}selected{% endif %}>iPhone 14</option>
+                    <option value="14 Pro" {% if posted_data.model == "14 Pro" %}selected{% endif %}>iPhone 14 Pro</option>
+                    <option value="14 Pro Max" {% if posted_data.model == "14 Pro Max" %}selected{% endif %}>iPhone 14 Pro Max</option>
+                    <option value="15" {% if posted_data.model == "15" %}selected{% endif %}>iPhone 15</option>
+                    <option value="15 Pro" {% if posted_data.model == "15 Pro" %}selected{% endif %}>iPhone 15 Pro</option>
+                    <option value="15 Pro Max" {% if posted_data.model == "15 Pro Max" %}selected{% endif %}>iPhone 15 Pro Max</option>
+                    <option value="16" {% if posted_data.model == "16" %}selected{% endif %}>iPhone 16</option>
+                    <option value="16 Pro" {% if posted_data.model == "16 Pro" %}selected{% endif %}>iPhone 16 Pro</option>
+                    <option value="16 Pro Max" {% if posted_data.model == "16 Pro Max" %}selected{% endif %}>iPhone 16 Pro Max</option>
+                    <option value="17 Pro Max" {% if posted_data.model == "17 Pro Max" %}selected{% endif %}>iPhone 17 Pro Max</option>
                 </select>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Memory -->
-                <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">💾 Xotira</label>
-                    <select name="memory" class="input-field" style="font-size:14px; padding:12px 16px;">
+                <div class="space-y-3">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">💾 Xotira</label>
+                    <select name="memory" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-5 font-black text-slate-900 focus:bg-white focus:border-primary outline-none transition-all shadow-inner appearance-none">
                         <option value="128">128 GB</option>
                         <option value="256" {% if posted_data.memory == '256' %}selected{% endif %}>256 GB</option>
                         <option value="512" {% if posted_data.memory == '512' %}selected{% endif %}>512 GB</option>
@@ -74,18 +81,18 @@
                 </div>
 
                 <!-- Battery -->
-                <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🔋 Batareya</label>
+                <div class="space-y-3">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">🔋 Batareya</label>
                     <input type="number" name="battery" value="{{ posted_data.battery|default:'100' }}" min="50" max="100" required
-                           class="input-field" style="font-size:14px; padding:12px 16px;" placeholder="100">
+                           class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-5 font-black text-slate-900 focus:bg-white focus:border-primary outline-none transition-all shadow-inner" placeholder="100">
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Condition -->
-                <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🛠️ Holati</label>
-                    <select name="condition" class="input-field" style="font-size:14px; padding:12px 16px;">
+                <div class="space-y-3">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">🛠️ Holati</label>
+                    <select name="condition" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-5 font-black text-slate-900 focus:bg-white focus:border-primary outline-none transition-all shadow-inner appearance-none">
                         <option value="ideal">✨ Ideal</option>
                         <option value="medium" {% if posted_data.condition == 'medium' %}selected{% endif %}>👍 Yaxshi</option>
                         <option value="bad" {% if posted_data.condition == 'bad' %}selected{% endif %}>⚠️ O'rta</option>
@@ -93,9 +100,9 @@
                 </div>
 
                 <!-- Region -->
-                <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">🌍 Region</label>
-                    <select name="region" class="input-field" style="font-size:14px; padding:12px 16px;">
+                <div class="space-y-3">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">🌍 Region</label>
+                    <select name="region" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-5 font-black text-slate-900 focus:bg-white focus:border-primary outline-none transition-all shadow-inner appearance-none">
                         <option value="ll" {% if posted_data.region == 'll' %}selected{% endif %}>LL/A (AQSh)</option>
                         <option value="za" {% if posted_data.region == 'za' %}selected{% endif %}>ZA/A (Gonkong)</option>
                         <option value="kh" {% if posted_data.region == 'kh' %}selected{% endif %}>KH/A (Koreya)</option>
@@ -106,26 +113,44 @@
             </div>
 
             <!-- Box -->
-            <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:rgba(255,255,255,0.06); border-radius:14px; border:1px solid rgba(255,255,255,0.1);">
-                <input type="checkbox" name="has_box" id="has_box" checked style="width:18px; height:18px; accent-color:white; cursor:pointer;">
-                <label for="has_box" style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.8); cursor:pointer;">📦 Karobka va hujjatlari bor</label>
-            </div>
+            <label class="flex items-center gap-4 p-6 bg-slate-50 rounded-2xl border-2 border-transparent hover:border-red-100 transition-all cursor-pointer group">
+                <div class="relative">
+                    <input type="checkbox" name="has_box" id="has_box" checked class="peer sr-only">
+                    <div class="w-12 h-6 bg-slate-200 rounded-full peer-checked:bg-primary transition-all"></div>
+                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-all shadow-sm"></div>
+                </div>
+                <span class="font-black text-slate-700 text-sm uppercase tracking-tight">📦 Karobka va hujjatlari bor</span>
+            </label>
 
-            <button type="submit" style="width:100%; background:white; color:#C0143C; padding:14px; border-radius:14px; font-weight:900; font-size:14px; border:none; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; box-shadow:0 4px 20px rgba(0,0,0,0.2);">
-                🧮 Narxni Hisoblash
+            <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-2xl text-lg shadow-2xl shadow-red-200 transition-all hover:bg-accent active:scale-95">
+                NARXNI HISOBLASH
             </button>
         </form>
     </div>
 
     <!-- Price Info -->
-    <div class="card" style="padding:16px; margin-top:12px;">
-        <div style="font-size:12px; font-weight:800; color:white; margin-bottom:8px;">💡 Narxga ta'sir qiluvchi omillar:</div>
-        <div style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.8;">
-            🔋 Batareya 80% dan past → <span style="color:#FF6B6B;">-30-50$</span><br>
-            🔋 Batareya 95%+ → <span style="color:#51CF66;">+20-40$</span><br>
-            📦 Karobkasiz → <span style="color:#FF6B6B;">-30$ dan -80$</span><br>
-            🌍 KH/CH region → <span style="color:#FF6B6B;">-10-20$</span><br>
-            💾 256GB → <span style="color:#51CF66;">+50$</span> | 512GB → <span style="color:#51CF66;">+120$</span>
+    <div class="mt-8 bg-white rounded-3xl p-8 card-shadow border border-red-50">
+        <h3 class="font-black text-slate-900 text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+            Narxga ta'sir qiluvchi omillar:
+        </h3>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400">Batareya < 80%</span>
+                <span class="text-xs font-black text-primary">-30$ dan -50$ gacha</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400">Batareya > 95%</span>
+                <span class="text-xs font-black text-green-500">+20$ dan +40$ gacha</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400">Karobkasiz</span>
+                <span class="text-xs font-black text-primary">-30$ dan -80$ gacha</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400">KH/CH region</span>
+                <span class="text-xs font-black text-primary">-10$ dan -20$ gacha</span>
+            </div>
         </div>
     </div>
 </div>

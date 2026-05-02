@@ -14,14 +14,14 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#3b82f6',
-                        secondary: '#64748b',
-                        accent: '#f59e0b',
-                        milky: '#f8fafc',
+                        primary: '#B12241',
+                        secondary: '#666666',
+                        accent: '#8e1b34',
+                        milky: '#FFFFFF',
                     },
                     borderRadius: {
-                        '2xl': '1.5rem',
-                        '3xl': '2rem',
+                        '2xl': '1.25rem',
+                        '3xl': '1.75rem',
                     }
                 }
             }
@@ -30,54 +30,53 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <style type="text/tailwindcss">
         @layer base {
             body {
-                @apply font-['Outfit'] antialiased bg-milky text-slate-900;
+                @apply font-['Outfit'] antialiased bg-white text-[#1A1A1A];
                 -webkit-tap-highlight-color: transparent;
             }
         }
         @layer components {
             .glass {
-                @apply bg-white/70 backdrop-blur-md border border-white/30;
+                @apply bg-white/90 backdrop-blur-xl border-b border-slate-100;
             }
             .card-shadow {
-                box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+                box-shadow: 0 10px 40px rgba(177, 34, 65, 0.05);
             }
             .btn-primary {
-                @apply bg-primary text-white font-bold py-3 px-6 rounded-2xl transition-all active:scale-95 shadow-lg shadow-blue-200;
+                @apply bg-primary text-white font-bold py-3.5 px-6 rounded-2xl transition-all active:scale-95 shadow-lg shadow-red-100;
             }
             .btn-secondary {
-                @apply bg-white text-slate-700 font-bold py-3 px-6 rounded-2xl border border-slate-200 transition-all active:scale-95;
+                @apply bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl border border-slate-100 transition-all active:scale-95;
             }
             .nav-link {
-                @apply flex items-center gap-2 text-sm font-semibold transition-colors hover:text-primary;
+                @apply flex items-center gap-2 text-sm font-bold transition-colors hover:text-primary text-slate-600;
             }
         }
         .hover-lift {
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .hover-lift:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
+            @apply shadow-2xl shadow-red-100/50;
         }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body class="min-h-screen">
 
     <!-- Desktop Navbar -->
-    <header class="hidden md:block sticky top-0 z-50 glass h-20 border-b border-slate-200">
+    <header class="hidden md:block sticky top-0 z-50 glass h-20">
         <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-            <a href="{% url 'phones:home' %}" class="text-2xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                MARKAB
+            <a href="{% url 'phones:home' %}" class="flex items-center gap-3">
+                <img src="{% static 'img/logo.png' %}" alt="Markab" class="h-10 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="text-2xl font-black text-primary hidden">MARKAB</span>
             </a>
             
-            <nav class="flex items-center gap-8">
+            <nav class="flex items-center gap-10">
                 <a href="{% url 'phones:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}text-primary{% endif %}">Asosiy</a>
                 <a href="{% url 'phones:price' %}" class="nav-link {% if request.resolver_match.url_name == 'price' %}text-primary{% endif %}">Narxlash</a>
                 <a href="{% url 'phones:favorites' %}" class="nav-link {% if request.resolver_match.url_name == 'favorites' %}text-primary{% endif %}">Saralanganlar</a>
@@ -85,23 +84,23 @@
                 <a href="{% url 'phones:sell' %}" class="btn-primary">Sotish</a>
             </nav>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6">
                 {% if user.is_authenticated %}
-                    {% if user.is_staff or user.is_superuser %}
-                        <a href="{% url 'phones:store_panel' %}" class="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl hover:bg-emerald-100 transition-colors">Do'kon Paneli</a>
-                    {% endif %}
-                    <span class="text-sm font-bold text-slate-500">{{ user.username }}</span>
+                    <a href="{% url 'users:profile' %}" class="text-sm font-bold text-slate-400 hover:text-primary transition-colors flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        {{ user.username }}
+                    </a>
                 {% else %}
-                    <a href="/login" class="nav-link">Kirish</a>
+                    <a href="/login" class="text-sm font-bold text-slate-400 hover:text-primary transition-colors">Kirish</a>
                 {% endif %}
             </div>
         </div>
     </header>
 
     <!-- Mobile Nav Header -->
-    <header class="md:hidden sticky top-0 z-50 glass h-16 border-b border-slate-200 px-4 flex items-center justify-between">
-        <a href="{% url 'phones:home' %}" class="text-xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            MARKAB
+    <header class="md:hidden sticky top-0 z-50 glass h-16 px-4 flex items-center justify-between">
+        <a href="{% url 'phones:home' %}" class="flex items-center">
+            <img src="{% static 'img/logo.png' %}" alt="Markab" class="h-8 w-auto">
         </a>
         <div class="flex items-center gap-3">
             <a href="{% url 'phones:favorites' %}" class="p-2 text-slate-400"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></a>
@@ -111,9 +110,10 @@
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12">
         {% if messages %}
-            <div class="mb-6 space-y-2">
+            <div class="mb-8 space-y-3">
                 {% for message in messages %}
-                    <div class="p-4 rounded-2xl {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} font-bold">
+                    <div class="p-4 rounded-2xl animate-fade-in {% if message.tags == 'success' %}bg-green-50 text-green-700 border border-green-100{% else %}bg-red-50 text-red-700 border border-red-100{% endif %} font-bold flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}"></div>
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -124,7 +124,7 @@
     </main>
 
     <!-- Bottom Nav for Mobile -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 glass h-20 border-t border-slate-200 flex items-center justify-around px-4 safe-area-bottom">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 glass h-20 border-t border-slate-100 flex items-center justify-around px-4 safe-area-bottom">
         <a href="{% url 'phones:home' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'home' %}text-primary{% else %}text-slate-400{% endif %}">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
             <span class="text-[10px] font-bold">Asosiy</span>
@@ -134,7 +134,7 @@
             <span class="text-[10px] font-bold">Narxlash</span>
         </a>
         <a href="{% url 'phones:sell' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'sell' %}text-primary{% else %}text-slate-400{% endif %}">
-            <div class="bg-primary text-white p-3 rounded-2xl shadow-lg -translate-y-6">
+            <div class="bg-primary text-white p-3.5 rounded-2xl shadow-xl shadow-red-200 -translate-y-6">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             </div>
             <span class="text-[10px] font-bold -translate-y-4">Sotish</span>
@@ -143,7 +143,7 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
             <span class="text-[10px] font-bold">Saralangan</span>
         </a>
-        <a href="/admin" class="flex flex-col items-center gap-1 text-slate-400">
+        <a href="{% url 'users:profile' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'profile' %}text-primary{% else %}text-slate-400{% endif %}">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
             <span class="text-[10px] font-bold">Profil</span>
         </a>

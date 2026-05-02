@@ -3,33 +3,33 @@
 {% block title %}Saralanganlar | Markab{% endblock %}
 
 {% block content %}
-<div class="space-y-8">
+<div class="space-y-12">
     <div class="text-center md:text-left">
-        <h1 class="text-3xl font-black text-slate-900 mb-2">Saralanganlar</h1>
-        <p class="text-slate-500 font-medium">Sizga yoqqan e'lonlar to'plami</p>
+        <h1 class="text-4xl font-black text-slate-900 mb-3 tracking-tight">Saralanganlar</h1>
+        <p class="text-slate-400 font-bold text-sm">Sizga yoqqan va saqlab qo'yilgan e'lonlar</p>
     </div>
 
     {% if favorites %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {% for fav in favorites %}
         {% with listing=fav.listing %}
         <div class="hover-lift">
             <a href="{% url 'phones:detail' listing.id %}">
-                <div class="card-shadow bg-white rounded-3xl overflow-hidden group border border-slate-100 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden bg-slate-100">
+                <div class="card-shadow bg-white rounded-[2rem] overflow-hidden group border border-red-50 h-full flex flex-col relative transition-all duration-500 hover:shadow-red-100">
+                    <div class="relative h-56 overflow-hidden bg-slate-50">
                         {% if listing.image %}
-                            <img src="{{ listing.image.url }}" class="w-full h-full object-cover">
+                            <img src="{{ listing.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         {% endif %}
-                        <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST" class="absolute top-3 right-3">
+                        <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST" class="absolute top-4 right-4 z-10">
                             {% csrf_token %}
-                            <button type="submit" class="p-2 rounded-xl bg-white/90 backdrop-blur text-red-500 shadow-sm">
+                            <button type="submit" class="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur text-primary shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-90">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.5 3c1.38 0 2.627.56 3.522 1.465a3.522 3.522 0 013.522-1.465c2.786 0 5.25 2.322 5.25 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>
                             </button>
                         </form>
                     </div>
-                    <div class="p-5 flex-1 flex flex-col">
-                        <h3 class="font-bold text-slate-900 line-clamp-1 mb-1">{{ listing.title }}</h3>
-                        <p class="text-blue-600 font-black mt-auto">{{ listing.price|floatformat:0 }} so'm</p>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="font-black text-slate-900 text-lg line-clamp-1 mb-2">{{ listing.title }}</h3>
+                        <p class="text-primary font-black text-xl tracking-tight mt-auto">{{ listing.price|floatformat:0 }} so'm</p>
                     </div>
                 </div>
             </a>
@@ -38,12 +38,14 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+    <div class="text-center py-24 bg-white rounded-[2.5rem] border-2 border-dashed border-red-100/50">
+        <div class="w-20 h-20 bg-red-50 text-primary/30 rounded-3xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
         </div>
-        <p class="text-slate-400 font-bold">Hozircha hech narsa yo'q.</p>
-        <a href="{% url 'phones:home' %}" class="text-blue-600 text-sm mt-2 inline-block">E'lonlarni ko'rish</a>
+        <p class="text-slate-400 font-black text-sm uppercase tracking-widest mb-6">Hozircha hech narsa yo'q</p>
+        <a href="{% url 'phones:home' %}" class="inline-flex items-center gap-2 bg-primary text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-red-100 transition-all hover:bg-accent active:scale-95">
+            E'LONLARNI KO'RISH <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
     </div>
     {% endif %}
 </div>

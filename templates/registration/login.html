@@ -3,38 +3,45 @@
 {% block title %}Kirish | Markab{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto py-10">
-    <div class="bg-white rounded-3xl p-8 card-shadow border border-slate-100">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-black text-slate-900 mb-2">Xush kelibsiz</h1>
-            <p class="text-slate-500 font-medium">Tizimga kirish uchun ma'lumotlarni kiriting</p>
+<div class="max-w-md mx-auto py-16 px-4">
+    <div class="bg-white rounded-[2.5rem] p-10 md:p-12 card-shadow border border-red-50">
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 bg-red-50 text-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-red-100/50">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 mb-2 tracking-tight">Xush kelibsiz</h1>
+            <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Tizimga kirish uchun ma'lumotlarni kiriting</p>
         </div>
 
-        <form method="POST" class="space-y-6">
+        <form method="POST" class="space-y-8">
             {% csrf_token %}
             
-            <div>
-                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Username</label>
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Foydalanuvchi nomi</label>
                 <input type="text" name="username" required
-                       class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                       class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-5 font-black text-slate-900 focus:bg-white focus:border-primary focus:ring-4 focus:ring-red-100/50 outline-none transition-all shadow-inner">
             </div>
 
-            <div>
-                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Parol</label>
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Parol</label>
                 <input type="password" name="password" required
-                       class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                       class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-5 font-black text-slate-900 focus:bg-white focus:border-primary focus:ring-4 focus:ring-red-100/50 outline-none transition-all shadow-inner">
             </div>
 
             {% if form.errors %}
-                <p class="text-red-500 text-sm font-bold text-center">Username yoki parol xato!</p>
+                <div class="bg-red-50 text-primary text-[10px] font-black p-4 rounded-xl text-center uppercase tracking-widest border border-red-100">
+                    Username yoki parol xato!
+                </div>
             {% endif %}
 
-            <button type="submit" class="w-full btn-primary py-5 text-lg shadow-2xl shadow-blue-200">
-                Kirish
+            <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-2xl text-lg shadow-2xl shadow-red-200 transition-all hover:bg-accent active:scale-95">
+                KIRISH
             </button>
 
-            <div class="text-center">
-                <p class="text-slate-400 text-sm">Profilingiz yo'qmi? <a href="/register" class="text-blue-600 font-bold">Ro'yxatdan o'tish</a></p>
+            <div class="text-center pt-4">
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                    Profilingiz yo'qmi? <a href="/register" class="text-primary hover:underline">Ro'yxatdan o'tish</a>
+                </p>
             </div>
         </form>
     </div>

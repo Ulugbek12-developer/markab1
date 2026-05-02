@@ -5,21 +5,21 @@
 {% block content %}
 <div class="space-y-8">
     <!-- Hero Section -->
-    <section class="relative rounded-3xl overflow-hidden bg-blue-600 h-48 md:h-64 flex flex-col items-center justify-center text-white p-6 shadow-xl">
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-        <h1 class="text-3xl md:text-5xl font-black mb-4 text-center z-10 animate-fade-in">
-            Orzuingizdagi gadjetni toping
+    <section class="relative rounded-[2.5rem] overflow-hidden bg-primary h-56 md:h-72 flex flex-col items-center justify-center text-white p-6 shadow-2xl shadow-red-100">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+        <h1 class="text-3xl md:text-5xl font-black mb-6 text-center z-10 animate-fade-in tracking-tight">
+            Premium Gadjetlar Olami
         </h1>
         <form action="{% url 'phones:home' %}" method="GET" class="relative w-full max-w-xl z-10">
             <input 
                 type="text" 
                 name="q"
-                placeholder="Telefonlar, noutbuklar qidirish..." 
-                class="w-full h-14 pl-12 pr-4 rounded-2xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-lg border-none"
+                placeholder="Qidirish..." 
+                class="w-full h-14 pl-14 pr-4 rounded-2xl text-slate-900 focus:outline-none focus:ring-4 focus:ring-white/20 shadow-2xl border-none font-medium"
                 value="{{ request.GET.q|default:'' }}"
             >
-            <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-blue-500 p-2 rounded-xl text-white hover:bg-blue-400 transition-colors">
+            <svg class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-primary p-2.5 rounded-xl text-white hover:bg-accent transition-all shadow-lg">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </button>
         </form>
@@ -27,41 +27,41 @@
 
     <!-- Branches Section -->
     <section class="mb-12">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-black text-slate-900">Bizning Filiallarimiz</h2>
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-black text-slate-900">Bizning Filiallarimiz</h2>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Branch 1 -->
-            <div class="bg-white rounded-3xl p-6 card-shadow border border-slate-100 flex flex-col h-full">
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <div class="premium-card p-8 flex flex-col h-full">
+                <div class="flex items-start gap-5 mb-6">
+                    <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </div>
                     <div>
-                        <h3 class="font-black text-slate-900 text-lg">Asosiy Filial</h3>
-                        <p class="text-sm text-slate-500 mt-1">Toshkent sh., Yunusobod tumani, Amir Temur ko'chasi 123-uy</p>
+                        <h3 class="font-black text-slate-900 text-xl">Asosiy Filial</h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Toshkent sh., Yunusobod tumani, Amir Temur ko'chasi 123-uy</p>
                     </div>
                 </div>
-                <div class="mt-auto pt-4 border-t border-slate-100">
-                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3 rounded-xl transition-colors">
+                <div class="mt-auto pt-6 border-t border-slate-50">
+                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-red-50 hover:text-primary text-slate-600 font-bold py-4 rounded-2xl transition-all">
                         Xaritada ko'rish
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </a>
                 </div>
             </div>
             <!-- Branch 2 -->
-            <div class="bg-white rounded-3xl p-6 card-shadow border border-slate-100 flex flex-col h-full">
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <div class="premium-card p-8 flex flex-col h-full">
+                <div class="flex items-start gap-5 mb-6">
+                    <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </div>
                     <div>
-                        <h3 class="font-black text-slate-900 text-lg">Chilonzor Filiali</h3>
-                        <p class="text-sm text-slate-500 mt-1">Toshkent sh., Chilonzor tumani, Muqimiy ko'chasi 45-uy</p>
+                        <h3 class="font-black text-slate-900 text-xl">Chilonzor Filiali</h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Toshkent sh., Chilonzor tumani, Muqimiy ko'chasi 45-uy</p>
                     </div>
                 </div>
-                <div class="mt-auto pt-4 border-t border-slate-100">
-                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3 rounded-xl transition-colors">
+                <div class="mt-auto pt-6 border-t border-slate-50">
+                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-red-50 hover:text-primary text-slate-600 font-bold py-4 rounded-2xl transition-all">
                         Xaritada ko'rish
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </a>
@@ -72,46 +72,48 @@
 
     <!-- Listings Feed -->
     <section>
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-black text-slate-900">Siz uchun tavsiyalar</h2>
-            <span class="text-sm text-slate-400 font-bold">{{ listings.count }} ta e'lon</span>
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-black text-slate-900">Siz uchun tavsiyalar</h2>
+            <div class="bg-red-50 text-primary px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-tighter">
+                {{ listings.count }} ta e'lon
+            </div>
         </div>
 
         {% if listings %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {% for listing in listings %}
             <div class="hover-lift">
                 <a href="{% url 'phones:detail' listing.id %}">
-                    <div class="card-shadow bg-white rounded-3xl overflow-hidden group border border-slate-100 flex flex-col h-full">
-                        <div class="relative h-48 overflow-hidden bg-slate-100">
+                    <div class="premium-card overflow-hidden group flex flex-col h-full">
+                        <div class="relative h-56 overflow-hidden bg-slate-50">
                             {% if listing.image %}
-                                <img src="{{ listing.image.url }}" alt="{{ listing.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <img src="{{ listing.image.url }}" alt="{{ listing.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             {% else %}
                                 <div class="w-full h-full flex items-center justify-center text-slate-300">Rasm yo'q</div>
                             {% endif %}
-                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-xl text-[10px] font-black text-blue-600 uppercase tracking-wider">
+                            <div class="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">
                                 {{ listing.category.name }}
                             </div>
-                            <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST" class="absolute top-3 right-3">
+                            <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST" class="absolute top-4 right-4">
                                 {% csrf_token %}
-                                <button type="submit" class="p-2 rounded-xl bg-white/90 backdrop-blur text-slate-400 hover:text-red-500 transition-colors">
+                                <button type="submit" class="p-2.5 rounded-xl bg-white/90 backdrop-blur text-slate-400 hover:text-primary transition-all shadow-lg active:scale-90">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                                 </button>
                             </form>
                         </div>
-                        <div class="p-5 flex-1 flex flex-col">
-                            <h3 class="font-bold text-slate-900 line-clamp-1 mb-1 group-hover:text-blue-600 transition-colors">
+                        <div class="p-6 flex-1 flex flex-col">
+                            <h3 class="font-black text-slate-900 line-clamp-1 mb-2 group-hover:text-primary transition-colors text-lg">
                                 {{ listing.title }}
                             </h3>
-                            <div class="flex items-center gap-1 text-slate-400 text-xs mb-4">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <div class="flex items-center gap-2 text-slate-400 text-xs font-bold mb-5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 {{ listing.location }}
                             </div>
-                            <div class="mt-auto flex items-center justify-between">
-                                <span class="text-lg font-black text-blue-600">
+                            <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50">
+                                <span class="text-xl font-black text-primary">
                                     {{ listing.price|floatformat:0 }} so'm
                                 </span>
-                                <span class="text-[10px] text-slate-400 font-bold">
+                                <span class="text-[10px] text-slate-400 font-black">
                                     {{ listing.created_at|date:"d.m.Y" }}
                                 </span>
                             </div>
@@ -122,11 +124,15 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-            <p class="text-slate-400 font-bold">Hech narsa topilmadi.</p>
-            <a href="{% url 'phones:home' %}" class="text-blue-600 text-sm mt-2 inline-block">Barcha e'lonlarni ko'rish</a>
+        <div class="text-center py-24 premium-card border-dashed border-slate-200">
+            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 00-2 2H6a2 2 0 00-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+            </div>
+            <p class="text-slate-400 font-black text-lg">Hozircha hech narsa yo'q</p>
+            <a href="{% url 'phones:home' %}" class="text-primary font-bold text-sm mt-4 inline-block hover:underline">Barcha e'lonlarni ko'rish</a>
         </div>
         {% endif %}
+    </section>
     </section>
 </div>
 {% endblock %}

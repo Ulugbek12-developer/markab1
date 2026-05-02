@@ -3,19 +3,22 @@
 {% block title %}Ro'yxatdan o'tish | Markab{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto py-10">
-    <div class="bg-white rounded-3xl p-8 card-shadow border border-slate-100">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-black text-slate-900 mb-2">Yangi Profil</h1>
-            <p class="text-slate-500 font-medium">Platformamizga qo'shiling</p>
+<div class="max-w-md mx-auto py-16 px-4">
+    <div class="bg-white rounded-[2.5rem] p-10 md:p-12 card-shadow border border-red-50">
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 bg-red-50 text-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-red-100/50">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 mb-2 tracking-tight">Yangi Profil</h1>
+            <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Platformamizga qo'shiling</p>
         </div>
 
-        <form method="POST" class="space-y-4">
+        <form method="POST" class="space-y-6">
             {% csrf_token %}
             
             {% for field in form %}
-            <div>
-                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
                     {% if field.name == 'username' %}Foydalanuvchi nomi
                     {% elif 'password' in field.name and '2' in field.name or 'confirmation' in field.name %}Parolni tasdiqlang
                     {% elif 'password' in field.name %}Parol
@@ -23,38 +26,42 @@
                 </label>
                 {{ field }}
                 {% if field.errors %}
-                <p class="text-xs text-red-500 font-bold mt-1 ml-1">{{ field.errors.0 }}</p>
+                <p class="text-[10px] text-primary font-black mt-1 ml-1 uppercase tracking-widest">{{ field.errors.0 }}</p>
                 {% endif %}
             </div>
             {% endfor %}
 
-
-            <button type="submit" class="w-full btn-primary py-5 text-lg shadow-2xl shadow-blue-200 mt-6">
-                Ro'yxatdan o'tish
+            <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-2xl text-lg shadow-2xl shadow-red-200 transition-all hover:bg-accent active:scale-95 mt-4">
+                RO'YXATDAN O'TISH
             </button>
 
-            <div class="text-center mt-6">
-                <p class="text-slate-400 text-sm">Profilingiz bormi? <a href="/login" class="text-blue-600 font-bold">Kirish</a></p>
+            <div class="text-center pt-6">
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                    Profilingiz bormi? <a href="/login" class="text-primary hover:underline">Kirish</a>
+                </p>
             </div>
         </form>
     </div>
 </div>
 
 <style>
-    /* Styling Django forms */
-    input[type="text"], input[type="password"] {
+    /* Styling Django forms to match premium theme */
+    input[type="text"], input[type="password"], input[type="email"], input[type="tel"] {
         width: 100%;
         background-color: #f8fafc; /* bg-slate-50 */
-        border: 1px solid #e2e8f0; /* border-slate-200 */
+        border: 2px solid transparent;
         border-radius: 1rem; /* rounded-2xl */
-        padding: 1rem 1rem; /* px-4 py-4 */
-        font-weight: 700; /* font-bold */
-        color: #334155; /* text-slate-700 */
+        padding: 1.25rem 1.5rem; /* px-6 py-5 */
+        font-weight: 900; /* font-black */
+        color: #0f172a; /* text-slate-900 */
         transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
     }
-    input[type="text"]:focus, input[type="password"]:focus {
+    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
         outline: none;
-        box-shadow: 0 0 0 2px #3b82f6; /* focus:ring-2 focus:ring-blue-500 */
+        background-color: #ffffff;
+        border-color: #B12241; /* border-primary */
+        box-shadow: 0 0 0 4px rgba(177, 34, 65, 0.1);
     }
 </style>
 {% endblock %}

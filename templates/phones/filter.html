@@ -1,94 +1,156 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Katalog — Markab Electronics{% endblock %}
+{% block title %}Katalog | Markab{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto px-4 py-6">
+<div class="max-w-6xl mx-auto px-4 py-12">
 
     <!-- Header -->
-    <div class="mb-6 animate-fade-in">
-        <h1 style="font-size:22px; font-weight:900; color:white; margin-bottom:4px;">📋 Katalog</h1>
-        <p style="font-size:12px; color:rgba(255,255,255,0.5);">{{ phones|length }} ta mahsulot</p>
-    </div>
-
-    <!-- Quick Filter (horizontal scroll) -->
-    <div class="flex gap-2 overflow-x-auto pb-3 scrollbar-hide mb-4 animate-fade-in">
-        <a href="{% url 'phones:filter' %}" style="flex-shrink:0; padding:8px 16px; border-radius:12px; font-size:11px; font-weight:700; text-decoration:none; {% if not request.GET.model %}background:white; color:#C0143C;{% else %}background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.15);{% endif %}">
-            Barchasi
-        </a>
-        {% for val, label in filter_choices.models %}
-        <a href="{% url 'phones:filter' %}?model={{ val }}" style="flex-shrink:0; padding:8px 16px; border-radius:12px; font-size:11px; font-weight:700; text-decoration:none; white-space:nowrap; {% if request.GET.model == val %}background:white; color:#C0143C;{% else %}background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.15);{% endif %}">
-            {{ label }}
-        </a>
-        {% endfor %}
-    </div>
-
-    <!-- Sort & Filter Row -->
-    <div class="card p-4 mb-4 animate-fade-in">
-        <form method="GET" action="{% url 'phones:filter' %}" class="space-y-3">
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">💾 Xotira</label>
-                    <select name="memory" class="input-field" style="padding:10px 14px; font-size:13px;">
-                        <option value="">Barchasi</option>
-                        <option value="64" {% if request.GET.memory == '64' %}selected{% endif %}>64 GB</option>
-                        <option value="128" {% if request.GET.memory == '128' %}selected{% endif %}>128 GB</option>
-                        <option value="256" {% if request.GET.memory == '256' %}selected{% endif %}>256 GB</option>
-                        <option value="512" {% if request.GET.memory == '512' %}selected{% endif %}>512 GB</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">📊 Saralash</label>
-                    <select name="sort" class="input-field" style="padding:10px 14px; font-size:13px;">
-                        <option value="">Yangi</option>
-                        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Arzon →</option>
-                        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Qimmat →</option>
-                    </select>
-                </div>
-            </div>
-            <button type="submit" style="width:100%; background:white; color:#C0143C; padding:10px; border-radius:12px; font-size:12px; font-weight:800; border:none; cursor:pointer;">
-                🔍 Qidirish
-            </button>
-        </form>
-    </div>
-
-    <!-- Products Grid -->
-    <div class="grid grid-cols-2 gap-3">
-        {% for phone in phones %}
-        <a href="{% url 'phones:detail' phone.pk %}" class="block animate-fade-in" style="text-decoration:none;">
-            <div style="background:rgba(255,255,255,0.1); border-radius:18px; border:1px solid rgba(255,255,255,0.12); overflow:hidden; transition:all 0.3s;">
-                <div style="aspect-ratio:1/1; background:rgba(0,0,0,0.12); overflow:hidden; position:relative;">
-                    {% if phone.image %}
-                    <img src="{{ phone.image.url }}" alt="{{ phone.get_model_name_display }}"
-                         style="width:100%; height:100%; object-fit:cover;">
-                    {% else %}
-                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-                        <span style="font-size:40px; opacity:0.3;">📱</span>
-                    </div>
-                    {% endif %}
-                    {% if phone.is_booked %}
-                    <div style="position:absolute; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">
-                        <span style="background:white; padding:3px 8px; border-radius:6px; font-size:9px; font-weight:800; color:#333;">🔒 Bron</span>
-                    </div>
-                    {% endif %}
-                </div>
-                <div style="padding:10px 12px;">
-                    <div style="font-size:12px; font-weight:800; color:white; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ phone.get_model_name_display }}</div>
-                    <div style="font-size:10px; color:rgba(255,255,255,0.45); margin-bottom:4px;">{{ phone.memory }}GB · 🔋{{ phone.battery_health }}%</div>
-                    <div style="font-size:14px; font-weight:900; color:white;">{{ phone.price|floatformat:0 }} <span style="font-size:9px; color:rgba(255,255,255,0.45);">so'm</span></div>
-                </div>
-            </div>
-        </a>
-        {% empty %}
-        <div class="col-span-2 py-16 text-center">
-            <div style="font-size:48px; margin-bottom:12px;">🔍</div>
-            <p style="color:rgba(255,255,255,0.7); font-weight:700;">Topilmadi</p>
-            <a href="{% url 'phones:filter' %}" style="display:inline-block; margin-top:12px; background:white; color:#C0143C; padding:10px 24px; border-radius:12px; font-size:12px; font-weight:800; text-decoration:none;">
-                Filtrni tozalash
-            </a>
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 px-2">
+        <div>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-2">KATALOG</h1>
+            <p class="text-slate-400 font-bold text-xs uppercase tracking-[0.2em]">{{ phones|length }} TA MAHSULOT TOPILDI</p>
         </div>
-        {% endfor %}
+        
+        <!-- Sort & Filter Toggle (Desktop) -->
+        <div class="hidden md:flex gap-4">
+            <!-- We can add more desktop filters here if needed -->
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <!-- Sidebar Filters -->
+        <div class="lg:col-span-1 space-y-8">
+            <div class="bg-white rounded-[2rem] p-8 card-shadow border border-red-50">
+                <form method="GET" action="{% url 'phones:filter' %}" class="space-y-8">
+                    <!-- Model Selection -->
+                    <div class="space-y-4">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Modellar</label>
+                        <div class="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                            <a href="{% url 'phones:filter' %}" 
+                               class="flex items-center justify-between px-5 py-3 rounded-xl font-black text-sm transition-all {% if not request.GET.model %}bg-primary text-white shadow-lg shadow-red-100{% else %}bg-slate-50 text-slate-500 hover:bg-red-50 hover:text-primary{% endif %}">
+                                <span>Barchasi</span>
+                                {% if not request.GET.model %}<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>{% endif %}
+                            </a>
+                            {% for val, label in filter_choices.models %}
+                            <a href="{% url 'phones:filter' %}?model={{ val }}{% if request.GET.memory %}&memory={{ request.GET.memory }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" 
+                               class="flex items-center justify-between px-5 py-3 rounded-xl font-black text-sm transition-all {% if request.GET.model == val %}bg-primary text-white shadow-lg shadow-red-100{% else %}bg-slate-50 text-slate-500 hover:bg-red-50 hover:text-primary{% endif %}">
+                                <span>{{ label }}</span>
+                                {% if request.GET.model == val %}<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>{% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-50">
+
+                    <!-- Memory Selection -->
+                    <div class="space-y-4">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Xotira</label>
+                        <select name="memory" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-4 font-black text-slate-900 focus:bg-white focus:border-primary outline-none transition-all shadow-inner appearance-none">
+                            <option value="">Barchasi</option>
+                            <option value="64" {% if request.GET.memory == '64' %}selected{% endif %}>64 GB</option>
+                            <option value="128" {% if request.GET.memory == '128' %}selected{% endif %}>128 GB</option>
+                            <option value="256" {% if request.GET.memory == '256' %}selected{% endif %}>256 GB</option>
+                            <option value="512" {% if request.GET.memory == '512' %}selected{% endif %}>512 GB</option>
+                            <option value="1024" {% if request.GET.memory == '1024' %}selected{% endif %}>1 TB</option>
+                        </select>
+                    </div>
+
+                    <!-- Sort Selection -->
+                    <div class="space-y-4">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Saralash</label>
+                        <select name="sort" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-6 py-4 font-black text-slate-900 focus:bg-white focus:border-primary outline-none transition-all shadow-inner appearance-none">
+                            <option value="">Yangi e'lonlar</option>
+                            <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Arzonroq</option>
+                            <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Qimmatroq</option>
+                        </select>
+                    </div>
+
+                    {% if request.GET.model %}
+                        <input type="hidden" name="model" value="{{ request.GET.model }}">
+                    {% endif %}
+
+                    <button type="submit" class="w-full bg-primary text-white font-black py-5 rounded-2xl shadow-xl shadow-red-100 transition-all hover:bg-accent active:scale-95">
+                        FILTRNI QO'LLASH
+                    </button>
+                    
+                    {% if request.GET.model or request.GET.memory or request.GET.sort %}
+                    <a href="{% url 'phones:filter' %}" class="block text-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-primary transition-colors">
+                        Filtrni tozalash
+                    </a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <!-- Products List -->
+        <div class="lg:col-span-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                {% for phone in phones %}
+                <div class="hover-lift">
+                    <a href="{% url 'phones:detail' phone.pk %}">
+                        <div class="card-shadow bg-white rounded-[2rem] overflow-hidden group border border-red-50 h-full flex flex-col relative transition-all duration-500 hover:shadow-red-100">
+                            <div class="relative h-64 overflow-hidden bg-slate-50">
+                                {% if phone.image %}
+                                    <img src="{{ phone.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-300">
+                                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    </div>
+                                {% endif %}
+                                {% if phone.is_booked %}
+                                <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center">
+                                    <span class="bg-white text-slate-900 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                                        Band qilingan
+                                    </span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="p-8 flex-1 flex flex-col">
+                                <div class="text-[10px] font-black text-primary uppercase tracking-widest mb-1">{{ phone.get_model_name_display }}</div>
+                                <h3 class="font-black text-slate-900 text-xl line-clamp-1 mb-2">{{ phone.title|default:phone.get_model_name_display }}</h3>
+                                <div class="flex items-center gap-3 mb-6">
+                                    <span class="bg-slate-50 text-slate-500 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-100">{{ phone.memory }}GB</span>
+                                    <span class="bg-red-50 text-primary px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-red-100">🔋 {{ phone.battery_health }}%</span>
+                                </div>
+                                <p class="text-primary font-black text-2xl tracking-tight mt-auto">{{ phone.price|floatformat:0 }} so'm</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-24 text-center bg-white rounded-[3rem] border-2 border-dashed border-red-100/50">
+                    <div class="w-24 h-24 bg-red-50 text-primary/30 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-4 tracking-tight">Mahsulot topilmadi</h3>
+                    <p class="text-slate-400 font-bold text-sm mb-8">Boshqa filtrlar yordamida qidirib ko'ring yoki barcha mahsulotlarni ko'ring</p>
+                    <a href="{% url 'phones:filter' %}" class="inline-flex items-center gap-3 bg-primary text-white font-black px-10 py-5 rounded-2xl shadow-2xl shadow-red-100 transition-all hover:bg-accent active:scale-95">
+                        FILTRNI TOZALASH
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #F1F5F9;
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #E2E8F0;
+    }
+</style>
 {% endblock %}
