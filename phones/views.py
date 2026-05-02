@@ -127,6 +127,26 @@ class SellView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.seller = self.request.user
+        listing = form.save()
+        
+        # Bot notification
+        load_dotenv()
+        bot_token = os.environ.get('BOT_TOKEN')
+        admin_id = os.environ.get('ADMIN_ID')
+        if bot_token and admin_id:
+            text = f"🆕 <b>Yangi e'lon (Veb-saytdan)!</b>\n\n"
+            text += f"👤 User: {self.request.user.username}\n"
+            text += f"📱 Telefon: {listing.title}\n"
+            text += f"💰 Narxi: {listing.price} so'm\n"
+            text += f"📞 Aloqa: {listing.seller_phone}"
+            try:
+                requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={
+                    "chat_id": admin_id,
+                    "text": text,
+                    "parse_mode": "HTML"
+                })
+            except: pass
+
         messages.success(self.request, "E'loningiz qabul qilindi va tekshiruvdan so'ng saytga chiqadi!")
         return super().form_valid(form)
 

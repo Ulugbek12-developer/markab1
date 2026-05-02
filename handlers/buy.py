@@ -2,7 +2,11 @@ from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from states import BuyPhone
-from keyboards import get_iphone_models_keyboard, get_branches_keyboard, get_main_menu, get_confirm_keyboard, get_back_keyboard, get_payment_type_keyboard, get_location_keyboard, get_installment_plan_keyboard
+from keyboards import (
+    get_iphone_models_keyboard, get_branches_keyboard, get_main_menu, 
+    get_confirm_keyboard, get_back_keyboard, get_payment_type_keyboard, 
+    get_location_keyboard, get_installment_plan_keyboard, get_choice_keyboard
+)
 from database import search_ads, get_user_language, get_all_branches
 from config import config
 from strings import STRINGS
@@ -12,15 +16,27 @@ router = Router()
 @router.message(F.text.in_(["🛍 Telefon sotib olish", "🛍 Купить телефон"]))
 async def start_buy(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
-    await state.set_state(BuyPhone.model)
-    await message.answer(STRINGS[lang]['prompt_buy_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
+    await state.set_state(BuyPhone.choice)
+    await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'buy'))
+
+@router.message(BuyPhone.choice)
+async def process_choice(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text == STRINGS[lang]['btn_continue_bot']:
+        await state.set_state(BuyPhone.model)
+        await message.answer(STRINGS[lang]['prompt_buy_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
+    elif message.text == STRINGS[lang]['btn_back']:
+        await state.clear()
+        await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
+    else:
+        await message.answer(STRINGS[lang]['prompt_choice'])
 
 @router.message(BuyPhone.model, F.text)
 async def process_buy_model(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
-    if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
-        await state.clear()
-        await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
+    if message.text == STRINGS[lang]['btn_back']:
+        await state.set_state(BuyPhone.choice)
+        await message.answer(STRINGS[lang]['prompt_choice'], reply_markup=get_choice_keyboard(lang, 'buy'))
         return
         
     model = message.text
@@ -193,6 +209,7 @@ async def process_buy_confirm(message: Message, state: FSMContext):
             )
         
         if config.ADMIN_ID:
+            from keyboards import get_order_admin_keyboard
             await message.bot.send_message(
                 config.ADMIN_ID, 
                 f"🛍 <b>YANGI ZAKAZ!</b>\n\n"
@@ -201,7 +218,8 @@ async def process_buy_confirm(message: Message, state: FSMContext):
                 f"Model: {data['model']}\n"
                 f"Filial: {data.get('branch')}\n"
                 f"To'lov: {payment_info}",
-                parse_mode="HTML"
+                parse_mode="HTML",
+                reply_markup=get_order_admin_keyboard(data['selected_id'], lang)
             )
         
         await message.answer(s['buy_success'], parse_mode="HTML", reply_markup=get_main_menu(lang))

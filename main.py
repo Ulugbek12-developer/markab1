@@ -17,8 +17,11 @@ async def main():
     # Initialize DB
     await init_db()
 
-    # Initialize Bot and Dispatcher
-    bot = Bot(token=config.BOT_TOKEN.get_secret_value())
+    # Initialize Bot and Dispatcher with Proxy for PythonAnywhere Free accounts
+    from aiogram.client.session.aiohttp import AiohttpSession
+    session = AiohttpSession(proxy="http://proxy.server:3128")
+    
+    bot = Bot(token=config.BOT_TOKEN.get_secret_value(), session=session)
     dp = Dispatcher(storage=MemoryStorage())
 
     me = await bot.get_me()
@@ -53,13 +56,13 @@ async def main():
     # Auto-restart polling on network errors
     while True:
         try:
-            print("⏳ Polling boshlanmoqda...")
+            print("Polling boshlanmoqda...")
             await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
         except Exception as e:
             import traceback
-            print(f"❌ Polling xatosi: {e}")
+            print(f"Polling xatosi: {e}")
             traceback.print_exc()
-            print("🔄 5 soniyadan so'ng qayta urinib ko'ramiz...")
+            print("5 soniyadan so'ng qayta urinib ko'ramiz...")
             await asyncio.sleep(5)
             
 if __name__ == "__main__":
@@ -69,5 +72,5 @@ if __name__ == "__main__":
         print("Bot stopped")
     except Exception as e:
         import traceback
-        print(f"❌ XATO: {e}")
+        print(f"XATO: {e}")
         traceback.print_exc()

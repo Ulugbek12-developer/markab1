@@ -1,10 +1,15 @@
 from aiogram.fsm.state import State, StatesGroup
 
 class SellPhone(StatesGroup):
+    choice = State()
     model = State()
+    color = State()
     photos = State()
     memory = State()
     battery = State()
+    cycles = State()
+    replaced_parts = State()
+    defects = State()
     condition = State()
     region = State()
     box = State()
@@ -13,6 +18,7 @@ class SellPhone(StatesGroup):
     confirm = State()
 
 class BuyPhone(StatesGroup):
+    choice = State()
     model = State()
     branch = State()
     select_id = State()
@@ -22,10 +28,15 @@ class BuyPhone(StatesGroup):
     confirm = State()
 
 class PricePhone(StatesGroup):
+    choice = State()
     model = State()
+    color = State()
     photos = State()
     battery = State()
+    cycles = State()
     memory = State()
+    replaced_parts = State()
+    defects = State()
     condition = State()
     region = State()
     manual_region = State()

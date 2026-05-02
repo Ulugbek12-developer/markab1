@@ -3,6 +3,28 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from strings import STRINGS
 
+IPHONE_COLORS = {
+    "iPhone 11": ["Black", "White", "Green", "Yellow", "Purple", "Red"],
+    "iPhone 11 Pro": ["Midnight Green", "Space Gray", "Silver", "Gold"],
+    "iPhone 11 Pro Max": ["Midnight Green", "Space Gray", "Silver", "Gold"],
+    "iPhone 12": ["Black", "White", "Red", "Green", "Blue", "Purple"],
+    "iPhone 12 Pro": ["Graphite", "Silver", "Gold", "Pacific Blue"],
+    "iPhone 12 Pro Max": ["Graphite", "Silver", "Gold", "Pacific Blue"],
+    "iPhone 13": ["Starlight", "Midnight", "Blue", "Pink", "Red", "Green"],
+    "iPhone 13 Pro": ["Graphite", "Silver", "Gold", "Sierra Blue", "Alpine Green"],
+    "iPhone 13 Pro Max": ["Graphite", "Silver", "Gold", "Sierra Blue", "Alpine Green"],
+    "iPhone 14": ["Midnight", "Starlight", "Blue", "Purple", "Red", "Yellow"],
+    "iPhone 14 Pro": ["Space Black", "Silver", "Gold", "Deep Purple"],
+    "iPhone 14 Pro Max": ["Space Black", "Silver", "Gold", "Deep Purple"],
+    "iPhone 15": ["Black", "Blue", "Green", "Yellow", "Pink"],
+    "iPhone 15 Pro": ["Black Titanium", "White Titanium", "Blue Titanium", "Natural Titanium"],
+    "iPhone 15 Pro Max": ["Black Titanium", "White Titanium", "Blue Titanium", "Natural Titanium"],
+    "iPhone 16": ["Black", "White", "Pink", "Teal", "Ultramarine"],
+    "iPhone 16 Pro": ["Black Titanium", "White Titanium", "Natural Titanium", "Desert Titanium"],
+    "iPhone 16 Pro Max": ["Black Titanium", "White Titanium", "Natural Titanium", "Desert Titanium"],
+    "iPhone 17 Pro Max": ["Orange", "Blue", "Silver"]
+}
+
 def get_language_keyboard():
     builder = InlineKeyboardBuilder()
     builder.row(
@@ -19,22 +41,34 @@ def get_subscription_keyboard(lang):
 
 def get_main_menu(lang):
     s = STRINGS[lang]
-    # PythonAnywhere URL from settings
-    base_url = "https://markab2.pythonanywhere.com"
     builder = ReplyKeyboardBuilder()
     builder.row(
-        KeyboardButton(text=s['btn_sell'], web_app=WebAppInfo(url=f"{base_url}/sell/")), 
-        KeyboardButton(text=s['btn_buy'], web_app=WebAppInfo(url=f"{base_url}/"))
+        KeyboardButton(text=s['btn_sell']), 
+        KeyboardButton(text=s['btn_buy'])
     )
     builder.row(
-        KeyboardButton(text=s['btn_price'], web_app=WebAppInfo(url=f"{base_url}/price/")), 
+        KeyboardButton(text=s['btn_price']), 
         KeyboardButton(text=s['btn_branches'])
     )
     builder.row(
-        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url=base_url)),
+        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markab2.pythonanywhere.com")),
         KeyboardButton(text=s['btn_help'])
     )
     builder.row(KeyboardButton(text=s['btn_admin']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_choice_keyboard(lang, action_type):
+    s = STRINGS[lang]
+    base_url = "https://markab2.pythonanywhere.com"
+    urls = {
+        'sell': f"{base_url}/sell/",
+        'buy': f"{base_url}/",
+        'price': f"{base_url}/price/"
+    }
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text=s['btn_continue_bot']))
+    builder.row(KeyboardButton(text=s['btn_open_miniapp'], web_app=WebAppInfo(url=urls.get(action_type, base_url))))
+    builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
 def get_admin_panel_keyboard(lang):
@@ -51,18 +85,80 @@ def get_admin_branch_mgmt_keyboard(lang):
     builder.row(KeyboardButton(text=s['btn_back_to_admin']))
     return builder.as_markup(resize_keyboard=True)
 
+REPLACED_PARTS = [
+    ("batareya", "🔋 Batareya"),
+    ("ekran", "📱 Ekran"),
+    ("orqa_qopqoq", "🔲 Orqa qopqoq"),
+    ("kamera", "📷 Kamera"),
+    ("dinamik", "🔊 Dinamik"),
+    ("tugmalar", "⚙️ Tugmalar"),
+    ("boshqa", "🔧 Boshqa"),
+    ("almashtirilmagan", "✅ Almashtirilmagan"),
+]
+
+DEFECTS_LIST = [
+    ("face_id", "🔓 Face ID"),
+    ("true_tone", "🎨 True Tone"),
+    ("old_kamera", "📷 Old kamera"),
+    ("asosiy_kamera", "📸 Asosiy kamera"),
+    ("dinamiklar", "🔊 Dinamiklar"),
+    ("mikrofon", "🎤 Mikrofon"),
+    ("vibro", "📳 Vibro"),
+    ("wifi_bt", "📶 Wi-Fi / Bluetooth"),
+    ("gps", "📍 GPS"),
+    ("nfc", "💳 NFC / Apple Pay"),
+    ("hammasi_ishlaydi", "✅ Hammasi ishlaydi"),
+]
+
+def get_replaced_parts_keyboard(selected_keys, lang='uz'):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    
+    for key, label in REPLACED_PARTS:
+        display_label = f"✅ {label}" if key in selected_keys else label
+        builder.add(KeyboardButton(text=display_label))
+    
+    builder.adjust(2)
+    builder.row(KeyboardButton(text=s['btn_continue'] if lang == 'uz' else "➡️ Продолжить"))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_defects_keyboard(selected_keys, lang='uz'):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    
+    for key, label in DEFECTS_LIST:
+        display_label = f"✅ {label}" if key in selected_keys else label
+        builder.add(KeyboardButton(text=display_label))
+    
+    builder.adjust(2)
+    builder.row(KeyboardButton(text=s['btn_continue'] if lang == 'uz' else "➡️ Продолжить"))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_yes_no_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text=s['btn_yes']), KeyboardButton(text=s['btn_no']))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+
 def get_iphone_models_keyboard(lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
-    models = ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max",
-              "iPhone 12", "iPhone 12 Pro", "iPhone 12 Pro Max",
-              "iPhone 13", "iPhone 13 Pro", "iPhone 13 Pro Max",
-              "iPhone 14", "iPhone 14 Pro", "iPhone 14 Pro Max",
-              "iPhone 15", "iPhone 15 Pro", "iPhone 15 Pro Max",
-              "iPhone 16", "iPhone 16 Pro", "iPhone 16 Pro Max",
-              "iPhone 17", "iPhone 17 Pro", "iPhone 17 Pro Max"]
+    models = sorted(list(IPHONE_COLORS.keys()), reverse=True)
     for i in range(0, len(models), 3):
         builder.row(*[KeyboardButton(text=m) for m in models[i:i+3]])
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_color_keyboard(model, lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    colors = IPHONE_COLORS.get(model, ["Black", "White", "Gold", "Silver"])
+    for i in range(0, len(colors), 2):
+        builder.row(*[KeyboardButton(text=c) for c in colors[i:i+2]])
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
@@ -78,11 +174,11 @@ def get_condition_keyboard(lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
     if lang == 'uz':
-        builder.row(KeyboardButton(text="Yangi"), KeyboardButton(text="Ideal"))
-        builder.row(KeyboardButton(text="Yaxshi"), KeyboardButton(text="Ta'mir talab"))
+        builder.row(KeyboardButton(text="🆕 Yangi (Upakovka)"), KeyboardButton(text="✨ Ideal"))
+        builder.row(KeyboardButton(text="👍 Yaxshi"), KeyboardButton(text="🛠 Ta'mir talab"))
     else:
-        builder.row(KeyboardButton(text="Новый"), KeyboardButton(text="Идеал"))
-        builder.row(KeyboardButton(text="Хороший"), KeyboardButton(text="Требует ремонта"))
+        builder.row(KeyboardButton(text="🆕 Новый"), KeyboardButton(text="✨ Идеал"))
+        builder.row(KeyboardButton(text="👍 Хороший"), KeyboardButton(text="🛠 Требует ремонта"))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
@@ -99,9 +195,9 @@ def get_box_keyboard(lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
     if lang == 'uz':
-        builder.row(KeyboardButton(text="📦 Karobka hujjati bor"), KeyboardButton(text="🚫 Karobka hujjati yo'q"))
+        builder.row(KeyboardButton(text="📦 Bor"), KeyboardButton(text="🚫 Yo'q"))
     else:
-        builder.row(KeyboardButton(text="📦 Коробка/Документы есть"), KeyboardButton(text="🚫 Коробки/Документов нет"))
+        builder.row(KeyboardButton(text="📦 Есть"), KeyboardButton(text="🚫 Нет"))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
@@ -122,6 +218,19 @@ def get_continue_keyboard(lang):
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
+def get_confirm_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text=s['btn_confirm']), KeyboardButton(text=s['btn_cancel']))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_back_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
 def get_branches_keyboard(branches, lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
@@ -135,19 +244,6 @@ def get_contact_keyboard(lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
     builder.row(KeyboardButton(text=s['btn_share_contact'], request_contact=True))
-    builder.row(KeyboardButton(text=s['btn_back']))
-    return builder.as_markup(resize_keyboard=True)
-
-def get_confirm_keyboard(lang):
-    s = STRINGS[lang]
-    builder = ReplyKeyboardBuilder()
-    builder.row(KeyboardButton(text=s['btn_confirm']), KeyboardButton(text=s['btn_cancel']))
-    builder.row(KeyboardButton(text=s['btn_back']))
-    return builder.as_markup(resize_keyboard=True)
-
-def get_back_keyboard(lang):
-    s = STRINGS[lang]
-    builder = ReplyKeyboardBuilder()
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
@@ -200,3 +296,12 @@ def get_installment_plan_keyboard(m3, m6, m12, lang):
     builder.row(KeyboardButton(text=f"12 oy - {m12:,.0f} so'm"))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
+
+def get_order_admin_keyboard(listing_id: int, lang):
+    s = STRINGS[lang]
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="✅ Bron qilish (48s)", callback_data=f"book_{listing_id}"),
+        InlineKeyboardButton(text="❌ Rad etish", callback_data=f"rejectorder_{listing_id}")
+    )
+    return builder.as_markup()

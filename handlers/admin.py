@@ -85,11 +85,15 @@ async def admin_add_price(message: Message, state: FSMContext):
 
 @router.message(AdminAddProduct.photos, F.photo)
 async def admin_add_photos_photo(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
     data = await state.get_data()
     photos = data.get('photos', [])
     if len(photos) < 3:
         photos.append(message.photo[-1].file_id)
         await state.update_data(photos=photos)
+        
+    msg = f"✅ Rasm qabul qilindi ({len(photos)}/3).\nYana yuboring yoki 'Davom etish' tugmasini bosing." if lang == 'uz' else f"✅ Фото принято ({len(photos)}/3).\nОтправьте еще или нажмите 'Продолжить'."
+    await message.answer(msg, parse_mode="HTML")
 
 @router.message(AdminAddProduct.photos, F.text)
 async def admin_add_photos_text(message: Message, state: FSMContext):
@@ -102,7 +106,7 @@ async def admin_add_photos_text(message: Message, state: FSMContext):
     if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
         data = await state.get_data()
         if not data.get('photos'):
-            await message.answer(STRINGS[lang]['prompt_admin_photos'])
+            await message.answer(STRINGS[lang]['prompt_admin_photos'], parse_mode="HTML")
             return
             
         data['status'] = 'approved' # Direct approve
@@ -112,13 +116,9 @@ async def admin_add_photos_text(message: Message, state: FSMContext):
     
     # Sync to Django (Web App)
     try:
-        from phones.models import Phone
         from asgiref.sync import sync_to_async
         import os
         from core.settings import MEDIA_ROOT
-        
-        log_msg = f"DEBUG: Syncing {data.get('model')} to Web App...\n"
-        with open('sync_debug.log', 'a') as f: f.write(log_msg)
         
         # Convert battery to int safely
         battery_str = str(data.get('battery', '100')).replace('%', '').strip()
@@ -151,30 +151,33 @@ async def admin_add_photos_text(message: Message, state: FSMContext):
             photo_id = data['photos'][0]
             file = await message.bot.get_file(photo_id)
             local_filename = f"{photo_id}.jpg"
-            local_full_path = os.path.join(MEDIA_ROOT, 'phones', local_filename)
+            local_full_path = os.path.join(MEDIA_ROOT, 'listings', local_filename)
             os.makedirs(os.path.dirname(local_full_path), exist_ok=True)
             await message.bot.download_file(file.file_path, local_full_path)
-            image_rel_path = f"phones/{local_filename}"
+            image_rel_path = f"listings/{local_filename}"
 
         # Map condition to Django choices
         bot_cond = str(data.get('condition', '')).lower()
         if 'ideal' in bot_cond or 'yangi' in bot_cond: django_cond = 'ideal'
-        elif 'yaxshi' in bot_cond or 'medium' in bot_cond: django_cond = 'medium'
+        elif 'yaxshi' in bot_cond or 'medium' in bot_cond: django_cond = 'good'
         else: django_cond = 'bad'
 
-        phone_obj = await sync_to_async(Phone.objects.create)(
+        from phones.models import Listing, Category
+        apple_cat = await sync_to_async(Category.objects.filter(name__icontains='iPhone').first)()
+        
+        listing_obj = await sync_to_async(Listing.objects.create)(
+            title=f"iPhone {model_name} {memory}",
             model_name=model_name,
             memory=memory,
             battery_health=battery_val,
-            color='Noma\'lum',
             price=price_val,
             condition=django_cond,
             is_approved=True,
             seller_phone=str(data.get('contact', '')),
-            image=image_rel_path
+            image=image_rel_path,
+            category=apple_cat
         )
-        with open('sync_debug.log', 'a') as f: f.write(f"DEBUG: SUCCESS! Product created in Django with ID: {phone_obj.id}\n")
-        with open('sync_debug.log', 'a') as f: f.write(f"DEBUG: Sync Bot -> Web App success! ID: {phone_obj.id}\n")
+        with open('sync_debug.log', 'a') as f: f.write(f"DEBUG: SUCCESS! Product created in Django with ID: {listing_obj.id}\n")
     except Exception as e:
         import traceback
         err_msg = f"DEBUG: Sync Bot -> Web App error: {e}\n{traceback.format_exc()}\n"
@@ -187,7 +190,7 @@ async def admin_add_photos_text(message: Message, state: FSMContext):
 async def admin_exit(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     await state.clear()
-    await message.answer(STRINGS[lang]['msg_cancelled'], reply_markup=keyboards.get_main_menu(lang))
+    await message.answer(STRINGS[lang]['msg_cancelled'], parse_mode="HTML", reply_markup=keyboards.get_main_menu(lang))
 
 @router.message(F.text.in_(["🏢 Filiallarni boshqarish", "🏢 Управление филиалами"]))
 async def admin_branch_mgmt(message: Message, state: FSMContext):
@@ -281,16 +284,19 @@ async def approve_ad(callback: CallbackQuery, state: FSMContext):
     # Save to Django DB
     try:
         from asgiref.sync import sync_to_async
-        from phones.models import Phone
-        await sync_to_async(Phone.objects.create)(
+        from phones.models import Listing, Category
+        apple_cat = await sync_to_async(Category.objects.filter(name__icontains='iPhone').first)()
+        
+        await sync_to_async(Listing.objects.create)(
+            title=f"iPhone {ad['model']} {ad['storage']}",
             model_name=ad['model'],
             memory=ad['storage'],
             battery_health=int(ad['battery']),
-            condition=ad['condition'],
+            condition='ideal' if 'ideal' in ad['condition'].lower() else 'good',
             price=int(ad['price']),
             seller_phone=ad['contact'],
-            branch=branch,
-            is_approved=True
+            is_approved=True,
+            category=apple_cat
         )
     except Exception as e:
         print(f"Error saving to Django DB: {e}")
@@ -396,3 +402,26 @@ async def handle_user_disagree(callback: CallbackQuery):
         parse_mode="HTML"
     )
     await callback.answer()
+
+@router.callback_query(F.data.startswith("book_"))
+async def admin_book_listing(callback: CallbackQuery):
+    lang = await get_user_language(callback.from_user.id)
+    listing_id = int(callback.data.split("_")[1])
+    
+    from database import book_listing
+    await book_listing(listing_id)
+    
+    await callback.message.edit_text(
+        callback.message.text + "\n\n✅ <b>BRON QILINDI! (48 soat)</b>\nMahsulot sotuvdan olindi.",
+        parse_mode="HTML"
+    )
+    await callback.answer("✅ Bron qilindi")
+
+@router.callback_query(F.data.startswith("rejectorder_"))
+async def admin_reject_order(callback: CallbackQuery):
+    lang = await get_user_language(callback.from_user.id)
+    await callback.message.edit_text(
+        callback.message.text + "\n\n❌ <b>ZAKAZ RAD ETILDI.</b>",
+        parse_mode="HTML"
+    )
+    await callback.answer("❌ Rad etildi")

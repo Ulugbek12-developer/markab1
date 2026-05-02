@@ -41,8 +41,9 @@ async def set_language(callback: CallbackQuery, state: FSMContext):
     
     is_sub = await check_user_sub(callback.bot, callback.from_user.id)
     if is_sub:
-        await callback.message.edit_text(STRINGS[lang]['main_menu'])
-        await callback.message.answer("🎉", reply_markup=get_main_menu(lang))
+        await callback.message.delete()
+        await callback.message.answer("🎉")
+        await callback.message.answer(STRINGS[lang]['main_menu'] + "\n\n" + STRINGS[lang]['main_menu_info'], parse_mode="HTML", reply_markup=get_main_menu(lang))
     else:
         await callback.message.edit_text(STRINGS[lang]['sub_required'], reply_markup=get_subscription_keyboard(lang))
 
@@ -53,7 +54,8 @@ async def check_subscription(callback: CallbackQuery):
     
     if is_sub:
         await callback.message.delete()
-        await callback.message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
+        await callback.message.answer("🎉")
+        await callback.message.answer(STRINGS[lang]['main_menu'] + "\n\n" + STRINGS[lang]['main_menu_info'], parse_mode="HTML", reply_markup=get_main_menu(lang))
     else:
         await callback.answer(STRINGS[lang]['sub_error'], show_alert=True)
 
@@ -112,10 +114,10 @@ async def branch_chilonzor(message: Message):
         text = "📍 <b>Локация филиала Чиланзар:</b>\n\nhttps://maps.google.com/maps?q=41.274714,69.203840&ll=41.274714,69.203840&z=16"
     await message.answer(text, parse_mode="HTML")
 
-@router.message(F.text.in_(["⬅️ Orqaga", "⬅️ Назад"]))
+@router.message(F.text.in_(["⬅️ Orqaga", "⬅️ Назад", "⬅️ Назад"]))
 async def cmd_back(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
-    await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
+    await message.answer(STRINGS[lang]['main_menu'] + "\n\n" + STRINGS[lang]['main_menu_info'], parse_mode="HTML", reply_markup=get_main_menu(lang))
     await state.clear()
 
 @router.message(Command("cancel"))
