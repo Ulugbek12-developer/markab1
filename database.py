@@ -173,13 +173,22 @@ async def get_ad_by_id(ad_id: int):
             return await cursor.fetchone()
 
 async def search_ads(model=None, branch=None):
-    async with aiosqlite.connect(config.DB_NAME) as db:
+    # Search from Django DB directly to sync with Web App
+    import os
+    django_db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3')
+    if not os.path.exists(django_db_path):
+        django_db_path = 'db.sqlite3' # fallback
+        
+    async with aiosqlite.connect(django_db_path) as db:
         db.row_factory = aiosqlite.Row
-        query = "SELECT * FROM ads WHERE status = 'approved'"
+        query = "SELECT id, model_name as model, memory as storage, battery_health as battery, condition, price, branch, image as photos FROM phones_phone WHERE is_approved = 1"
         params = []
         if model:
-            query += " AND model = ?"
-            params.append(model)
+            query += " AND model_name = ?"
+            if model.startswith('iPhone '):
+                params.append(model.replace('iPhone ', ''))
+            else:
+                params.append(model)
         if branch:
             query += " AND branch = ?"
             params.append(branch)

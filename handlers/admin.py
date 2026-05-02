@@ -340,8 +340,37 @@ async def process_counter_price(message: Message, state: FSMContext):
         await message.bot.send_message(
             ad['user_id'], 
             STRINGS[user_lang]['counter_sent_user'].format(price=price), 
-            parse_mode="HTML"
+            parse_mode="HTML",
+            reply_markup=keyboards.get_user_counter_response_keyboard(ad_id)
         )
         await message.answer(STRINGS[lang]['counter_sent_admin'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
     
     await state.clear()
+
+@router.callback_query(F.data.startswith("user_agree_"))
+async def handle_user_agree(callback: CallbackQuery):
+    ad_id = int(callback.data.split("_")[2])
+    
+    # Send success message to user
+    await callback.message.edit_text(
+        "✅ <b>Tabriklaymiz!</b>\n\nSizning telefoningiz telegram kanalga joylanadi va siz bilan adminlarimiz aloqaga chiqadi. 🎉", 
+        parse_mode="HTML"
+    )
+    
+    # Notify Admin
+    ad = await get_ad_by_id(ad_id)
+    if ad:
+        await callback.bot.send_message(
+            config.ADMIN_ID, 
+            f"🎉 <b>Mijoz rozi bo'ldi!</b> (E'lon ID: {ad_id})\n\n📞 Aloqa: {ad.get('contact', 'Noma\'lum')}",
+            parse_mode="HTML"
+        )
+    await callback.answer()
+
+@router.callback_query(F.data.startswith("user_disagree_"))
+async def handle_user_disagree(callback: CallbackQuery):
+    await callback.message.edit_text(
+        "❌ <b>Afsus...</b>\n\nIltimos, narxni admin bilan kelishing:\n👨‍💻 Admin: @markab_admin", 
+        parse_mode="HTML"
+    )
+    await callback.answer()

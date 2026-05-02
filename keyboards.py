@@ -150,3 +150,37 @@ def get_price_admin_keyboard(req_id: int, lang):
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text=s['btn_set_price'], callback_data=f"setprice_{req_id}"))
     return builder.as_markup()
+
+def get_user_counter_response_keyboard(ad_id: int):
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="✅ Roziman", callback_data=f"user_agree_{ad_id}"),
+        InlineKeyboardButton(text="❌ Noroziman", callback_data=f"user_disagree_{ad_id}")
+    )
+    return builder.as_markup()
+
+def get_payment_type_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text=s['btn_cash']), KeyboardButton(text=s['btn_installment']))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_location_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text=s['btn_city']))
+    builder.row(KeyboardButton(text=s['btn_region']))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_installment_plan_keyboard(m3, m6, m12, lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        KeyboardButton(text=f"3 oy - {m3:,.0f} so'm"), 
+        KeyboardButton(text=f"6 oy - {m6:,.0f} so'm")
+    )
+    builder.row(KeyboardButton(text=f"12 oy - {m12:,.0f} so'm"))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)

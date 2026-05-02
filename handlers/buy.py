@@ -74,7 +74,7 @@ async def process_buy_branch(message: Message, state: FSMContext):
                 await message.answer(summary, parse_mode="HTML")
             ids.append(str(row['id']))
         
-        await state.update_data(available_ids=ids)
+        await state.update_data(available_ids=ids, results_cache=[dict(r) for r in results])
         await state.set_state(BuyPhone.select_id)
         await message.answer(STRINGS[lang]['prompt_select_id'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
 
@@ -93,8 +93,104 @@ async def process_select_id(message: Message, state: FSMContext):
         return
 
     await state.update_data(selected_id=message.text)
+    
+    # Store selected price for installment calculations
+    # Find the price of the selected ad
+    selected_price_str = "0"
+    for row in data.get('results_cache', []):
+        if str(row['id']) == message.text:
+            selected_price_str = row['price']
+            break
+            
+    # Clean price string and convert to float
+    import re
+    price_digits = re.findall(r'\d+', str(selected_price_str))
+    price_val = int(''.join(price_digits)) if price_digits else 0
+    await state.update_data(selected_price=price_val)
+
+    await state.set_state(BuyPhone.payment_type)
+    from keyboards import get_payment_type_keyboard
+    await message.answer(STRINGS[lang]['prompt_payment_type'], parse_mode="HTML", reply_markup=get_payment_type_keyboard(lang))
+
+@router.message(BuyPhone.payment_type)
+async def process_payment_type(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    s = STRINGS[lang]
+    if message.text in [s['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
+        await state.set_state(BuyPhone.select_id)
+        await message.answer(s['prompt_select_id'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
+        return
+
+    if message.text == s['btn_cash']:
+        await state.update_data(payment_type="cash")
+        await state.set_state(BuyPhone.confirm)
+        data = await state.get_data()
+        await message.answer(s['confirm_buy'].format(id=data['selected_id']), parse_mode="HTML", reply_markup=get_confirm_keyboard(lang))
+    
+    elif message.text == s['btn_installment']:
+        await state.update_data(payment_type="installment")
+        await state.set_state(BuyPhone.location)
+        from keyboards import get_location_keyboard
+        await message.answer(s['prompt_location'], parse_mode="HTML", reply_markup=get_location_keyboard(lang))
+    else:
+        await message.answer(s['prompt_payment_type'])
+
+@router.message(BuyPhone.location)
+async def process_location(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    s = STRINGS[lang]
+    if message.text in [s['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
+        await state.set_state(BuyPhone.payment_type)
+        from keyboards import get_payment_type_keyboard
+        await message.answer(s['prompt_payment_type'], parse_mode="HTML", reply_markup=get_payment_type_keyboard(lang))
+        return
+
+    if message.text not in [s['btn_city'], s['btn_region']]:
+        from keyboards import get_location_keyboard
+        await message.answer(s['prompt_location'], parse_mode="HTML", reply_markup=get_location_keyboard(lang))
+        return
+
+    location_type = "shahar" if message.text == s['btn_city'] else "viloyat"
+    await state.update_data(location=location_type)
+    
+    data = await state.get_data()
+    price = float(data.get('selected_price', 0))
+    
+    initial_percent = 0.3 if location_type == "shahar" else 0.4
+    initial = price * initial_percent
+    remaining = price - initial
+    
+    m3 = remaining / 3 * 1.10
+    m6 = remaining / 6 * 1.15
+    m12 = remaining / 12 * 1.25
+    
+    await state.update_data(initial=initial, m3=m3, m6=m6, m12=m12)
+    
+    summary = (
+        f"📊 <b>Muddatli to'lov ma'lumoti:</b>\n\n"
+        f"💰 Umumiy narx: <b>{price:,.0f} so'm</b>\n"
+        f"💳 Boshlang'ich to'lov ({int(initial_percent*100)}%): <b>{initial:,.0f} so'm</b>\n\n"
+    )
+    
+    await state.set_state(BuyPhone.installment_plan)
+    from keyboards import get_installment_plan_keyboard
+    await message.answer(summary + s['prompt_plan'], parse_mode="HTML", reply_markup=get_installment_plan_keyboard(m3, m6, m12, lang))
+
+@router.message(BuyPhone.installment_plan)
+async def process_installment_plan(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    s = STRINGS[lang]
+    if message.text in [s['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
+        await state.set_state(BuyPhone.location)
+        from keyboards import get_location_keyboard
+        await message.answer(s['prompt_location'], parse_mode="HTML", reply_markup=get_location_keyboard(lang))
+        return
+
+    await state.update_data(plan_selected=message.text)
     await state.set_state(BuyPhone.confirm)
-    await message.answer(STRINGS[lang]['confirm_buy'].format(id=message.text), parse_mode="HTML", reply_markup=get_confirm_keyboard(lang))
+    
+    data = await state.get_data()
+    await message.answer(s['confirm_buy'].format(id=data['selected_id']), parse_mode="HTML", reply_markup=get_confirm_keyboard(lang))
 
 @router.message(BuyPhone.confirm)
 async def process_buy_confirm(message: Message, state: FSMContext):
@@ -102,17 +198,44 @@ async def process_buy_confirm(message: Message, state: FSMContext):
     s = STRINGS[lang]
     if message.text == s['btn_confirm']:
         data = await state.get_data()
+        
+        payment_info = "Naqd to'lov"
+        if data.get('payment_type') == "installment":
+            loc_text = "Shahar (30%)" if data.get('location') == "shahar" else "Viloyat (40%)"
+            payment_info = (
+                f"Muddatli to'lov\n"
+                f"Hudud: {loc_text}\n"
+                f"Boshlang'ich: {data.get('initial', 0):,.0f} so'm\n"
+                f"Tanlangan reja: {data.get('plan_selected', '')}"
+            )
+        
         if config.ADMIN_ID:
             await message.bot.send_message(
                 config.ADMIN_ID, 
-                f"🛍 <b>YANGI ZAKAZ!</b>\n\nUser: {message.from_user.full_name}\nTelefon ID: {data['selected_id']}\nModel: {data['model']}",
+                f"🛍 <b>YANGI ZAKAZ!</b>\n\n"
+                f"User: {message.from_user.full_name}\n"
+                f"Telefon ID: {data['selected_id']}\n"
+                f"Model: {data['model']}\n"
+                f"Filial: {data.get('branch')}\n"
+                f"To'lov: {payment_info}",
                 parse_mode="HTML"
             )
         
         await message.answer(s['buy_success'], parse_mode="HTML", reply_markup=get_main_menu(lang))
     elif message.text == s['btn_back']:
-        await state.set_state(BuyPhone.select_id)
-        await message.answer(s['prompt_select_id'], reply_markup=get_back_keyboard(lang))
+        data = await state.get_data()
+        if data.get('payment_type') == "installment":
+            await state.set_state(BuyPhone.installment_plan)
+            from keyboards import get_installment_plan_keyboard
+            await message.answer(s['prompt_plan'], parse_mode="HTML", reply_markup=get_installment_plan_keyboard(data['m3'], data['m6'], data['m12'], lang))
+        elif data.get('payment_type') == "cash":
+            await state.set_state(BuyPhone.payment_type)
+            from keyboards import get_payment_type_keyboard
+            await message.answer(s['prompt_payment_type'], parse_mode="HTML", reply_markup=get_payment_type_keyboard(lang))
+        else:
+            await state.set_state(BuyPhone.select_id)
+            from keyboards import get_back_keyboard
+            await message.answer(s['prompt_select_id'], reply_markup=get_back_keyboard(lang))
         return
     else:
         await message.answer(s['msg_cancelled'], parse_mode="HTML", reply_markup=get_main_menu(lang))

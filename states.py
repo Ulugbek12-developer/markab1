@@ -16,6 +16,9 @@ class BuyPhone(StatesGroup):
     model = State()
     branch = State()
     select_id = State()
+    payment_type = State()
+    location = State()
+    installment_plan = State()
     confirm = State()
 
 class PricePhone(StatesGroup):
