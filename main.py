@@ -36,12 +36,32 @@ async def main():
         )
     )
 
+    # Error handler — botni xato bo'lsa ham to'xtatmaslik uchun (aiogram 3.x)
+    from aiogram.types import ErrorEvent
+    
+    @dp.error()
+    async def error_handler(event: ErrorEvent):
+        import traceback
+        exc = event.exception
+        print(f"❌ Handler xatosi: {type(exc).__name__}: {exc}")
+        traceback.print_exception(type(exc), exc, exc.__traceback__)
+        return True  # xatoni ushladik, botni davom ettir
+
     # Start Polling
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-    await dp.start_polling(bot)
+    try:
+        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    except Exception as e:
+        import traceback
+        print(f"❌ Polling xatosi: {e}")
+        traceback.print_exc()
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Bot stopped")
+    except Exception as e:
+        import traceback
+        print(f"❌ XATO: {e}")
+        traceback.print_exc()

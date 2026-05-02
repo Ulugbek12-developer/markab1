@@ -17,23 +17,23 @@
                 extend: {
                     colors: {
                         brand: {
-                            DEFAULT: '#F5A623',
-                            hover: '#E09010',
-                            light: '#FFD166',
-                            dark: '#C47D0B',
+                            DEFAULT: '#E53935',
+                            hover: '#C62828',
+                            light: '#EF9A9A',
+                            dark: '#B71C1C',
                         },
                         surface: {
-                            bg: '#FAFAF8',
+                            bg: '#FFF5F5',
                             card: '#FFFFFF',
-                            border: '#F0EDEA',
+                            border: '#FFE0E0',
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
                     boxShadow: {
-                        'gold': '0 4px 24px rgba(245, 166, 35, 0.25)',
-                        'gold-lg': '0 8px 40px rgba(245, 166, 35, 0.35)',
+                        'gold': '0 4px 24px rgba(229, 57, 53, 0.25)',
+                        'gold-lg': '0 8px 40px rgba(229, 57, 53, 0.4)',
                         'card': '0 2px 20px rgba(0,0,0,0.06)',
                         'card-hover': '0 8px 40px rgba(0,0,0,0.12)',
                     }
@@ -49,8 +49,8 @@
         @layer base {
             body {
                 @apply bg-surface-bg text-gray-900 font-sans antialiased;
-                background-image: radial-gradient(circle at 10% 20%, rgba(245,166,35,0.04) 0%, transparent 50%),
-                                  radial-gradient(circle at 90% 80%, rgba(245,166,35,0.06) 0%, transparent 50%);
+                background-image: radial-gradient(circle at 10% 20%, rgba(229,57,53,0.04) 0%, transparent 50%),
+                                  radial-gradient(circle at 90% 80%, rgba(229,57,53,0.06) 0%, transparent 50%);
             }
         }
         @layer components {
@@ -64,13 +64,13 @@
                 @apply bg-brand hover:bg-brand-hover text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5 active:translate-y-0;
             }
             .btn-secondary {
-                @apply bg-white hover:bg-gray-50 text-gray-800 font-semibold py-4 px-8 rounded-2xl border border-surface-border transition-all duration-300 shadow-card hover:shadow-card-hover;
+                @apply bg-white hover:bg-red-50 text-gray-800 font-semibold py-4 px-8 rounded-2xl border border-surface-border transition-all duration-300 shadow-card hover:shadow-card-hover;
             }
             .btn-ghost {
                 @apply text-gray-600 hover:text-brand font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:bg-brand/5;
             }
             .input-field {
-                @apply w-full bg-surface-bg border border-surface-border rounded-2xl px-5 py-4 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all text-gray-900 placeholder-gray-400;
+                @apply w-full bg-white border-2 border-surface-border rounded-2xl px-5 py-4 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all text-gray-900 placeholder-gray-400;
             }
             .badge-premium {
                 @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-bold;
