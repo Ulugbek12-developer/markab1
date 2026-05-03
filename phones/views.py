@@ -211,3 +211,13 @@ class StorePanelView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         form.instance.seller = self.request.user
         form.instance.is_approved = True
         return super().form_valid(form)
+
+class AdminBranchCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Branch
+    fields = ['name', 'address', 'map_url', 'phone']
+    template_name = 'phones/branch_add.html'
+    success_url = reverse_lazy('phones:admin_dashboard')
+    def test_func(self): return self.request.user.is_staff
+    def form_valid(self, form):
+        messages.success(self.request, "Filial muvaffaqiyatli qo'shildi!")
+        return super().form_valid(form)

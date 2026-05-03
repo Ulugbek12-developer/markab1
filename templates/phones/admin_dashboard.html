@@ -5,7 +5,10 @@
 <div class="animate">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
         <h1 style="font-size:36px; font-weight:900;">🔐 Admin Panel</h1>
-        <a href="{% url 'phones:admin_add' %}" class="btn-primary">+ YANGI QO'SHISH</a>
+        <div style="display:flex; gap:10px;">
+            <a href="{% url 'phones:admin_branch_add' %}" class="btn-primary" style="background:var(--text); color:white;">+ FILIAL QO'SHISH</a>
+            <a href="{% url 'phones:admin_add' %}" class="btn-primary">+ YANGI QO'SHISH</a>
+        </div>
     </div>
 
     <div class="premium-card" style="padding:0; overflow:hidden;">
