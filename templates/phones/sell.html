@@ -1,647 +1,70 @@
 {% extends 'base.html' %}
-
-{% block title %}Telefonni baholash va sotish | Markab{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto" 
-     x-data="sellWizard()" 
-     x-init="$watch('step', value => window.scrollTo({top: 0, behavior: 'smooth'}))">
-    
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <!-- Left: Wizard -->
-        <div class="lg:col-span-8">
-            <div class="bg-white rounded-[2.5rem] p-8 md:p-12 card-shadow border border-red-50 relative overflow-hidden">
-                
-                <!-- Header -->
-                <div class="flex items-center gap-4 mb-3">
-                    <button type="button" @click="prevStep" x-show="step > 1 && step < 9" class="text-slate-300 hover:text-primary transition-colors">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    </button>
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Telefonni sotish</h1>
-                </div>
-                <p class="text-slate-400 font-bold text-sm mb-10" :class="{'ml-11': step > 1 && step < 9}">Gadjetingizni eng yaxshi narxda sotish uchun ma'lumotlarni kiriting</p>
+<div class="animate" style="max-width: 800px; margin: 0 auto;">
+    <h1 style="font-size:36px; font-weight:900; margin-bottom:10px;">📱 Telefon sotish</h1>
+    <p style="color:var(--text-muted); font-weight:700; margin-bottom:40px;">E'loningizni joylang va tezda soting</p>
 
-                <!-- Progress -->
-                <div class="mb-12" x-show="step < 9">
-                    <div class="flex justify-between text-xs font-black mb-3 uppercase tracking-widest">
-                        <span class="text-slate-400" x-text="stepTitle()"></span>
-                        <span class="text-primary bg-red-50 px-4 py-1.5 rounded-full" x-text="step + ' / 8'"></span>
-                    </div>
-                    <div class="h-3 w-full bg-slate-50 rounded-full overflow-hidden shadow-inner">
-                        <div class="h-full bg-primary transition-all duration-700 ease-out shadow-lg shadow-red-200" :style="'width: ' + ((step / 8) * 100) + '%'"></div>
-                    </div>
-                </div>
-
-                <!-- Form starts here so we can submit at the end -->
-                <form id="sellForm" method="POST" action="{% url 'phones:sell' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <!-- Hidden inputs to store all data for Django -->
-                    <input type="hidden" name="title" :value="'iPhone ' + model + ' ' + storage">
-                    <input type="hidden" name="price" :value="saleType === 'trade_in' ? Math.round(basePrice / 12600) : Math.round((basePrice * 0.93) / 12600)">
-                    <input type="hidden" name="model_name" :value="model">
-                    <input type="hidden" name="memory" :value="storage">
-                    <input type="hidden" name="battery_health" :value="battery">
-                    <input type="hidden" name="condition" :value="(screenCondition === 'broken' || bodyCondition === 'broken' || !faults.includes('none')) ? 'bad' : ((screenCondition === 'ideal' && bodyCondition === 'ideal') ? 'ideal' : 'good')">
-                    <input type="hidden" name="description" :value="'Region: ' + regions.find(r=>r.id===region)?.name + ' (' + region + '). Rangi: ' + color + '. Ekran: ' + screenCondition + '. Korpus: ' + bodyCondition + '. Almashtirilgan: ' + replacedParts.join(', ') + '. Nosozliklar: ' + faults.join(', ') + '. To\'plam: ' + boxDocs + '. Sotish turi: ' + (saleType === 'trade_in' ? 'Trade-in' : 'Naqd pul')">
-                    <input type="hidden" name="seller_phone" :value="phoneNumber">
-
-                    <!-- Step 1: Model -->
-                    <div x-show="step === 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-8">Aniq modelingiz qaysi?</h2>
-                        
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 h-[450px] overflow-y-auto pr-3 custom-scrollbar">
-                            <template x-for="m in models" :key="m">
-                                <button type="button" @click="model = m; nextStep()" 
-                                        class="p-5 rounded-2xl border-2 transition-all font-black text-sm text-center shadow-sm"
-                                        :class="model === m ? 'border-primary bg-red-50 text-primary shadow-red-100 scale-[1.02]' : 'border-slate-50 bg-slate-50 hover:bg-white hover:border-red-100 text-slate-600'">
-                                    <span x-text="'iPhone ' + m"></span>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Specs -->
-                    <div x-show="step === 2" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-8">Texnik holati</h2>
-                        
-                        <div class="space-y-10">
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Rangni tanlang</p>
-                                <div class="flex flex-wrap gap-5">
-                                    <template x-for="c in colors">
-                                        <button type="button" @click="color = c.name" 
-                                                class="w-14 h-14 rounded-2xl border-4 transition-all relative shadow-xl"
-                                                :style="`background-color: ${c.hex}`"
-                                                :class="color === c.name ? 'border-primary scale-110 shadow-red-100' : 'border-white hover:scale-105'"></button>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <div x-show="color" x-transition>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Xotira hajmi</p>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                    <template x-for="s in storages">
-                                        <button type="button" @click="storage = s" 
-                                                class="py-4 rounded-2xl font-black transition-all border-2 text-center"
-                                                :class="storage === s ? 'bg-primary text-white border-primary shadow-xl shadow-red-100' : 'bg-slate-50 text-slate-600 border-transparent hover:bg-white hover:border-red-100'">
-                                            <span x-text="s"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <div x-show="storage" x-transition>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Mintaqa (Region)</p>
-                                <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                                    <template x-for="r in regions">
-                                        <button type="button" @click="region = r.id" 
-                                                class="py-4 rounded-2xl flex flex-col items-center justify-center transition-all border-2"
-                                                :class="region === r.id ? 'bg-[#1A1A1A] text-white border-black shadow-xl shadow-slate-200' : 'bg-slate-50 text-slate-600 border-transparent hover:bg-white hover:border-red-100'">
-                                            <span class="text-xs font-black" x-text="r.name"></span>
-                                            <span class="text-[8px] opacity-50 font-bold" x-text="r.code"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-12" x-show="region">
-                            <button type="button" @click="nextStep" 
-                                    class="w-full bg-primary text-white font-black py-5 rounded-2xl text-lg transition-all hover:bg-accent shadow-2xl shadow-red-100 active:scale-95">
-                                Keyingi bosqich
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Battery -->
-                    <div x-show="step === 3" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-8">Akkumulyator holati</h2>
-                        
-                        <div class="max-w-md mx-auto py-10 text-center">
-                            <div class="relative inline-block mb-12">
-                                <input type="number" x-model="battery" min="1" max="100" class="w-64 h-64 bg-white border-8 border-red-50 rounded-[3rem] text-center text-7xl font-black text-primary focus:outline-none focus:border-red-100 transition-all shadow-2xl shadow-red-50">
-                                <span class="absolute right-10 top-1/2 -translate-y-1/2 text-3xl font-black text-slate-200">%</span>
-                            </div>
-
-                            <div class="flex justify-center mb-10">
-                                <div class="px-8 py-3 rounded-2xl font-black text-sm flex items-center gap-3 shadow-sm"
-                                     :class="getBatteryStatus().class">
-                                    <span class="text-xl" x-html="getBatteryStatus().icon"></span>
-                                    <span x-text="getBatteryStatus().text"></span>
-                                </div>
-                            </div>
-
-                            <div class="px-5">
-                                <input type="range" x-model="battery" min="60" max="100" class="w-full h-4 bg-slate-100 rounded-full appearance-none cursor-pointer accent-primary shadow-inner">
-                                <div class="flex justify-between text-[10px] text-slate-400 font-black mt-4 uppercase tracking-widest">
-                                    <span>Almashtirilgan</span>
-                                    <span>Ideal (100%)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-10">
-                            <button type="button" @click="nextStep"
-                                    class="w-full bg-primary text-white font-black py-5 rounded-2xl text-lg transition-all hover:bg-accent shadow-2xl shadow-red-100 active:scale-95">
-                                Davom etish
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Condition -->
-                    <div x-show="step === 4" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-10">Tashqi holati</h2>
-                        
-                        <div class="space-y-12">
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Ekran holati qanday?</p>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <template x-for="opt in conditionOptions.screen">
-                                        <button type="button" @click="screenCondition = opt.id" 
-                                                class="p-8 rounded-3xl border-2 transition-all flex flex-col items-center justify-center gap-4 text-center group"
-                                                :class="screenCondition === opt.id ? 'border-primary bg-red-50 shadow-xl shadow-red-50' : 'border-slate-50 bg-slate-50 hover:bg-white hover:border-red-100'">
-                                            <div class="text-4xl transition-transform group-hover:scale-110" x-html="opt.icon"></div>
-                                            <span class="font-black text-sm text-slate-700" x-text="opt.label"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Korpus holati qanday?</p>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <template x-for="opt in conditionOptions.body">
-                                        <button type="button" @click="bodyCondition = opt.id" 
-                                                class="p-8 rounded-3xl border-2 transition-all flex flex-col items-center justify-center gap-4 text-center group"
-                                                :class="bodyCondition === opt.id ? 'border-primary bg-red-50 shadow-xl shadow-red-50' : 'border-slate-50 bg-slate-50 hover:bg-white hover:border-red-100'">
-                                            <div class="text-4xl transition-transform group-hover:scale-110" x-html="opt.icon"></div>
-                                            <span class="font-black text-sm text-slate-700" x-text="opt.label"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-12">
-                            <button type="button" @click="nextStep" :disabled="!screenCondition || !bodyCondition" 
-                                    class="w-full bg-primary text-white font-black py-5 rounded-2xl text-lg transition-all hover:bg-accent shadow-2xl shadow-red-100 disabled:opacity-30 active:scale-95">
-                                Davom etish
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 5: Extra -->
-                    <div x-show="step === 5" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-10">Nosozliklar va Ta'mirlash</h2>
-                        
-                        <div class="space-y-12">
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Almashtirilgan qismlar</p>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <template x-for="opt in replacedOptions">
-                                        <button type="button" @click="toggleReplaced(opt.id)" 
-                                                class="p-5 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 text-center"
-                                                :class="replacedParts.includes(opt.id) ? 'border-primary bg-red-50 text-primary' : 'border-slate-50 bg-slate-50 hover:border-red-100'">
-                                            <div class="text-2xl" x-html="opt.icon"></div>
-                                            <span class="font-black text-[10px] leading-tight" x-text="opt.label"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <div>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Ishlamaydigan funksiyalar</p>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <template x-for="opt in faultOptions">
-                                        <button type="button" @click="toggleFault(opt.id)" 
-                                                class="p-5 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 text-center"
-                                                :class="faults.includes(opt.id) ? 'border-primary bg-red-50 text-primary' : 'border-slate-50 bg-slate-50 hover:border-red-100'">
-                                            <div class="text-2xl" x-html="opt.icon"></div>
-                                            <span class="font-black text-[10px] leading-tight" x-text="opt.label"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-12">
-                            <button type="button" @click="nextStep" 
-                                    class="w-full bg-primary text-white font-black py-5 rounded-2xl text-lg transition-all hover:bg-accent shadow-2xl shadow-red-100 active:scale-95">
-                                Davom etish
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 6: Box -->
-                    <div x-show="step === 6" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-10">Komplektatsiya</h2>
-                        
-                        <div class="space-y-4">
-                            <button type="button" @click="boxDocs = 'Barchasi bor'; nextStep()" 
-                                    class="w-full p-8 rounded-[2rem] border-2 transition-all flex items-center gap-6 text-left border-slate-50 bg-slate-50 hover:border-primary hover:bg-white group shadow-sm">
-                                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl shadow-inner transition-transform group-hover:scale-110">📦</div>
-                                <div>
-                                    <h3 class="font-black text-slate-900 text-xl">Barchasi mavjud</h3>
-                                    <p class="text-sm text-slate-400 font-medium">Karobka, hujjatlar, chek va aksessuarlar</p>
-                                </div>
-                            </button>
-                            <button type="button" @click="boxDocs = 'Boshqa'; nextStep()" 
-                                    class="w-full p-8 rounded-[2rem] border-2 transition-all flex items-center gap-6 text-left border-slate-50 bg-slate-50 hover:border-primary hover:bg-white group shadow-sm">
-                                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl shadow-inner transition-transform group-hover:scale-110">🔌</div>
-                                <div>
-                                    <h3 class="font-black text-slate-900 text-xl">To'liq emas</h3>
-                                    <p class="text-sm text-slate-400 font-medium">Faqat karobka yoki faqat zaryadlovchi moslama</p>
-                                </div>
-                            </button>
-                            <button type="button" @click="boxDocs = 'Faqat telefon'; nextStep()" 
-                                    class="w-full p-8 rounded-[2rem] border-2 transition-all flex items-center gap-6 text-left border-slate-50 bg-slate-50 hover:border-primary hover:bg-white group shadow-sm">
-                                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl shadow-inner transition-transform group-hover:scale-110">📱</div>
-                                <div>
-                                    <h3 class="font-black text-slate-900 text-xl">Faqat telefon</h3>
-                                    <p class="text-sm text-slate-400 font-medium">Hech qanday qo'shimcha hujjat yoki quti yo'q</p>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 7: Photo Upload -->
-                    <div x-show="step === 7" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-6">Telefon rasmi</h2>
-                        <p class="text-sm text-slate-400 font-medium mb-10 leading-relaxed">Xaridorlar telefoningizni ko'ra olishlari uchun rasm yuklang. Yaxshi yorug'likda tushirilgan rasm telefoningizni tezroq sotilishiga yordam beradi.</p>
-                        
-                        <div class="relative w-full h-80 border-4 border-dashed rounded-[2.5rem] overflow-hidden transition-all flex flex-col items-center justify-center text-center p-10 group cursor-pointer"
-                             :class="imagePreview ? 'border-primary bg-red-50/50' : 'border-slate-100 hover:border-red-200 bg-slate-50/50'">
-                            
-                            <input type="file" name="image" id="imageInput" accept="image/*" required
-                                   @change="handleImageUpload($event)"
-                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                            
-                            <template x-if="!imagePreview">
-                                <div class="pointer-events-none">
-                                    <div class="w-20 h-20 bg-white rounded-3xl shadow-xl mx-auto flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    </div>
-                                    <h3 class="font-black text-slate-900 text-lg">Rasm yuklash</h3>
-                                    <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Rasmni shu yerga tanlang</p>
-                                </div>
-                            </template>
-
-                            <template x-if="imagePreview">
-                                <img :src="imagePreview" class="absolute inset-0 w-full h-full object-cover opacity-90 pointer-events-none">
-                            </template>
-                            
-                            <template x-if="imagePreview">
-                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none">
-                                    <span class="text-white font-black bg-black/50 px-6 py-3 rounded-2xl">Boshqa rasm tanlash</span>
-                                </div>
-                            </template>
-                        </div>
-
-                        <div class="mt-12">
-                            <button type="button" @click="nextStep" :disabled="!imagePreview"
-                                    class="w-full bg-primary text-white font-black py-5 rounded-2xl text-lg transition-all hover:bg-accent shadow-2xl shadow-red-100 disabled:opacity-30 active:scale-95">
-                                Davom etish
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 8: Contact -->
-                    <div x-show="step === 8" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
-                        <h2 class="text-2xl font-black text-slate-900 mb-8">Bog'lanish uchun</h2>
-                        
-                        <div class="bg-red-50 text-primary p-8 rounded-[2rem] mb-10 flex gap-6 border border-red-100">
-                            <span class="text-4xl">🔥</span>
-                            <div>
-                                <h3 class="font-black text-xl mb-1">Deyarli tayyor!</h3>
-                                <p class="text-sm font-medium opacity-80 leading-relaxed">Yakuniy narxni ko'rish va e'loningizni joylashtirish uchun telefon raqamingizni kiriting.</p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Telefon raqamingiz</label>
-                            <input type="tel" x-model="phoneNumber" placeholder="+998 90 123 45 67" required class="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-6 font-black text-slate-900 text-2xl focus:bg-white focus:ring-4 focus:ring-red-100/50 outline-none transition-all shadow-sm">
-                        </div>
-
-                        <div class="mt-12">
-                            <button type="button" @click="calculateFinalPrice(); nextStep()" :disabled="phoneNumber.length < 9" 
-                                    class="w-full bg-primary text-white font-black py-6 rounded-2xl text-xl transition-all hover:bg-accent shadow-2xl shadow-red-200 disabled:opacity-30 active:scale-95">
-                                NARXNI BILISH
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 9: Final Price & Submit -->
-                    <div x-show="step === 9" style="display: none;" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
-                        
-                        <div class="text-center mb-10">
-                            <div class="w-24 h-24 bg-red-50 text-primary rounded-full flex items-center justify-center text-5xl mx-auto mb-6 shadow-2xl shadow-red-100">✨</div>
-                            <h2 class="text-3xl font-black text-slate-900 mb-2">E'lon tayyor!</h2>
-                            <p class="text-slate-400 font-black text-sm uppercase tracking-widest mb-2" x-text="'iPhone ' + model + ' • ' + storage"></p>
-                            <p class="text-xs font-bold text-slate-400">Sotish usulini tanlang</p>
-                        </div>
-
-                        <!-- Price Cards (Selectable) -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                            <!-- Trade-in -->
-                            <button type="button" @click="saleType = 'trade_in'" 
-                                    class="rounded-[2.5rem] p-8 border-4 relative overflow-hidden transition-all text-left group"
-                                    :class="saleType === 'trade_in' ? 'bg-red-50 border-primary shadow-2xl shadow-red-100 scale-[1.02]' : 'bg-slate-50 border-transparent hover:border-red-100'">
-                                
-                                <div class="absolute top-6 right-6 text-primary" x-show="saleType === 'trade_in'">
-                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                </div>
-
-                                <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 pointer-events-none group-hover:scale-110 transition-transform">♻️</div>
-                                <p class="text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2"
-                                   :class="saleType === 'trade_in' ? 'text-primary' : 'text-slate-400'">
-                                    Trade-in taklifi
-                                </p>
-                                <h3 class="text-5xl font-black mb-2 tracking-tighter" 
-                                    :class="saleType === 'trade_in' ? 'text-primary' : 'text-slate-900'" 
-                                    x-text="'$' + Math.round(basePrice / 12600)"></h3>
-                                <p class="text-sm font-black text-slate-400 mb-6" x-text="formatNumber(basePrice) + ' so\'m'"></p>
-                                <div class="rounded-2xl p-4 text-[11px] font-black leading-snug"
-                                     :class="saleType === 'trade_in' ? 'bg-white text-primary' : 'bg-white/50 text-slate-400'">
-                                    Yangi smartfonga almashtirish uchun maxsus narx
-                                </div>
-                            </button>
-
-                            <!-- Cash -->
-                            <button type="button" @click="saleType = 'cash'"
-                                    class="rounded-[2.5rem] p-8 border-4 relative overflow-hidden transition-all text-left group"
-                                    :class="saleType === 'cash' ? 'bg-[#1A1A1A] border-black shadow-2xl shadow-slate-200 scale-[1.02]' : 'bg-slate-50 border-transparent hover:border-red-100'">
-                                
-                                <div class="absolute top-6 right-6 text-white" x-show="saleType === 'cash'">
-                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                </div>
-
-                                <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 pointer-events-none group-hover:scale-110 transition-transform">💵</div>
-                                <p class="text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2"
-                                   :class="saleType === 'cash' ? 'text-white' : 'text-slate-400'">
-                                    Naqd pul taklifi
-                                </p>
-                                <h3 class="text-5xl font-black mb-2 tracking-tighter"
-                                    :class="saleType === 'cash' ? 'text-white' : 'text-slate-900'"
-                                    x-text="'$' + Math.round((basePrice * 0.93) / 12600)"></h3>
-                                <p class="text-sm font-black text-slate-400 mb-6" x-text="formatNumber(Math.round(basePrice * 0.93)) + ' so\'m'"></p>
-                                <div class="rounded-2xl p-4 text-[11px] font-black leading-snug"
-                                     :class="saleType === 'cash' ? 'bg-white/10 text-white' : 'bg-white/50 text-slate-400'">
-                                    Gadjetni shunchaki naqd pulga sotish (-7% komissiya)
-                                </div>
-                            </button>
-                        </div>
-
-                        <div class="bg-red-50 border border-red-100 text-primary text-[10px] font-black py-4 px-6 rounded-2xl mb-10 text-center uppercase tracking-widest">
-                            ⚠️ Yakuniy narx mutaxassis ko'rigidan so'ng tasdiqlanadi
-                        </div>
-
-                        <button type="submit" :disabled="!saleType" class="w-full bg-primary text-white font-black py-6 rounded-2xl text-xl transition-all hover:bg-accent shadow-2xl shadow-red-200 active:scale-95 disabled:opacity-30">
-                            E'LONNI JOYLASHTIRISH
-                        </button>
-                    </div>
-
-                </form>
+    <form method="POST" enctype="multipart/form-data" class="premium-card" style="padding: 40px; display:flex; flex-direction:column; gap:25px;">
+        {% csrf_token %}
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">SARLAVHA</label>
+                <input type="text" name="title" placeholder="Masalan: iPhone 14 Pro Max" required
+                       style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">MODEL</label>
+                <input type="text" name="model_name" placeholder="iPhone 14 Pro" required
+                       style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
             </div>
         </div>
 
-        <!-- Right: Info Card -->
-        <div class="lg:col-span-4">
-            <div class="premium-card p-10 sticky top-28 space-y-10">
-                <h3 class="font-black text-slate-900 text-xl tracking-tight">Afzalliklarimiz</h3>
-                
-                <div class="space-y-10">
-                    <div class="flex gap-5">
-                        <div class="flex-shrink-0 w-12 h-12 bg-red-50 text-primary rounded-2xl flex items-center justify-center shadow-inner">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-900 mb-2">Halol narx</h4>
-                            <p class="text-sm text-slate-400 font-medium leading-relaxed">Bozor qiymatidan kelib chiqqan holda eng yuqori taklif.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-5">
-                        <div class="flex-shrink-0 w-12 h-12 bg-red-50 text-primary rounded-2xl flex items-center justify-center shadow-inner">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-900 mb-2">Tezkor to'lov</h4>
-                            <p class="text-sm text-slate-400 font-medium leading-relaxed">Telefonni topshirgach — darhol naqd yoki kartaga.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-5">
-                        <div class="flex-shrink-0 w-12 h-12 bg-red-50 text-primary rounded-2xl flex items-center justify-center shadow-inner">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-900 mb-2">Bepul xizmat</h4>
-                            <p class="text-sm text-slate-400 font-medium leading-relaxed">Kuryerimiz manzilingizga borib gadjetingizni oladi.</p>
-                        </div>
-                    </div>
-                </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">NARX (SO'M)</label>
+                <input type="number" name="price" placeholder="12000000" required
+                       style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">XOTIRA</label>
+                <select name="memory" style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+                    <option value="64">64 GB</option>
+                    <option value="128" selected>128 GB</option>
+                    <option value="256">256 GB</option>
+                    <option value="512">512 GB</option>
+                </select>
             </div>
         </div>
-    </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">BATAREYA HOLATI (%)</label>
+                <input type="number" name="battery_health" value="90"
+                       style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">RASM YUKLASH</label>
+                <input type="file" name="image" required
+                       style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); font-size:12px;">
+            </div>
+        </div>
+
+        <div>
+            <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">TELEFON RAQAMINGIZ</label>
+            <input type="tel" name="seller_phone" placeholder="+998 90 123 45 67" required
+                   style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+        </div>
+
+        <div>
+            <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted);">QO'SHIMCHA MA'LUMOT</label>
+            <textarea name="description" rows="4" placeholder="Holati haqida batafsil..."
+                      style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700; resize:none;"></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="padding:20px; font-size:18px;">E'LONNI JOYLASHTIRISH 🚀</button>
+    </form>
 </div>
-
-<script>
-function sellWizard() {
-    return {
-        step: 1,
-        
-        // Data
-        model: '',
-        color: '',
-        storage: '',
-        region: '',
-        battery: 100,
-        screenCondition: '',
-        bodyCondition: '',
-        replacedParts: ['none'],
-        faults: ['none'],
-        boxDocs: '',
-        imagePreview: null,
-        phoneNumber: '',
-        basePrice: 0,
-        saleType: null, // 'trade_in' or 'cash'
-        
-        models: [
-            '17 Pro Max', '17 Pro', '17',
-            '16 Pro Max', '16 Pro', '16 Plus', '16',
-            '15 Pro Max', '15 Pro', '15 Plus', '15',
-            '14 Pro Max', '14 Pro', '14 Plus', '14',
-            '13 Pro Max', '13 Pro', '13', '13 Mini',
-            '12 Pro Max', '12 Pro', '12', '12 Mini',
-            '11 Pro Max', '11 Pro', '11'
-        ],
-
-        colors: [
-            { name: 'Black', hex: '#1C1C1E' },
-            { name: 'White', hex: '#F5F5F7' },
-            { name: 'Blue', hex: '#2F4858' },
-            { name: 'Gold', hex: '#F3E5AB' },
-            { name: 'Natural Titanium', hex: '#8C8C85' }
-        ],
-
-        storages: ['128GB', '256GB', '512GB', '1TB'],
-
-        regions: [
-            { id: 'LL/A', name: 'US', code: 'LL/A' },
-            { id: 'ZA/A', name: 'SG', code: 'ZA/A' },
-            { id: 'ZP/A', name: 'HK', code: 'ZP/A' },
-            { id: 'CH/A', name: 'CN', code: 'CH/A' },
-            { id: 'KH/A', name: 'KR', code: 'KH/A' },
-            { id: 'J/A', name: 'JP', code: 'J/A' }
-        ],
-
-        conditionOptions: {
-            screen: [
-                { id: 'ideal', label: 'Ideal', icon: '✨' },
-                { id: 'minor', label: 'Mayda tirnalishlar', icon: '〰' },
-                { id: 'visible', label: "Ko'rinadigan tirnalishlar", icon: '///' },
-                { id: 'broken', label: 'Yoriqlar', icon: '💔' }
-            ],
-            body: [
-                { id: 'ideal', label: 'Ideal', icon: '✨' },
-                { id: 'minor', label: 'Mayda tirnalishlar', icon: '〰' },
-                { id: 'visible', label: "Ko'rinadigan tirnalishlar", icon: '///' },
-                { id: 'broken', label: 'Shikastlangan', icon: '💔' }
-            ]
-        },
-
-        replacedOptions: [
-            { id: 'battery', label: 'Batareya', icon: '🔋' },
-            { id: 'screen', label: 'Ekran', icon: '📱' },
-            { id: 'back', label: 'Orqa qopqoq', icon: '🔲' },
-            { id: 'camera', label: 'Kamera', icon: '📷' },
-            { id: 'speaker', label: 'Dinamik', icon: '🔊' },
-            { id: 'buttons', label: 'Tugmalar', icon: '⚙️' },
-            { id: 'other', label: 'Boshqa', icon: '🔧' },
-            { id: 'none', label: 'Almashtirilmagan', icon: '✅' }
-        ],
-
-        faultOptions: [
-            { id: 'faceid', label: 'Face ID', icon: '👤' },
-            { id: 'truetone', label: 'True Tone', icon: '🌈' },
-            { id: 'frontcam', label: 'Old kamera', icon: '🤳' },
-            { id: 'backcam', label: 'Asosiy kamera', icon: '📸' },
-            { id: 'speakers', label: 'Dinamiklar', icon: '🔈' },
-            { id: 'mic', label: 'Mikrofon', icon: '🎤' },
-            { id: 'vibro', label: 'Vibro', icon: '📳' },
-            { id: 'wifi', label: 'Wi-Fi / Bluetooth', icon: '📶' },
-            { id: 'gps', label: 'GPS', icon: '📍' },
-            { id: 'nfc', label: 'NFC / Apple Pay', icon: '💳' },
-            { id: 'none', label: 'Hammasi ishlaydi', icon: '✅' }
-        ],
-
-        handleImageUpload(e) {
-            const file = e.target.files[0];
-            if (file) {
-                this.imagePreview = URL.createObjectURL(file);
-            }
-        },
-
-        getBatteryStatus() {
-            let val = parseInt(this.battery) || 0;
-            if (val >= 95) return { text: "A'lo", icon: '✨', class: 'bg-green-100 text-green-600' };
-            if (val >= 85) return { text: "Zo'r", icon: '👍', class: 'bg-blue-100 text-blue-600' };
-            if (val >= 70) return { text: "Yaxshi", icon: '✅', class: 'bg-yellow-100 text-yellow-600' };
-            return { text: "Almashtirish kerak", icon: '⚠️', class: 'bg-red-100 text-red-600' };
-        },
-
-        toggleReplaced(id) {
-            if (id === 'none') {
-                this.replacedParts = ['none'];
-            } else {
-                this.replacedParts = this.replacedParts.filter(i => i !== 'none');
-                if (this.replacedParts.includes(id)) {
-                    this.replacedParts = this.replacedParts.filter(i => i !== id);
-                } else {
-                    this.replacedParts.push(id);
-                }
-                if (this.replacedParts.length === 0) this.replacedParts = ['none'];
-            }
-        },
-
-        toggleFault(id) {
-            if (id === 'none') {
-                this.faults = ['none'];
-            } else {
-                this.faults = this.faults.filter(i => i !== 'none');
-                if (this.faults.includes(id)) {
-                    this.faults = this.faults.filter(i => i !== id);
-                } else {
-                    this.faults.push(id);
-                }
-                if (this.faults.length === 0) this.faults = ['none'];
-            }
-        },
-
-        stepTitle() {
-            const titles = {
-                1: 'Model',
-                2: 'Xususiyatlar',
-                3: 'Batareya',
-                4: 'Holat',
-                5: "Qo'shimcha",
-                6: "To'plam",
-                7: "Rasm",
-                8: "Bog'lanish",
-                9: "Natija"
-            };
-            return titles[this.step] || '';
-        },
-
-        nextStep() {
-            if (this.step < 9) {
-                this.step++;
-            }
-        },
-
-        prevStep() {
-            if (this.step > 1) {
-                this.step--;
-            }
-        },
-
-        formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        },
-
-        calculateFinalPrice() {
-            let base = 8000000;
-            if (this.model.includes('17')) base = 15000000;
-            else if (this.model.includes('16')) base = 12000000;
-            else if (this.model.includes('15')) base = 9000000;
-            else if (this.model.includes('14')) base = 7000000;
-            else if (this.model.includes('13')) base = 5000000;
-            else if (this.model.includes('12')) base = 4000000;
-            else if (this.model.includes('11')) base = 3000000;
-
-            if (this.model.includes('Pro Max')) base += 3000000;
-            else if (this.model.includes('Pro')) base += 2000000;
-            else if (this.model.includes('Plus')) base += 1000000;
-            
-            if (this.storage === '256GB') base += 1000000;
-            if (this.storage === '512GB') base += 2000000;
-            if (this.storage === '1TB') base += 3500000;
-
-            let bat = parseInt(this.battery);
-            if (bat < 85 && bat >= 70) base -= 500000;
-            if (bat < 70) base -= 1000000;
-
-            if (this.screenCondition !== 'ideal') base -= 1000000;
-            if (this.bodyCondition !== 'ideal') base -= 500000;
-            
-            if (!this.replacedParts.includes('none')) base -= 1500000;
-            if (!this.faults.includes('none')) base -= 2500000;
-
-            if (this.boxDocs === 'Faqat telefon') base -= 800000;
-
-            this.basePrice = Math.max(1000000, base);
-        }
-    }
-}
-</script>
 {% endblock %}

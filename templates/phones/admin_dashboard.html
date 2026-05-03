@@ -1,98 +1,49 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Admin Dashboard — Markab Electronics{% endblock %}
-
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-8">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
-        <div>
-            <div class="badge-premium mb-3">🔐 Admin Panel</div>
-            <h1 class="text-4xl font-black text-gray-900 tracking-tight">
-                Admin <span class="text-gradient">Dashboard</span>
-            </h1>
-            <p class="text-gray-500 mt-1 font-medium">{{ phones|length }} ta mahsulot boshqarilmoqda</p>
-        </div>
-        <a href="{% url 'phones:admin_add' %}" class="btn-primary inline-flex items-center gap-2 font-black uppercase tracking-wide text-sm">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-            Yangi Mahsulot
-        </a>
+<div class="animate">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
+        <h1 style="font-size:36px; font-weight:900;">🔐 Admin Panel</h1>
+        <a href="{% url 'phones:store_panel' %}" class="btn-primary">+ YANGI QO'SHISH</a>
     </div>
 
-    <!-- Stats Row -->
-    <div class="grid grid-cols-3 gap-4 mb-10">
-        <div class="card p-5 text-center">
-            <div class="text-3xl font-black text-brand">{{ phones|length }}</div>
-            <div class="text-xs text-gray-500 font-bold uppercase tracking-wide mt-1">Jami</div>
-        </div>
-        <div class="card p-5 text-center">
-            <div class="text-3xl font-black text-green-600">
-                {% with phones|length as total %}{{ total }}{% endwith %}
-            </div>
-            <div class="text-xs text-gray-500 font-bold uppercase tracking-wide mt-1">Faol</div>
-        </div>
-        <div class="card p-5 text-center">
-            <div class="text-3xl font-black text-orange-500">
-                {% for p in phones %}{% if p.is_booked %}1{% endif %}{% endfor %}
-            </div>
-            <div class="text-xs text-gray-500 font-bold uppercase tracking-wide mt-1">Bron</div>
-        </div>
-    </div>
-
-    <!-- Products Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {% for phone in phones %}
-        <div class="card overflow-hidden group hover:shadow-card-hover transition-all duration-300">
-            <!-- Image -->
-            <div class="relative h-44 bg-surface-bg overflow-hidden">
-                {% if phone.image %}
-                <img src="{{ phone.image.url }}" alt="{{ phone.model_name }}"
-                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                {% else %}
-                <div class="w-full h-full flex items-center justify-center">
-                    <span class="text-5xl opacity-20">📱</span>
-                </div>
-                {% endif %}
-
-                <!-- Status Badge -->
-                {% if phone.is_booked %}
-                <div class="absolute top-2 right-2">
-                    <span class="px-2 py-1 bg-orange-100 border border-orange-200 text-orange-700 text-[10px] font-black rounded-lg">🔒 Bron</span>
-                </div>
-                {% else %}
-                <div class="absolute top-2 right-2">
-                    <span class="px-2 py-1 bg-green-100 border border-green-200 text-green-700 text-[10px] font-black rounded-lg">✅ Faol</span>
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Info -->
-            <div class="p-4">
-                <h3 class="font-black text-gray-900 mb-1 text-sm">{{ phone.model_name }}</h3>
-                <p class="text-xs text-gray-400 mb-1">{{ phone.memory }}GB · 🔋{{ phone.battery_health }}%</p>
-                <div class="text-lg font-black text-brand mb-4">{{ phone.price|floatformat:0 }} <span class="text-xs text-gray-400 font-bold">so'm</span></div>
-
-                <div class="flex gap-2">
-                    <a href="{% url 'phones:detail' phone.pk %}"
-                       class="flex-1 py-2.5 rounded-xl text-xs font-black text-center bg-surface-bg border border-surface-border hover:border-brand/30 hover:bg-brand/5 transition-all text-gray-700">
-                        👁 Ko'rish
-                    </a>
-                    <a href="{% url 'phones:admin_delete' phone.pk %}"
-                       onclick="return confirm('Haqiqatdan ham o\'chirmoqchimisiz?')"
-                       class="flex-1 py-2.5 rounded-xl text-xs font-black text-center bg-red-50 border border-red-100 hover:bg-red-100 transition-all text-red-600">
-                        🗑 O'chirish
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-span-full py-24 text-center">
-            <div class="text-6xl mb-4">📭</div>
-            <p class="text-gray-500 font-bold text-lg">Hozircha mahsulotlar yo'q</p>
-            <a href="{% url 'phones:admin_add' %}" class="btn-primary inline-block mt-6 text-sm">➕ Birinchi mahsulotni qo'shing</a>
-        </div>
-        {% endfor %}
+    <div class="premium-card" style="padding:0; overflow:hidden;">
+        <table style="width:100%; border-collapse:collapse; text-align:left;">
+            <thead style="background:#F9F9F9; border-bottom:1px solid var(--border);">
+                <tr>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Mahsulot</th>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Narxi</th>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Sotuvchi</th>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Holati</th>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for phone in phones %}
+                <tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:20px; display:flex; align-items:center; gap:15px;">
+                        <div style="width:50px; height:50px; background:#F5F5F5; border-radius:10px; overflow:hidden;">
+                            {% if phone.image %}<img src="{{ phone.image.url }}" style="width:100%; height:100%; object-fit:cover;">{% endif %}
+                        </div>
+                        <span style="font-weight:900;">{{ phone.title }}</span>
+                    </td>
+                    <td style="padding:20px; font-weight:900; color:var(--primary);">{{ phone.price|floatformat:0 }} so'm</td>
+                    <td style="padding:20px; font-weight:700; color:var(--text-muted);">{{ phone.seller.username }}</td>
+                    <td style="padding:20px;">
+                        {% if phone.is_approved %}
+                            <span style="background:#E6F4EA; color:#1E7E34; padding:5px 12px; border-radius:8px; font-size:10px; font-weight:900;">TASDIQLANGAN</span>
+                        {% else %}
+                            <span style="background:#FFF5F7; color:var(--primary); padding:5px 12px; border-radius:8px; font-size:10px; font-weight:900;">KUTILMOQDA</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:20px;">
+                        <a href="{% url 'phones:admin_delete' phone.id %}" style="color:#FF4D4D; text-decoration:none; font-weight:900; font-size:12px;">O'CHIRISH</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

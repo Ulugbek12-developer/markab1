@@ -5,3 +5,5 @@ python-dotenv
 aiosqlite
 Pillow
 requests
+gunicorn
+whitenoise

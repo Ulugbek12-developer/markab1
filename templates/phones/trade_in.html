@@ -1,90 +1,49 @@
 {% extends 'base.html' %}
-
-{% block title %}Trade-in Kalkulyatori | Markab{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-black text-text-main mb-4">🔄 Trade-in Kalkulyatori</h1>
-        <p class="text-text-muted font-medium">Eski telefoningizni yangisiga almashtirish narxini hisoblang</p>
-    </div>
+<div class="animate" style="max-width: 900px; margin: 0 auto;">
+    <h1 style="font-size:36px; font-weight:900; margin-bottom:10px;">🔄 Trade-in Kalkulyator</h1>
+    <p style="color:var(--text-muted); font-weight:700; margin-bottom:40px;">Eski telefoningizni yangisiga almashtirish narxini hisoblang</p>
 
-    {% if result %}
-    <div class="premium-card p-10 mb-12 animate-fade-in bg-primary/5 border-primary/20">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-                <p class="text-xs font-black uppercase tracking-widest text-text-muted mb-2">Sizning telefoningiz</p>
-                <p class="text-2xl font-black text-text-main">~{{ result.my_price }} mln</p>
-            </div>
-            <div class="flex items-center justify-center">
-                <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-red-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
-            </div>
-            <div>
-                <p class="text-xs font-black uppercase tracking-widest text-text-muted mb-2">Yangi telefon</p>
-                <p class="text-2xl font-black text-primary">{{ result.target_price }} mln</p>
-            </div>
-        </div>
-        <div class="mt-10 pt-10 border-t border-primary/10 text-center">
-            <p class="text-sm font-bold text-text-muted mb-2">Siz to'laydigan farq:</p>
-            <p class="text-5xl font-black text-primary tracking-tighter">{{ result.difference }} mln so'm</p>
-            <div class="mt-8 flex gap-4 justify-center">
-                <a href="{% url 'phones:home' %}" class="btn-primary">Sotib olish</a>
-                <a href="{% url 'phones:trade_in' %}" class="btn-secondary">Qayta hisoblash</a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <form method="POST" class="space-y-8">
+    <form method="POST" class="premium-card" style="padding: 40px; display:flex; flex-direction:column; gap:30px;">
         {% csrf_token %}
         
-        <!-- Target Phone Info (Hidden if coming from detail page) -->
-        <div class="premium-card p-8">
-            <h2 class="text-xl font-black mb-6 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm">1</span>
-                Sotib olmoqchi bo'lgan telefoningiz
-            </h2>
-            
+        <!-- Step 1: Target Phone -->
+        <div>
+            <h3 style="font-size:20px; font-weight:900; margin-bottom:15px; border-left: 4px solid var(--primary); padding-left:15px;">1. Sotib olmoqchi bo'lgan telefoningiz</h3>
             {% if target_phone %}
-            <div class="flex items-center gap-6 p-4 bg-milky rounded-2xl border border-border-light">
-                {% if target_phone.image %}
-                <img src="{{ target_phone.image.url }}" class="w-20 h-20 rounded-xl object-cover shadow-sm">
-                {% endif %}
-                <div>
-                    <h3 class="font-black text-lg text-text-main">{{ target_phone.title }}</h3>
-                    <p class="text-primary font-bold">{{ target_phone.price|floatformat:0 }} so'm</p>
-                    <input type="hidden" name="target_price" value="{{ target_phone.price }}">
+                <div style="background:#F9F9F9; padding:20px; border-radius:15px; display:flex; align-items:center; gap:15px;">
+                    <div style="width:50px; height:50px; background:white; border-radius:10px; overflow:hidden;">
+                        {% if target_phone.image %}<img src="{{ target_phone.image.url }}" style="width:100%; height:100%; object-fit:contain;">{% endif %}
+                    </div>
+                    <div>
+                        <p style="font-weight:900;">{{ target_phone.title }}</p>
+                        <p style="color:var(--primary); font-weight:900;">{{ target_phone.price|floatformat:0 }} so'm</p>
+                        <input type="hidden" name="target_price" value="{{ target_phone.price }}">
+                    </div>
                 </div>
-            </div>
             {% else %}
-            <div class="space-y-4">
-                <p class="text-sm text-text-muted font-bold">Avval saytdan biron bir telefonni tanlang yoki taxminiy narxni yozing:</p>
-                <input type="number" name="target_price" placeholder="Yangi telefon narxi (masalan: 12000000)" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold">
-            </div>
+                <input type="number" name="target_price" placeholder="Yangi telefon narxi (masalan: 12000000)" required
+                       style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
             {% endif %}
         </div>
 
-        <!-- My Phone Assessment -->
-        <div class="premium-card p-8">
-            <h2 class="text-xl font-black mb-6 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm">2</span>
-                Sizning hozirgi telefoningiz holati
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Model</label>
-                    <select name="my_model" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold appearance-none">
+        <!-- Step 2: My Phone -->
+        <div>
+            <h3 style="font-size:20px; font-weight:900; margin-bottom:15px; border-left: 4px solid var(--primary); padding-left:15px;">2. Sizning hozirgi telefoningiz holati</h3>
+            <div class="grid grid-2" style="gap:15px;">
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:5px; color:var(--text-muted);">MODEL</label>
+                    <select name="my_model" required style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
                         {% for model in models %}
-                        <option value="{{ model }}">{{ model }}</option>
+                            <option value="{{ model }}">{{ model }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Xotira</label>
-                    <select name="my_memory" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold">
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:5px; color:var(--text-muted);">XOTIRA</label>
+                    <select name="my_memory" style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
                         <option value="64GB">64 GB</option>
                         <option value="128GB" selected>128 GB</option>
                         <option value="256GB">256 GB</option>
@@ -92,42 +51,60 @@
                         <option value="1TB">1 TB</option>
                     </select>
                 </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Batareya (%)</label>
-                    <input type="number" name="my_battery" value="90" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Holati</label>
-                    <select name="my_condition" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold">
-                        <option value="ideal">Ideal (Yangi kabi)</option>
-                        <option value="yaxshi">Yaxshi (Qirilgan joylari bor)</option>
-                        <option value="yomon">Yomon (Urilgan/Chaqilgan)</option>
-                    </select>
-                </div>
             </div>
-
-            <div class="mt-8 space-y-4">
-                <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Almashtirilgan qismlari bormi?</label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light hover:bg-primary/5 transition-all cursor-pointer group">
-                        <input type="checkbox" name="my_parts" value="ekran" class="w-5 h-5 accent-primary">
-                        <span class="text-sm font-bold text-text-main group-hover:text-primary transition-colors">Ekran</span>
-                    </label>
-                    <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light hover:bg-primary/5 transition-all cursor-pointer group">
-                        <input type="checkbox" name="my_parts" value="batareya" class="w-5 h-5 accent-primary">
-                        <span class="text-sm font-bold text-text-main group-hover:text-primary transition-colors">Batareya</span>
-                    </label>
-                    <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light hover:bg-primary/5 transition-all cursor-pointer group">
-                        <input type="checkbox" name="my_parts" value="kamera" class="w-5 h-5 accent-primary">
-                        <span class="text-sm font-bold text-text-main group-hover:text-primary transition-colors">Kamera</span>
-                    </label>
-                </div>
-            </div>
-
-            <button type="submit" class="w-full mt-10 btn-primary h-16 text-lg shadow-xl shadow-red-200">
-                Hisoblash 🚀
-            </button>
         </div>
+
+        <div class="grid grid-2" style="gap:15px;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:5px; color:var(--text-muted);">BATAREYA (%)</label>
+                <input type="number" name="my_battery" value="90" min="50" max="100" style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:5px; color:var(--text-muted);">HOLATI</label>
+                <select name="my_condition" style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+                    <option value="ideal">Ideal (Yangi kabi)</option>
+                    <option value="yaxshi">Yaxshi (Ozroq chizilgan)</option>
+                    <option value="o'rtacha">O'rtacha</option>
+                </select>
+            </div>
+        </div>
+
+        <div>
+            <label style="display:block; font-size:12px; font-weight:900; margin-bottom:10px; color:var(--text-muted);">ALMASHTIRILGAN QISMLARI</label>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <label style="display:flex; align-items:center; gap:8px; background:#F5F5F5; padding:10px 15px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;">
+                    <input type="checkbox" name="my_parts" value="ekran"> Ekran
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; background:#F5F5F5; padding:10px 15px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;">
+                    <input type="checkbox" name="my_parts" value="batareya"> Batareya
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; background:#F5F5F5; padding:10px 15px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;">
+                    <input type="checkbox" name="my_parts" value="kamera"> Kamera
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; background:#F5F5F5; padding:10px 15px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;">
+                    <input type="checkbox" name="my_parts" value="korpus"> Korpus
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="padding:20px; font-size:18px;">HISOBLASH 🚀</button>
     </form>
+
+    {% if result.calculated %}
+        <div class="premium-card animate" style="margin-top:40px; background:var(--primary); color:white; text-align:center;">
+            <h2 style="font-size:24px; font-weight:900; margin-bottom:20px;">Hisob-kitob natijasi:</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:30px;">
+                <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:15px;">
+                    <p style="font-size:12px; opacity:0.8;">Sizning telefoningiz:</p>
+                    <p style="font-size:24px; font-weight:900;">~ {{ result.my_price|floatformat:1 }} mln</p>
+                </div>
+                <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:15px;">
+                    <p style="font-size:12px; opacity:0.8;">To'lanadigan farq:</p>
+                    <p style="font-size:24px; font-weight:900;">{{ result.difference|floatformat:1 }} mln</p>
+                </div>
+            </div>
+            <p style="font-size:14px; font-weight:700; opacity:0.9;">* Bu taxminiy narx. Aniq narx filialda tekshirilgandan so'ng aytiladi.</p>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
