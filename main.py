@@ -7,6 +7,9 @@ from database import init_db
 async def main():
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     
+    # Initialize database
+    await init_db()
+    
     # Set WebApp Menu Button (O'zingizning havolangizni shu yerga yozing)
     from aiogram.types import MenuButtonWebApp, WebAppInfo
     WEBAPP_URL = "https://markabstore.pythonanywhere.com/" # <-- Yangi havola
