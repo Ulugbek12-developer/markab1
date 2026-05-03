@@ -364,13 +364,16 @@ async def process_confirm(message: Message, state: FSMContext):
         from handlers.price import calculate_price
         recommended_price = calculate_price(data)
         
-        if config.ADMIN_ID:
-            admin_text = f"🆕 <b>YANGI E'LON (ID: {ad_id})</b>\n\n"
-            admin_text += f"👤 User: {message.from_user.full_name}\n"
-            admin_text += f"📱 Model: {data['model']} ({data.get('color')})\n"
-            admin_text += f"💰 Narxi: {data['price']}\n"
-            admin_text += f"📐 Taxminiy: {recommended_price} mln so'm"
-            await message.bot.send_photo(config.ADMIN_ID, data['photos'][0], caption=admin_text, reply_markup=get_admin_keyboard(ad_id, lang), parse_mode="HTML")
+        try:
+            if config.ADMIN_ID:
+                admin_text = f"🆕 <b>YANGI E'LON (ID: {ad_id})</b>\n\n"
+                admin_text += f"👤 User: {message.from_user.full_name}\n"
+                admin_text += f"📱 Model: {data['model']} ({data.get('color')})\n"
+                admin_text += f"💰 Narxi: {data['price']}\n"
+                admin_text += f"📐 Taxminiy: {recommended_price} mln so'm"
+                await message.bot.send_photo(config.ADMIN_ID, data['photos'][0], caption=admin_text, reply_markup=get_admin_keyboard(ad_id, lang), parse_mode="HTML")
+        except Exception as e:
+            with open('sync_debug.log', 'a') as f: f.write(f"ERROR: Admin notification in sell.py: {e}\n")
 
         await message.answer(STRINGS[lang]['sell_success'].format(price=recommended_price), parse_mode="HTML", reply_markup=get_main_menu(lang))
         

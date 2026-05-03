@@ -338,12 +338,15 @@ async def process_confirm(message: Message, state: FSMContext):
         req_id = await add_price_request(data)
         
         # Admin Notification
-        if config.ADMIN_ID:
-            admin_text = f"🆕 <b>YANGI NARXLASH SO'ROVI (ID: {req_id})</b>\n\n"
-            admin_text += f"👤 Mijoz: <a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a>\n"
-            admin_text += f"📱 Model: {data.get('model')} ({data.get('color')})\n"
-            admin_text += f"📐 Taxminiy: {recommended_price} mln so'm"
-            await message.bot.send_photo(config.ADMIN_ID, data['photos'][0], caption=admin_text, parse_mode="HTML", reply_markup=get_price_admin_keyboard(req_id, lang))
+        try:
+            if config.ADMIN_ID:
+                admin_text = f"🆕 <b>YANGI NARXLASH SO'ROVI (ID: {req_id})</b>\n\n"
+                admin_text += f"👤 Mijoz: <a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a>\n"
+                admin_text += f"📱 Model: {data.get('model')} ({data.get('color')})\n"
+                admin_text += f"📐 Taxminiy: {recommended_price} mln so'm"
+                await message.bot.send_photo(config.ADMIN_ID, data['photos'][0], caption=admin_text, parse_mode="HTML", reply_markup=get_price_admin_keyboard(req_id, lang))
+        except Exception as e:
+            with open('sync_debug.log', 'a') as f: f.write(f"ERROR: Admin notification in price.py: {e}\n")
 
         await message.answer(STRINGS[lang]['price_success'].format(price=recommended_price), parse_mode="HTML", reply_markup=get_main_menu(lang))
         await state.clear()

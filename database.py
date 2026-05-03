@@ -83,12 +83,17 @@ async def init_db():
             ("branch", "TEXT"), ("region", "TEXT"), ("box", "TEXT"), 
             ("status", "TEXT DEFAULT 'pending'"), ("price", "TEXT"),
             ("replaced_parts", "TEXT"), ("defects", "TEXT"),
-            ("screen_condition", "TEXT"), ("body_condition", "TEXT")
+            ("screen_condition", "TEXT"), ("body_condition", "TEXT"),
+            ("description", "TEXT"), ("brand", "TEXT"), ("photos", "TEXT"),
+            ("battery", "TEXT"), ("storage", "TEXT"), ("condition", "TEXT"),
+            ("contact", "TEXT"), ("is_sold", "INTEGER DEFAULT 0"),
+            ("is_opened", "TEXT")
         ]
         columns_price = [
             ("replaced_parts", "TEXT"), ("defects", "TEXT"),
             ("screen_condition", "TEXT"), ("body_condition", "TEXT"),
-            ("region", "TEXT"), ("box", "TEXT")
+            ("region", "TEXT"), ("box", "TEXT"), ("photos", "TEXT"),
+            ("battery_range", "TEXT"), ("is_opened", "TEXT")
         ]
         
         for col_name, col_type in columns_ads:

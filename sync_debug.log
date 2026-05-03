@@ -379,3 +379,4 @@ Traceback (most recent call last):
   File "C:\Users\Hp\Desktop\isell\handlers\admin.py", line 124, in admin_add_photos_text
 UnboundLocalError: cannot access local variable 'data' where it is not associated with a value
 
+ERROR: Sync in sell.py: no such table: phones_category
