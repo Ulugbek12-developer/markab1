@@ -18,7 +18,8 @@ async def main():
         )
     )
     
-    print(f"Polling started for bot... Mini App: {WEBAPP_URL}")
+    # Delete webhook to prevent conflicts with polling
+    await bot.delete_webhook(drop_pending_updates=True)
     
     # Start polling
     await dp.start_polling(bot)

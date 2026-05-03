@@ -22,9 +22,22 @@ async def check_password(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == ADMIN_PASSWORD:
         await state.clear()
-        web_admin_url = "https://markab2.pythonanywhere.com/markab-admin/"
+        web_admin_url = "https://markabstore.pythonanywhere.com/markab-master-panel-6969/"
         text = STRINGS[lang]['admin_welcome'] + f"\n\n🌐 <b>Veb Admin Panel:</b>\n{web_admin_url}"
         await message.answer(text, parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
+    elif message.text in [STRINGS[lang]['btn_sell'], STRINGS[lang]['btn_buy'], STRINGS[lang]['btn_price'], STRINGS[lang]['btn_branches'], STRINGS[lang]['btn_help']]:
+        # Allow navigating away from password prompt
+        await state.clear()
+        from handlers.sell import start_sell
+        from handlers.buy import start_buy
+        from handlers.price import start_price
+        from handlers.common import show_branches, show_help
+        
+        if message.text == STRINGS[lang]['btn_sell']: await start_sell(message, state)
+        elif message.text == STRINGS[lang]['btn_buy']: await start_buy(message, state)
+        elif message.text == STRINGS[lang]['btn_price']: await start_price(message, state)
+        elif message.text == STRINGS[lang]['btn_branches']: await show_branches(message)
+        elif message.text == STRINGS[lang]['btn_help']: await show_help(message)
     else:
         await message.answer(STRINGS[lang]['err_pass'], parse_mode="HTML")
 
@@ -38,7 +51,7 @@ async def admin_add_product_start(message: Message, state: FSMContext):
 async def admin_add_model(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text in [STRINGS[lang]['btn_back'], "⬅️ Orqaga", "⬅️ Назад"]:
-        await message.answer(STRINGS[lang]['main_menu'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
+        await message.answer(STRINGS[lang]['main_menu'], parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
         await state.clear()
         return
     await state.update_data(model=message.text)

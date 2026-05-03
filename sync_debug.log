@@ -374,3 +374,8 @@ DEBUG: Syncing iPhone 14 Pro to Web App...
 DEBUG: Sync WebApp -> Bot DB success!
 DEBUG: SUCCESS! Product created in Django with ID: 23
 DEBUG: Sync Bot -> Web App success! ID: 23
+DEBUG: Sync Bot -> Web App error: cannot access local variable 'data' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\Hp\Desktop\isell\handlers\admin.py", line 124, in admin_add_photos_text
+UnboundLocalError: cannot access local variable 'data' where it is not associated with a value
+

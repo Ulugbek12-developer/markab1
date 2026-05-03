@@ -51,7 +51,7 @@ def get_main_menu(lang):
         KeyboardButton(text=s['btn_branches'])
     )
     builder.row(
-        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markabstore.pythonanywhere.com")),
+        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markabstore.pythonanywhere.com/")),
         KeyboardButton(text=s['btn_help'])
     )
     builder.row(KeyboardButton(text=s['btn_admin']))
@@ -59,15 +59,15 @@ def get_main_menu(lang):
 
 def get_choice_keyboard(lang, action_type):
     s = STRINGS[lang]
-    base_url = "https://markabstore.pythonanywhere.com"
     urls = {
-        'sell': f"{base_url}/sell/",
-        'buy': f"{base_url}/",
-        'price': f"{base_url}/price/"
+        'sell': "https://markabstore.pythonanywhere.com/sell/",
+        'buy': "https://markabstore.pythonanywhere.com/",
+        'price': "https://markabstore.pythonanywhere.com/price/",
+        'trade_in': "https://markabstore.pythonanywhere.com/trade-in/"
     }
     builder = ReplyKeyboardBuilder()
     builder.row(KeyboardButton(text=s['btn_continue_bot']))
-    builder.row(KeyboardButton(text=s['btn_open_miniapp'], web_app=WebAppInfo(url=urls.get(action_type, base_url))))
+    builder.row(KeyboardButton(text=s['btn_open_miniapp'], web_app=WebAppInfo(url=urls.get(action_type, "https://markabstore.pythonanywhere.com/"))))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
@@ -170,7 +170,8 @@ def get_memory_keyboard(lang):
     builder = ReplyKeyboardBuilder()
     builder.row(KeyboardButton(text="64GB"), KeyboardButton(text="128GB"))
     builder.row(KeyboardButton(text="256GB"), KeyboardButton(text="512GB"))
-    builder.row(KeyboardButton(text="1TB"), KeyboardButton(text=s['btn_back']))
+    builder.row(KeyboardButton(text="1TB"))
+    builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
 def get_condition_keyboard(lang):
@@ -201,6 +202,25 @@ def get_box_keyboard(lang):
         builder.row(KeyboardButton(text="📦 Bor"), KeyboardButton(text="🚫 Yo'q"))
     else:
         builder.row(KeyboardButton(text="📦 Есть"), KeyboardButton(text="🚫 Нет"))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_screen_body_condition_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    if lang == 'uz':
+        builder.row(KeyboardButton(text="✨ Ideal"), KeyboardButton(text="~ Mayda chiziqlar"))
+        builder.row(KeyboardButton(text="/// Chuqur chiziqlar"), KeyboardButton(text="💔 Yoriqlar / Singan"))
+    else:
+        builder.row(KeyboardButton(text="✨ Идеал"), KeyboardButton(text="~ Мелкие царапины"))
+        builder.row(KeyboardButton(text="/// Глубокие царапины"), KeyboardButton(text="💔 Трещины / Разбит"))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
+
+def get_skip_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text="O'tkazish" if lang == 'uz' else "Пропустить"))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 

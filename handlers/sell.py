@@ -25,12 +25,16 @@ async def start_sell(message: Message, state: FSMContext):
 @router.message(SellPhone.choice)
 async def process_choice(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
-    if message.text == STRINGS[lang]['btn_continue_bot'] or "davom etish" in message.text.lower() or "продолжить" in message.text.lower():
+    if message.text == STRINGS[lang]['btn_continue_bot'] or message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
         await state.set_state(SellPhone.model)
         await message.answer(STRINGS[lang]['prompt_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
     elif message.text == STRINGS[lang]['btn_back']:
         await state.clear()
-        await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
+        await message.answer(STRINGS[lang]['main_menu'], parse_mode="HTML", reply_markup=get_main_menu(lang))
+    elif message.text.startswith("iPhone"):
+        await state.update_data(model=message.text)
+        await state.set_state(SellPhone.color)
+        await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(message.text, lang))
     else:
         await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'sell'))
 
@@ -55,6 +59,19 @@ async def process_color(message: Message, state: FSMContext):
         return
     
     await state.update_data(color=message.text)
+    await state.set_state(SellPhone.memory)
+    await message.answer(STRINGS[lang]['prompt_memory'], parse_mode="HTML", reply_markup=get_memory_keyboard(lang))
+
+@router.message(SellPhone.memory)
+async def process_memory(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text == STRINGS[lang]['btn_back']:
+        data = await state.get_data()
+        await state.set_state(SellPhone.color)
+        await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(data.get('model'), lang))
+        return
+    
+    await state.update_data(memory=message.text)
     await state.set_state(SellPhone.photos)
     await state.update_data(photos=[])
     await message.answer(STRINGS[lang]['prompt_photos'], parse_mode="HTML", reply_markup=get_continue_keyboard(lang))
@@ -73,9 +90,8 @@ async def process_photos_photo(message: Message, state: FSMContext):
 async def process_photos_text(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
-        data = await state.get_data()
-        await state.set_state(SellPhone.color)
-        await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(data.get('model'), lang))
+        await state.set_state(SellPhone.memory)
+        await message.answer(STRINGS[lang]['prompt_memory'], parse_mode="HTML", reply_markup=get_memory_keyboard(lang))
         return
         
     if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
@@ -119,7 +135,7 @@ async def process_cycles(message: Message, state: FSMContext):
     await state.update_data(cycles=message.text)
     await state.set_state(SellPhone.replaced_parts)
     await state.update_data(replaced_parts=[])
-    await message.answer(STRINGS[lang]['prompt_replaced_parts'], parse_mode="HTML", reply_markup=get_replaced_parts_keyboard([]))
+    await message.answer(STRINGS[lang]['prompt_replaced_parts'], parse_mode="HTML", reply_markup=get_replaced_parts_keyboard([], lang))
 
 @router.message(SellPhone.replaced_parts)
 async def process_replaced_parts_message(message: Message, state: FSMContext):
@@ -174,8 +190,8 @@ async def process_defects_message(message: Message, state: FSMContext):
         return
         
     if message.text in [s['btn_continue'], "➡️ Davom etish", "➡️ Продолжить"]:
-        await state.set_state(SellPhone.memory)
-        await message.answer(STRINGS[lang]['prompt_memory'], parse_mode="HTML", reply_markup=get_memory_keyboard(lang))
+        await state.set_state(SellPhone.screen_condition)
+        await message.answer(STRINGS[lang]['prompt_screen_condition'], parse_mode="HTML", reply_markup=get_screen_body_condition_keyboard(lang))
         return
 
     # Toggle logic
@@ -195,35 +211,49 @@ async def process_defects_message(message: Message, state: FSMContext):
             selected = ["hammasi_ishlaydi"]
         else:
             if "hammasi_ishlaydi" in selected: selected.remove("hammasi_ishlaydi")
-            if defect_key in selected: selected.remove(defect_key)
-            else: selected.append(defect_key)
+            if toggled_key in selected: selected.remove(toggled_key)
+            else: selected.append(toggled_key)
             
         await state.update_data(defects=selected)
         await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(selected, lang))
     else:
         await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(selected, lang))
 
-@router.message(SellPhone.memory)
-async def process_memory(message: Message, state: FSMContext):
+@router.message(SellPhone.screen_condition)
+async def process_screen_condition(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
+        data = await state.get_data()
         await state.set_state(SellPhone.defects)
-        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard([]))
+        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(data.get('defects', []), lang))
         return
     
-    await state.update_data(memory=message.text, storage=message.text)
-    await state.set_state(SellPhone.condition)
-    await message.answer(STRINGS[lang]['prompt_condition'], parse_mode="HTML", reply_markup=get_condition_keyboard(lang))
+    await state.update_data(screen_condition=message.text)
+    await state.set_state(SellPhone.body_condition)
+    await message.answer(STRINGS[lang]['prompt_body_condition'], parse_mode="HTML", reply_markup=get_screen_body_condition_keyboard(lang))
 
-@router.message(SellPhone.condition)
-async def process_condition(message: Message, state: FSMContext):
+@router.message(SellPhone.body_condition)
+async def process_body_condition(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
-        await state.set_state(SellPhone.memory)
-        await message.answer(STRINGS[lang]['prompt_memory'], parse_mode="HTML", reply_markup=get_memory_keyboard(lang))
+        await state.set_state(SellPhone.screen_condition)
+        await message.answer(STRINGS[lang]['prompt_screen_condition'], parse_mode="HTML", reply_markup=get_screen_body_condition_keyboard(lang))
         return
     
-    await state.update_data(condition=message.text)
+    await state.update_data(body_condition=message.text)
+    await state.set_state(SellPhone.description)
+    await message.answer(STRINGS[lang]['prompt_description'], parse_mode="HTML", reply_markup=get_skip_keyboard(lang))
+
+@router.message(SellPhone.description)
+async def process_description(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text == STRINGS[lang]['btn_back']:
+        await state.set_state(SellPhone.body_condition)
+        await message.answer(STRINGS[lang]['prompt_body_condition'], parse_mode="HTML", reply_markup=get_screen_body_condition_keyboard(lang))
+        return
+    
+    desc = "" if message.text in ["O'tkazish", "Пропустить"] else message.text
+    await state.update_data(description=desc)
     await state.set_state(SellPhone.region)
     await message.answer(STRINGS[lang]['prompt_region'], parse_mode="HTML", reply_markup=get_region_keyboard(lang))
 
@@ -231,8 +261,8 @@ async def process_condition(message: Message, state: FSMContext):
 async def process_region(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
-        await state.set_state(SellPhone.condition)
-        await message.answer(STRINGS[lang]['prompt_condition'], parse_mode="HTML", reply_markup=get_condition_keyboard(lang))
+        await state.set_state(SellPhone.description)
+        await message.answer(STRINGS[lang]['prompt_description'], parse_mode="HTML", reply_markup=get_skip_keyboard(lang))
         return
     
     if message.text in ["Boshqa", "Другое"]:
@@ -303,12 +333,15 @@ async def process_contact(message: Message, state: FSMContext):
         f"🔄 <b>{s['lbl_cycles']}:</b> {data.get('cycles')}\n"
         f"🔧 <b>{s['lbl_replaced']}:</b> {parts_str or s['val_none']}\n"
         f"⚠️ <b>{s['lbl_defects']}:</b> {defects_str or s['val_none']}\n"
-        f"✨ <b>{s['lbl_condition']}:</b> {data['condition']}\n"
+        f"📱 <b>Ekran:</b> {data.get('screen_condition')}\n"
+        f"📐 <b>Korpus:</b> {data.get('body_condition')}\n"
         f"🌍 <b>{s['lbl_region']}:</b> {data['region']}\n"
         f"📦 <b>{s['lbl_box']}:</b> {data['box']}\n"
         f"💰 <b>{s['lbl_price']}:</b> {data['price']}\n"
         f"📞 <b>{s['lbl_contact']}:</b> {data['contact']}"
     )
+    if data.get('description'):
+        summary += f"\n\n📝 <b>Tavsif:</b> {data['description']}"
     
     await state.set_state(SellPhone.confirm)
     await message.answer_photo(photo=data['photos'][0], caption=summary + "\n\n" + STRINGS[lang]['prompt_confirm'], parse_mode="HTML", reply_markup=get_confirm_keyboard(lang))
@@ -365,8 +398,16 @@ async def process_confirm(message: Message, state: FSMContext):
             await sync_to_async(Listing.objects.create)(
                 title=f"iPhone {data['model']} {data['memory']}",
                 model_name=data['model'],
+                color=data.get('color', ''),
                 memory=data['memory'].replace(' GB', ''),
                 battery_health=int(str(data.get('battery', 100)).replace('%', '').strip()),
+                region=data.get('region', ''),
+                screen_condition=data.get('screen_condition', ''),
+                body_condition=data.get('body_condition', ''),
+                description=data.get('description', ''),
+                replaced_parts=data.get('replaced_parts', []),
+                defects=data.get('defects', []),
+                has_box=True if "bor" in str(data.get('box', '')).lower() else False,
                 price=recommended_price * 1000000, # Approximate
                 is_approved=False, # Wait for admin
                 seller_phone=str(data.get('contact', '')),

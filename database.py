@@ -15,6 +15,9 @@ async def init_db():
                 battery TEXT,
                 storage TEXT,
                 condition TEXT,
+                screen_condition TEXT,
+                body_condition TEXT,
+                description TEXT,
                 region TEXT,
                 box TEXT,
                 price TEXT,
@@ -36,6 +39,8 @@ async def init_db():
                 battery_range TEXT,
                 storage TEXT,
                 condition TEXT,
+                screen_condition TEXT,
+                body_condition TEXT,
                 region TEXT,
                 box TEXT,
                 replaced_parts TEXT,
@@ -116,16 +121,19 @@ async def delete_ad(ad_id: int):
 async def add_ad(data: dict):
     async with aiosqlite.connect(config.DB_NAME) as db:
         cursor = await db.execute("""
-            INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, region, box, price, contact, branch, replaced_parts, defects)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO ads (user_id, brand, model, photos, battery, storage, condition, screen_condition, body_condition, description, region, box, price, contact, branch, replaced_parts, defects)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             data.get('user_id'),
             data.get('brand', 'iPhone'),
             data.get('model'),
             ",".join(data.get('photos', [])),
             data.get('battery'),
-            data.get('storage'),
+            data.get('storage', data.get('memory')),
             data.get('condition'),
+            data.get('screen_condition'),
+            data.get('body_condition'),
+            data.get('description'),
             data.get('region'),
             data.get('box'),
             data.get('price'),
@@ -141,8 +149,8 @@ async def add_ad(data: dict):
 async def add_price_request(data: dict):
     async with aiosqlite.connect(config.DB_NAME) as db:
         cursor = await db.execute("""
-            INSERT INTO price_requests (user_id, model, photos, battery_range, storage, condition, region, box, replaced_parts, defects, calculated_price)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO price_requests (user_id, model, photos, battery_range, storage, condition, screen_condition, body_condition, region, box, replaced_parts, defects, calculated_price)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             data.get('user_id'),
             data.get('model'),
@@ -150,6 +158,8 @@ async def add_price_request(data: dict):
             data.get('battery_range', data.get('battery')),
             data.get('storage'),
             data.get('condition'),
+            data.get('screen_condition'),
+            data.get('body_condition'),
             data.get('region'),
             data.get('box'),
             json.dumps(data.get('replaced_parts', [])),

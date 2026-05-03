@@ -27,7 +27,20 @@ async def process_choice(message: Message, state: FSMContext):
         await message.answer(STRINGS[lang]['prompt_buy_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
     elif message.text == STRINGS[lang]['btn_back']:
         await state.clear()
-        await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
+        await message.answer(STRINGS[lang]['main_menu'], parse_mode="HTML", reply_markup=get_main_menu(lang))
+    elif message.text.startswith("iPhone"):
+        model = message.text
+        await state.update_data(model=model)
+        results = await search_ads(model=model, branch=None)
+        if not results:
+            err_msg = STRINGS[lang]['no_results'].replace('{branch} filialida ', '').replace('в {branch} филиале ', '')
+            await message.answer(err_msg.format(branch='', model=model), parse_mode="HTML", reply_markup=get_main_menu(lang))
+            await state.clear()
+        else:
+            title_msg = STRINGS[lang]['results_title'].replace('{branch} filialidagi', 'Barcha filiallardagi').replace('В {branch} филиале', 'Во всех филиалах')
+            await message.answer(title_msg.format(branch='', model=model), parse_mode="HTML")
+            # ... rest of search logic ...
+            await state.set_state(BuyPhone.select_ad)
     else:
         await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'buy'))
 
@@ -39,21 +52,56 @@ async def process_buy_model(message: Message, state: FSMContext):
         await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'buy'))
         return
         
-    model = message.text
-    await state.update_data(model=model)
+    await state.update_data(model=message.text)
+    await state.set_state(BuyPhone.memory)
+    await message.answer(STRINGS[lang]['prompt_buy_memory'], parse_mode="HTML", reply_markup=get_memory_keyboard(lang))
+
+@router.message(BuyPhone.memory, F.text)
+async def process_buy_memory(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text == STRINGS[lang]['btn_back']:
+        await state.set_state(BuyPhone.model)
+        await message.answer(STRINGS[lang]['prompt_buy_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
+        return
+    
+    await state.update_data(memory=message.text)
+    await state.set_state(BuyPhone.color)
+    data = await state.get_data()
+    await message.answer(STRINGS[lang]['prompt_buy_color'], parse_mode="HTML", reply_markup=get_skip_keyboard(lang))
+
+@router.message(BuyPhone.color, F.text)
+async def process_buy_color(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text == STRINGS[lang]['btn_back']:
+        await state.set_state(BuyPhone.memory)
+        await message.answer(STRINGS[lang]['prompt_buy_memory'], parse_mode="HTML", reply_markup=get_memory_keyboard(lang))
+        return
+
+    color = None if message.text in ["Hammasi", "O'tkazish", "Пропустить", "Все"] else message.text
+    await state.update_data(color=color)
+    
+    data = await state.get_data()
+    model = data.get('model')
+    memory = data.get('memory')
     
     results = await search_ads(model=model, branch=None)
     
-    if not results:
-        err_msg = STRINGS[lang]['no_results'].replace('{branch} filialida ', '').replace('в {branch} филиале ', '')
-        await message.answer(err_msg.format(branch='', model=model), parse_mode="HTML", reply_markup=get_main_menu(lang))
+    # Client-side filtering for memory and color if provided
+    filtered_results = []
+    for row in results:
+        match = True
+        if memory and memory.lower() not in str(row['storage']).lower(): match = False
+        if color and color.lower() not in str(row['color']).lower(): match = False
+        if match: filtered_results.append(row)
+        
+    if not filtered_results:
+        await message.answer(STRINGS[lang]['no_results'], parse_mode="HTML", reply_markup=get_main_menu(lang))
         await state.clear()
     else:
-        title_msg = STRINGS[lang]['results_title'].replace('{branch} filialidagi', 'Barcha filiallardagi').replace('В {branch} филиале', 'Во всех филиалах')
-        await message.answer(title_msg.format(branch='', model=model), parse_mode="HTML")
+        await message.answer(STRINGS[lang]['results_title'], parse_mode="HTML")
         ids = []
         s = STRINGS[lang]
-        for row in results:
+        for row in filtered_results:
             branch_name = row['branch'].capitalize() if row['branch'] else 'Malika'
             summary = (
                 f"🆔 <b>ID: {row['id']}</b>\n"
@@ -74,7 +122,7 @@ async def process_buy_model(message: Message, state: FSMContext):
                 await message.answer(summary, parse_mode="HTML")
             ids.append(str(row['id']))
         
-        await state.update_data(available_ids=ids, results_cache=[dict(r) for r in results])
+        await state.update_data(available_ids=ids, results_cache=[dict(r) for r in filtered_results])
         await state.set_state(BuyPhone.select_id)
         await message.answer(STRINGS[lang]['prompt_select_id'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
 
