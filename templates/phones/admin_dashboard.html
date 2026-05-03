@@ -48,5 +48,39 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Filiallar Ro'yxati -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:60px; margin-bottom:20px;">
+        <h2 style="font-size:24px; font-weight:900;">Barcha Filiallar</h2>
+    </div>
+
+    <div class="premium-card" style="padding:0; overflow:hidden;">
+        <table style="width:100%; border-collapse:collapse; text-align:left;">
+            <thead style="background:#F9F9F9; border-bottom:1px solid var(--border);">
+                <tr>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Nomi</th>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Manzil</th>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Telefon</th>
+                    <th style="padding:20px; font-size:12px; font-weight:900; color:var(--text-muted); text-transform:uppercase;">Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for branch in branches %}
+                <tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:20px; font-weight:900;">{{ branch.name }}</td>
+                    <td style="padding:20px; font-weight:700; color:var(--text-muted);">{{ branch.address }}</td>
+                    <td style="padding:20px; font-weight:700; color:var(--text-muted);">{{ branch.phone }}</td>
+                    <td style="padding:20px;">
+                        <a href="{% url 'phones:admin_branch_delete' branch.id %}" style="color:#FF4D4D; text-decoration:none; font-weight:900; font-size:12px;">O'CHIRISH</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding:20px; text-align:center; font-weight:700; color:var(--text-muted);">Hali filiallar qo'shilmagan</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

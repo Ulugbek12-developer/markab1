@@ -79,6 +79,10 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = 'phones'
     def test_func(self): return self.request.user.is_staff
     def get_queryset(self): return Listing.objects.all().order_by('-created_at')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['branches'] = Branch.objects.all()
+        return context
 
 class SellView(LoginRequiredMixin, CreateView):
     model = Listing
@@ -221,3 +225,10 @@ class AdminBranchCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
     def form_valid(self, form):
         messages.success(self.request, "Filial muvaffaqiyatli qo'shildi!")
         return super().form_valid(form)
+
+class AdminBranchDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self): return self.request.user.is_staff
+    def get(self, request, pk):
+        get_object_or_404(Branch, pk=pk).delete()
+        messages.success(request, "Filial o'chirildi.")
+        return redirect('phones:admin_dashboard')
