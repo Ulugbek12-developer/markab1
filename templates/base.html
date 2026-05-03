@@ -34,10 +34,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
+    <style>
+        :root {
+            --brand-color: #B12241;
+            --brand-hover: #8e1b34;
+            --bg-light: #FFFFFF;
+            --bg-milky: #FDFDFD;
+            --text-main: #1A1A1A;
+            --text-muted: #666666;
+            --border-light: #EEEEEE;
+            --card-shadow: 0 10px 40px rgba(177, 34, 65, 0.05);
+        }
+        body.dark {
+            --bg-light: #121212;
+            --bg-milky: #0D0D0D;
+            --text-main: #F5F5F5;
+            --text-muted: #A0A0A0;
+            --border-light: #2A2A2A;
+            --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+
     <style type="text/tailwindcss">
         @layer base {
             body {
                 @apply font-['Outfit'] antialiased bg-milky text-text-main;
+                background-color: var(--bg-milky);
+                color: var(--text-main);
                 -webkit-tap-highlight-color: transparent;
                 transition: background-color 0.3s, color 0.3s;
             }
@@ -45,18 +68,25 @@
         @layer components {
             .glass {
                 @apply bg-light/90 backdrop-blur-xl border-b border-slate-100/10;
+                background-color: rgba(var(--bg-light-rgb, 255, 255, 255), 0.9);
             }
             .card-shadow {
-                box-shadow: 0 10px 40px rgba(177, 34, 65, 0.05);
+                box-shadow: var(--card-shadow);
             }
             .btn-primary {
                 @apply bg-primary text-white font-bold py-3.5 px-6 rounded-2xl transition-all active:scale-95 shadow-lg shadow-red-100;
+                background-color: var(--brand-color);
             }
             .btn-secondary {
                 @apply bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl border border-slate-100 transition-all active:scale-95;
             }
             .nav-link {
                 @apply flex items-center gap-2 text-sm font-bold transition-colors hover:text-primary text-slate-600;
+            }
+            .premium-card {
+                @apply bg-light rounded-[2rem] border border-slate-100 transition-all duration-500;
+                background-color: var(--bg-light);
+                box-shadow: var(--card-shadow);
             }
         }
         .hover-lift {
