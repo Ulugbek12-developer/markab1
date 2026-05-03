@@ -61,10 +61,13 @@ async def process_color(message: Message, state: FSMContext):
 
 @router.message(SellPhone.photos, F.photo)
 async def process_photos_photo(message: Message, state: FSMContext):
-    data = await state.get_data()
-    photos = data.get('photos', [])
-    photos.append(message.photo[-1].file_id)
-    await state.update_data(photos=photos)
+    lang = await get_user_language(message.from_user.id)
+    photo_id = message.photo[-1].file_id
+    await state.update_data(photos=[photo_id])
+    
+    # Automatically proceed after 1 photo
+    await state.set_state(SellPhone.battery)
+    await message.answer(STRINGS[lang]['prompt_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
 
 @router.message(SellPhone.photos, F.text)
 async def process_photos_text(message: Message, state: FSMContext):
@@ -78,19 +81,19 @@ async def process_photos_text(message: Message, state: FSMContext):
     if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
         data = await state.get_data()
         if not data.get('photos'):
-            await message.answer(STRINGS[lang]['prompt_photos'])
+            await message.answer(STRINGS[lang]['prompt_photos'], parse_mode="HTML")
             return
         await state.set_state(SellPhone.battery)
         await message.answer(STRINGS[lang]['prompt_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_photos'])
+        await message.answer(STRINGS[lang]['prompt_photos'], parse_mode="HTML")
 
 @router.message(SellPhone.battery)
 async def process_battery(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(SellPhone.photos)
-        await message.answer(STRINGS[lang]['prompt_photos'], reply_markup=get_continue_keyboard(lang))
+        await message.answer(STRINGS[lang]['prompt_photos'], parse_mode="HTML", reply_markup=get_continue_keyboard(lang))
         return
 
     if not message.text.isdigit() or not (1 <= int(message.text) <= 100):
@@ -137,27 +140,27 @@ async def process_replaced_parts_message(message: Message, state: FSMContext):
     # Toggle logic
     data = await state.get_data()
     selected = data.get('replaced_parts', [])
-    text = message.text.replace("✅ ", "")
     
-    # Find key by label
-    part_key = None
-    for key, label in REPLACED_PARTS:
-        if label == text:
-            part_key = key
+    # Find which part was toggled
+    toggled_key = None
+    for key, string_key, icon in REPLACED_PARTS:
+        label = STRINGS[lang][string_key]
+        if message.text == f"{icon} {label}" or message.text == f"✅ {icon} {label}":
+            toggled_key = key
             break
             
-    if part_key:
-        if part_key == "almashtirilmagan":
+    if toggled_key:
+        if toggled_key == "almashtirilmagan":
             selected = ["almashtirilmagan"]
         else:
             if "almashtirilmagan" in selected: selected.remove("almashtirilmagan")
-            if part_key in selected: selected.remove(part_key)
-            else: selected.append(part_key)
+            if toggled_key in selected: selected.remove(toggled_key)
+            else: selected.append(toggled_key)
             
         await state.update_data(replaced_parts=selected)
-        await message.answer(STRINGS[lang]['prompt_replaced_parts'], reply_markup=get_replaced_parts_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_replaced_parts'], parse_mode="HTML", reply_markup=get_replaced_parts_keyboard(selected, lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_replaced_parts'], reply_markup=get_replaced_parts_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_replaced_parts'], parse_mode="HTML", reply_markup=get_replaced_parts_keyboard(selected, lang))
 
 @router.message(SellPhone.defects)
 async def process_defects_message(message: Message, state: FSMContext):
@@ -178,17 +181,17 @@ async def process_defects_message(message: Message, state: FSMContext):
     # Toggle logic
     data = await state.get_data()
     selected = data.get('defects', [])
-    text = message.text.replace("✅ ", "")
     
-    # Find key by label
-    defect_key = None
-    for key, label in DEFECTS_LIST:
-        if label == text:
-            defect_key = key
+    # Find which defect was toggled
+    toggled_key = None
+    for key, string_key, icon in DEFECTS_LIST:
+        label = STRINGS[lang][string_key]
+        if message.text == f"{icon} {label}" or message.text == f"✅ {icon} {label}":
+            toggled_key = key
             break
             
-    if defect_key:
-        if defect_key == "hammasi_ishlaydi":
+    if toggled_key:
+        if toggled_key == "hammasi_ishlaydi":
             selected = ["hammasi_ishlaydi"]
         else:
             if "hammasi_ishlaydi" in selected: selected.remove("hammasi_ishlaydi")
@@ -196,9 +199,9 @@ async def process_defects_message(message: Message, state: FSMContext):
             else: selected.append(defect_key)
             
         await state.update_data(defects=selected)
-        await message.answer(STRINGS[lang]['prompt_defects'], reply_markup=get_defects_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(selected, lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_defects'], reply_markup=get_defects_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(selected, lang))
 
 @router.message(SellPhone.memory)
 async def process_memory(message: Message, state: FSMContext):
@@ -281,25 +284,30 @@ async def process_contact(message: Message, state: FSMContext):
     data = await state.get_data()
     
     # Format replaced parts and defects for summary
+    s = STRINGS[lang]
     parts_list = data.get('replaced_parts', [])
     defects_list = data.get('defects', [])
-    parts_str = ", ".join([label for key, label in REPLACED_PARTS if key in parts_list])
-    defects_str = ", ".join([label for key, label in DEFECTS_LIST if key in defects_list])
+    
+    parts_labels = [s[string_key] for _, string_key, _ in REPLACED_PARTS if _ in parts_list]
+    defects_labels = [s[string_key] for _, string_key, _ in DEFECTS_LIST if _ in defects_list]
+    
+    parts_str = ", ".join(parts_labels)
+    defects_str = ", ".join(defects_labels)
 
     summary = (
-        f"{STRINGS[lang]['summary_title']}\n\n"
-        f"📱 <b>{STRINGS[lang]['lbl_model']}:</b> {data['model']}\n"
-        f"🎨 <b>{STRINGS[lang]['lbl_color']}:</b> {data.get('color')}\n"
-        f"💾 <b>{STRINGS[lang]['lbl_memory']}:</b> {data['memory']}\n"
-        f"🔋 <b>{STRINGS[lang]['lbl_battery']}:</b> {data['battery']}%\n"
-        f"🔄 <b>{STRINGS[lang]['lbl_cycles']}:</b> {data.get('cycles')}\n"
-        f"🔧 <b>Almashtirilgan:</b> {parts_str or 'Yo''q'}\n"
-        f"⚠️ <b>Nosozliklar:</b> {defects_str or 'Yo''q'}\n"
-        f"✨ <b>{STRINGS[lang]['lbl_condition']}:</b> {data['condition']}\n"
-        f"🌍 <b>{STRINGS[lang]['lbl_region']}:</b> {data['region']}\n"
-        f"📦 <b>{STRINGS[lang]['lbl_box']}:</b> {data['box']}\n"
-        f"💰 <b>{STRINGS[lang]['lbl_price']}:</b> {data['price']}\n"
-        f"📞 <b>{STRINGS[lang]['lbl_contact']}:</b> {data['contact']}"
+        f"{s['summary_title']}\n\n"
+        f"📱 <b>{s['lbl_model']}:</b> {data['model']}\n"
+        f"🎨 <b>{s['lbl_color']}:</b> {data.get('color')}\n"
+        f"💾 <b>{s['lbl_memory']}:</b> {data['memory']}\n"
+        f"🔋 <b>{s['lbl_battery']}:</b> {data['battery']}%\n"
+        f"🔄 <b>{s['lbl_cycles']}:</b> {data.get('cycles')}\n"
+        f"🔧 <b>{s['lbl_replaced']}:</b> {parts_str or s['val_none']}\n"
+        f"⚠️ <b>{s['lbl_defects']}:</b> {defects_str or s['val_none']}\n"
+        f"✨ <b>{s['lbl_condition']}:</b> {data['condition']}\n"
+        f"🌍 <b>{s['lbl_region']}:</b> {data['region']}\n"
+        f"📦 <b>{s['lbl_box']}:</b> {data['box']}\n"
+        f"💰 <b>{s['lbl_price']}:</b> {data['price']}\n"
+        f"📞 <b>{s['lbl_contact']}:</b> {data['contact']}"
     )
     
     await state.set_state(SellPhone.confirm)
@@ -331,6 +339,44 @@ async def process_confirm(message: Message, state: FSMContext):
             await message.bot.send_photo(config.ADMIN_ID, data['photos'][0], caption=admin_text, reply_markup=get_admin_keyboard(ad_id, lang), parse_mode="HTML")
 
         await message.answer(STRINGS[lang]['sell_success'].format(price=recommended_price), parse_mode="HTML", reply_markup=get_main_menu(lang))
+        
+        # --- SYNC TO DJANGO WEB APP ---
+        try:
+            from asgiref.sync import sync_to_async
+            import os
+            from core.settings import MEDIA_ROOT
+            from phones.models import Listing, Category
+
+            # Photo Download
+            image_rel_path = None
+            if data.get('photos'):
+                photo_id = data['photos'][0]
+                file = await message.bot.get_file(photo_id)
+                local_filename = f"{photo_id}.jpg"
+                local_full_path = os.path.join(MEDIA_ROOT, 'listings', local_filename)
+                os.makedirs(os.path.dirname(local_full_path), exist_ok=True)
+                await message.bot.download_file(file.file_path, local_full_path)
+                image_rel_path = f"listings/{local_filename}"
+
+            # Data Mapping
+            apple_cat = await sync_to_async(Category.objects.filter(name__icontains='iPhone').first)()
+            
+            # Create Django record (initially not approved for users)
+            await sync_to_async(Listing.objects.create)(
+                title=f"iPhone {data['model']} {data['memory']}",
+                model_name=data['model'],
+                memory=data['memory'].replace(' GB', ''),
+                battery_health=int(str(data.get('battery', 100)).replace('%', '').strip()),
+                price=recommended_price * 1000000, # Approximate
+                is_approved=False, # Wait for admin
+                seller_phone=str(data.get('contact', '')),
+                image=image_rel_path,
+                category=apple_cat
+            )
+        except Exception as e:
+            with open('sync_debug.log', 'a') as f: f.write(f"ERROR: Sync in sell.py: {e}\n")
+        # -----------------------------
+        
         await state.clear()
     else:
         await message.answer(STRINGS[lang]['msg_cancelled'], parse_mode="HTML", reply_markup=get_main_menu(lang))

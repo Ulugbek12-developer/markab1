@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Trade-in Kalkulyatori | Markab{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-black text-text-main mb-4">🔄 Trade-in Kalkulyatori</h1>
+        <p class="text-text-muted font-medium">Eski telefoningizni yangisiga almashtirish narxini hisoblang</p>
+    </div>
+
+    {% if result %}
+    <div class="premium-card p-10 mb-12 animate-fade-in bg-primary/5 border-primary/20">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+                <p class="text-xs font-black uppercase tracking-widest text-text-muted mb-2">Sizning telefoningiz</p>
+                <p class="text-2xl font-black text-text-main">~{{ result.my_price }} mln</p>
+            </div>
+            <div class="flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-red-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs font-black uppercase tracking-widest text-text-muted mb-2">Yangi telefon</p>
+                <p class="text-2xl font-black text-primary">{{ result.target_price }} mln</p>
+            </div>
+        </div>
+        <div class="mt-10 pt-10 border-t border-primary/10 text-center">
+            <p class="text-sm font-bold text-text-muted mb-2">Siz to'laydigan farq:</p>
+            <p class="text-5xl font-black text-primary tracking-tighter">{{ result.difference }} mln so'm</p>
+            <div class="mt-8 flex gap-4 justify-center">
+                <a href="{% url 'phones:home' %}" class="btn-primary">Sotib olish</a>
+                <a href="{% url 'phones:trade_in' %}" class="btn-secondary">Qayta hisoblash</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="POST" class="space-y-8">
+        {% csrf_token %}
+        
+        <!-- Target Phone Info (Hidden if coming from detail page) -->
+        <div class="premium-card p-8">
+            <h2 class="text-xl font-black mb-6 flex items-center gap-3">
+                <span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm">1</span>
+                Sotib olmoqchi bo'lgan telefoningiz
+            </h2>
+            
+            {% if target_phone %}
+            <div class="flex items-center gap-6 p-4 bg-milky rounded-2xl border border-border-light">
+                {% if target_phone.image %}
+                <img src="{{ target_phone.image.url }}" class="w-20 h-20 rounded-xl object-cover shadow-sm">
+                {% endif %}
+                <div>
+                    <h3 class="font-black text-lg text-text-main">{{ target_phone.title }}</h3>
+                    <p class="text-primary font-bold">{{ target_phone.price|floatformat:0 }} so'm</p>
+                    <input type="hidden" name="target_price" value="{{ target_phone.price }}">
+                </div>
+            </div>
+            {% else %}
+            <div class="space-y-4">
+                <p class="text-sm text-text-muted font-bold">Avval saytdan biron bir telefonni tanlang yoki taxminiy narxni yozing:</p>
+                <input type="number" name="target_price" placeholder="Yangi telefon narxi (masalan: 12000000)" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold">
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- My Phone Assessment -->
+        <div class="premium-card p-8">
+            <h2 class="text-xl font-black mb-6 flex items-center gap-3">
+                <span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm">2</span>
+                Sizning hozirgi telefoningiz holati
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Model</label>
+                    <select name="my_model" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold appearance-none">
+                        {% for model in models %}
+                        <option value="{{ model }}">{{ model }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Xotira</label>
+                    <select name="my_memory" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold">
+                        <option value="64GB">64 GB</option>
+                        <option value="128GB" selected>128 GB</option>
+                        <option value="256GB">256 GB</option>
+                        <option value="512GB">512 GB</option>
+                        <option value="1TB">1 TB</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Batareya (%)</label>
+                    <input type="number" name="my_battery" value="90" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Holati</label>
+                    <select name="my_condition" class="w-full h-14 px-6 rounded-2xl bg-milky border border-border-light text-text-main focus:outline-none font-bold">
+                        <option value="ideal">Ideal (Yangi kabi)</option>
+                        <option value="yaxshi">Yaxshi (Qirilgan joylari bor)</option>
+                        <option value="yomon">Yomon (Urilgan/Chaqilgan)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-8 space-y-4">
+                <label class="text-xs font-black uppercase tracking-widest text-text-muted ml-1">Almashtirilgan qismlari bormi?</label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light hover:bg-primary/5 transition-all cursor-pointer group">
+                        <input type="checkbox" name="my_parts" value="ekran" class="w-5 h-5 accent-primary">
+                        <span class="text-sm font-bold text-text-main group-hover:text-primary transition-colors">Ekran</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light hover:bg-primary/5 transition-all cursor-pointer group">
+                        <input type="checkbox" name="my_parts" value="batareya" class="w-5 h-5 accent-primary">
+                        <span class="text-sm font-bold text-text-main group-hover:text-primary transition-colors">Batareya</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light hover:bg-primary/5 transition-all cursor-pointer group">
+                        <input type="checkbox" name="my_parts" value="kamera" class="w-5 h-5 accent-primary">
+                        <span class="text-sm font-bold text-text-main group-hover:text-primary transition-colors">Kamera</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full mt-10 btn-primary h-16 text-lg shadow-xl shadow-red-200">
+                Hisoblash 🚀
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -31,42 +31,27 @@
             <h2 class="text-2xl font-black text-slate-900">Bizning Filiallarimiz</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Branch 1 -->
-            <div class="premium-card p-8 flex flex-col h-full">
+            {% for branch in branches %}
+            <div class="premium-card p-8 flex flex-col h-full animate-fade-in">
                 <div class="flex items-start gap-5 mb-6">
                     <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </div>
                     <div>
-                        <h3 class="font-black text-slate-900 text-xl">Asosiy Filial</h3>
-                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Toshkent sh., Yunusobod tumani, Amir Temur ko'chasi 123-uy</p>
+                        <h3 class="font-black text-slate-900 text-xl">{{ branch.name }}</h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">{{ branch.address }}</p>
                     </div>
                 </div>
-                <div class="mt-auto pt-6 border-t border-slate-50">
-                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-red-50 hover:text-primary text-slate-600 font-bold py-4 rounded-2xl transition-all">
+                <div class="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800">
+                    <a href="{{ branch.map_url|default:'#' }}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-800 hover:bg-red-50 hover:text-primary text-slate-600 font-bold py-4 rounded-2xl transition-all">
                         Xaritada ko'rish
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </a>
                 </div>
             </div>
-            <!-- Branch 2 -->
-            <div class="premium-card p-8 flex flex-col h-full">
-                <div class="flex items-start gap-5 mb-6">
-                    <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-slate-900 text-xl">Chilonzor Filiali</h3>
-                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Toshkent sh., Chilonzor tumani, Muqimiy ko'chasi 45-uy</p>
-                    </div>
-                </div>
-                <div class="mt-auto pt-6 border-t border-slate-50">
-                    <a href="https://yandex.uz/maps" target="_blank" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-red-50 hover:text-primary text-slate-600 font-bold py-4 rounded-2xl transition-all">
-                        Xaritada ko'rish
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </a>
-                </div>
-            </div>
+            {% empty %}
+            <p class="text-slate-400 font-bold col-span-full text-center py-10">Filiallar hozircha qo'shilmagan</p>
+            {% endfor %}
         </div>
     </section>
 
@@ -100,6 +85,9 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                                 </button>
                             </form>
+                            <button onclick="event.preventDefault(); addToCart('{{ listing.id }}', '{{ listing.title|escapejs }}', '{{ listing.price }}', '{{ listing.image.url|default:'' }}')" class="absolute bottom-4 right-4 p-3 rounded-2xl bg-white/90 backdrop-blur text-primary hover:bg-primary hover:text-white transition-all shadow-xl active:scale-90">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            </button>
                         </div>
                         <div class="p-6 flex-1 flex flex-col">
                             <h3 class="font-black text-slate-900 line-clamp-1 mb-2 group-hover:text-primary transition-colors text-lg">

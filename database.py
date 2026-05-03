@@ -237,3 +237,20 @@ async def get_user_language(user_id):
                 await db.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?)", (user_id,))
                 await db.commit()
                 return 'uz'
+async def get_admin_stats():
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute("SELECT COUNT(*) FROM users") as cursor:
+            total_users = (await cursor.fetchone())[0]
+        async with db.execute("SELECT COUNT(*) FROM ads") as cursor:
+            total_ads = (await cursor.fetchone())[0]
+        async with db.execute("SELECT COUNT(*) FROM price_requests") as cursor:
+            total_price_requests = (await cursor.fetchone())[0]
+        async with db.execute("SELECT COUNT(*) FROM ads WHERE status = 'approved'") as cursor:
+            active_ads = (await cursor.fetchone())[0]
+            
+        return {
+            'users': total_users,
+            'ads': total_ads,
+            'price_requests': total_price_requests,
+            'active_ads': active_ads
+        }

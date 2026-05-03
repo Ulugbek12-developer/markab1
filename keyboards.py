@@ -75,7 +75,8 @@ def get_admin_panel_keyboard(lang):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
     builder.row(KeyboardButton(text=s['btn_add_product']), KeyboardButton(text=s['btn_manage_branches']))
-    builder.row(KeyboardButton(text=s['btn_delete_product']), KeyboardButton(text=s['btn_exit']))
+    builder.row(KeyboardButton(text=s['btn_delete_product']), KeyboardButton(text=s['btn_stats']))
+    builder.row(KeyboardButton(text=s['btn_exit']))
     return builder.as_markup(resize_keyboard=True)
 
 def get_admin_branch_mgmt_keyboard(lang):
@@ -86,40 +87,41 @@ def get_admin_branch_mgmt_keyboard(lang):
     return builder.as_markup(resize_keyboard=True)
 
 REPLACED_PARTS = [
-    ("batareya", "🔋 Batareya"),
-    ("ekran", "📱 Ekran"),
-    ("orqa_qopqoq", "🔲 Orqa qopqoq"),
-    ("kamera", "📷 Kamera"),
-    ("dinamik", "🔊 Dinamik"),
-    ("tugmalar", "⚙️ Tugmalar"),
-    ("boshqa", "🔧 Boshqa"),
-    ("almashtirilmagan", "✅ Almashtirilmagan"),
+    ("batareya", "part_battery", "🔋"),
+    ("ekran", "part_display", "📱"),
+    ("orqa_qopqoq", "part_glass", "🔲"),
+    ("kamera", "part_camera", "📷"),
+    ("dinamik", "part_audio", "🔊"),
+    ("tugmalar", "part_buttons", "⚙️"),
+    ("boshqa", "part_other", "🔧"),
+    ("almashtirilmagan", "part_none", "✅"),
 ]
 
 DEFECTS_LIST = [
-    ("face_id", "🔓 Face ID"),
-    ("true_tone", "🎨 True Tone"),
-    ("old_kamera", "📷 Old kamera"),
-    ("asosiy_kamera", "📸 Asosiy kamera"),
-    ("dinamiklar", "🔊 Dinamiklar"),
-    ("mikrofon", "🎤 Mikrofon"),
-    ("vibro", "📳 Vibro"),
-    ("wifi_bt", "📶 Wi-Fi / Bluetooth"),
-    ("gps", "📍 GPS"),
-    ("nfc", "💳 NFC / Apple Pay"),
-    ("hammasi_ishlaydi", "✅ Hammasi ishlaydi"),
+    ("face_id", "defect_faceid", "🔓"),
+    ("true_tone", "defect_truetone", "🎨"),
+    ("old_kamera", "defect_camera_front", "📷"),
+    ("asosiy_kamera", "defect_camera_back", "📸"),
+    ("dinamiklar", "defect_audio", "🔊"),
+    ("mikrofon", "defect_mic", "🎤"),
+    ("vibro", "defect_vibro", "📳"),
+    ("wifi_bt", "defect_wifi", "📶"),
+    ("gps", "defect_gps", "📍"),
+    ("nfc", "defect_nfc", "💳"),
+    ("hammasi_ishlaydi", "defect_none", "✅"),
 ]
 
 def get_replaced_parts_keyboard(selected_keys, lang='uz'):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
     
-    for key, label in REPLACED_PARTS:
-        display_label = f"✅ {label}" if key in selected_keys else label
+    for key, string_key, icon in REPLACED_PARTS:
+        label = s[string_key]
+        display_label = f"✅ {icon} {label}" if key in selected_keys else f"{icon} {label}"
         builder.add(KeyboardButton(text=display_label))
     
     builder.adjust(2)
-    builder.row(KeyboardButton(text=s['btn_continue'] if lang == 'uz' else "➡️ Продолжить"))
+    builder.row(KeyboardButton(text=s['btn_continue']))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
@@ -127,12 +129,13 @@ def get_defects_keyboard(selected_keys, lang='uz'):
     s = STRINGS[lang]
     builder = ReplyKeyboardBuilder()
     
-    for key, label in DEFECTS_LIST:
-        display_label = f"✅ {label}" if key in selected_keys else label
+    for key, string_key, icon in DEFECTS_LIST:
+        label = s[string_key]
+        display_label = f"✅ {icon} {label}" if key in selected_keys else f"{icon} {label}"
         builder.add(KeyboardButton(text=display_label))
     
     builder.adjust(2)
-    builder.row(KeyboardButton(text=s['btn_continue'] if lang == 'uz' else "➡️ Продолжить"))
+    builder.row(KeyboardButton(text=s['btn_continue']))
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 

@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from states import AdminState, AdminAuth, AdminAddProduct, AdminBranchMgmt, AdminDeleteProduct
 import keyboards
-from database import update_ad_status, get_ad_by_id, update_price_request, get_price_request, add_ad, add_branch, get_all_branches, delete_branch, delete_ad, get_user_language
+from database import update_ad_status, get_ad_by_id, update_price_request, get_price_request, add_ad, add_branch, get_all_branches, delete_branch, delete_ad, get_user_language, get_admin_stats
 from config import config
 from strings import STRINGS
 
@@ -191,6 +191,18 @@ async def admin_exit(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     await state.clear()
     await message.answer(STRINGS[lang]['msg_cancelled'], parse_mode="HTML", reply_markup=keyboards.get_main_menu(lang))
+
+@router.message(F.text.in_(["📊 Statistika", "📊 Статистика"]))
+async def admin_show_stats(message: Message):
+    lang = await get_user_language(message.from_user.id)
+    stats = await get_admin_stats()
+    text = STRINGS[lang]['msg_stats'].format(
+        users=stats['users'],
+        ads=stats['ads'],
+        active=stats['active_ads'],
+        prices=stats['price_requests']
+    )
+    await message.answer(text, parse_mode="HTML")
 
 @router.message(F.text.in_(["🏢 Filiallarni boshqarish", "🏢 Управление филиалами"]))
 async def admin_branch_mgmt(message: Message, state: FSMContext):

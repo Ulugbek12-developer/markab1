@@ -2,10 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, View, CreateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .models import Category, Listing, Favorite
+from .models import Category, Listing, Favorite, Branch, Review
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
+from .utils import calculate_phone_price, BASE_PRICES
 
 def clean_expired_bookings():
     Listing.objects.filter(is_booked=True, booked_until__lt=timezone.now()).update(is_booked=False, booked_until=None)
@@ -36,6 +37,7 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['branches'] = Branch.objects.all()
         context['active_category'] = self.request.GET.get('category', 'all')
         return context
 
@@ -66,6 +68,15 @@ class ListingDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         listing = self.get_object()
+        # Average rating
+        reviews = listing.reviews.all()
+        if reviews:
+            context['avg_rating'] = sum(r.rating for r in reviews) / len(reviews)
+            context['rating_count'] = len(reviews)
+        else:
+            context['avg_rating'] = 0
+            context['rating_count'] = 0
+            
         # Installment logic
         price = float(listing.price)
         context['installment_3'] = int(price * 1.1 / 3)
@@ -279,3 +290,62 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
         if not created:
             favorite.delete()
         return redirect(request.META.get('HTTP_REFERER', 'phones:home'))
+class TradeInView(TemplateView):
+    template_name = 'phones/trade_in.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['models'] = list(BASE_PRICES.keys())
+        
+        # Get target phone if provided
+        target_id = self.request.GET.get('target')
+        if target_id:
+            context['target_phone'] = get_object_or_404(Listing, id=target_id)
+            
+        return context
+
+    def post(self, request, *args, **kwargs):
+        data = request.POST
+        my_phone_price = calculate_phone_price({
+            'model': data.get('my_model'),
+            'memory': data.get('my_memory'),
+            'battery': data.get('my_battery'),
+            'condition': data.get('my_condition'),
+            'box': data.get('my_box'),
+            'replaced_parts': request.POST.getlist('my_parts'),
+            'defects': request.POST.getlist('my_defects'),
+        })
+        
+        target_price = float(data.get('target_price', 0)) / 1000000 # Convert to millions
+        difference = round(target_price - my_phone_price, 1)
+        
+        context = self.get_context_data()
+        context['result'] = {
+            'my_price': my_phone_price,
+            'target_price': target_price,
+            'difference': max(0, difference),
+            'calculated': True
+        }
+        return render(request, self.template_name, context)
+
+ c l a s s   A d d R e v i e w V i e w ( L o g i n R e q u i r e d M i x i n ,   V i e w ) : 
+         d e f   p o s t ( s e l f ,   r e q u e s t ,   p k ) : 
+                 l i s t i n g   =   g e t _ o b j e c t _ o r _ 4 0 4 ( L i s t i n g ,   i d = p k ) 
+                 r a t i n g   =   r e q u e s t . P O S T . g e t ( ' r a t i n g ' ) 
+                 c o m m e n t   =   r e q u e s t . P O S T . g e t ( ' c o m m e n t ' ) 
+                 
+                 R e v i e w . o b j e c t s . c r e a t e ( 
+                         l i s t i n g = l i s t i n g , 
+                         u s e r = r e q u e s t . u s e r , 
+                         r a t i n g = i n t ( r a t i n g ) , 
+                         c o m m e n t = c o m m e n t 
+                 ) 
+                 m e s s a g e s . s u c c e s s ( r e q u e s t ,   \  
+ S h a r h i n g i z  
+ u c h u n  
+ r a h m a t ! \ ) 
+                 r e t u r n   r e d i r e c t ( ' p h o n e s : d e t a i l ' ,   p k = p k )  
+ 
+ c l a s s   C a r t V i e w ( T e m p l a t e V i e w ) : 
+         t e m p l a t e _ n a m e   =   ' p h o n e s / c a r t . h t m l '  
+ 

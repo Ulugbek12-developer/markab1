@@ -17,73 +17,10 @@ from strings import STRINGS
 
 router = Router()
 
-BASE_PRICES = {
-    "iPhone 11": 300, "iPhone 11 Pro": 400, "iPhone 11 Pro Max": 450,
-    "iPhone 12": 400, "iPhone 12 Pro": 500, "iPhone 12 Pro Max": 550,
-    "iPhone 13": 500, "iPhone 13 Pro": 650, "iPhone 13 Pro Max": 750,
-    "iPhone 14": 650, "iPhone 14 Pro": 850, "iPhone 14 Pro Max": 950,
-    "iPhone 15": 800, "iPhone 15 Pro": 1050, "iPhone 15 Pro Max": 1150,
-    "iPhone 16": 1000, "iPhone 16 Pro": 1300, "iPhone 16 Pro Max": 1450,
-    "iPhone 17 Pro Max": 1600
-}
+from phones.utils import calculate_phone_price
 
 def calculate_price(data):
-    model = data.get('model', "")
-    base = BASE_PRICES.get(model, 500)
-    
-    # Memory adjustments
-    storage = str(data.get('storage', "128GB"))
-    if "256" in storage: base += 50
-    elif "512" in storage: base += 100
-    elif "1TB" in storage: base += 200
-    
-    # Battery adjustments
-    try:
-        battery_val = int(data.get('battery', 90))
-        if battery_val >= 90: pass
-        elif battery_val >= 80: base -= 30
-        elif battery_val >= 70: base -= 60
-        else: base -= 100
-    except: pass
-    
-    # Cycles
-    try:
-        cycles = int(data.get('cycles', 0))
-        if cycles > 1000: base -= 50
-        elif cycles > 500: base -= 30
-    except: pass
-
-    # Condition
-    cond = str(data.get('condition', "")).lower()
-    if "yaxshi" in cond or "хороший" in cond: base -= 50
-    elif "yomon" in cond or "плохое" in cond: base -= 150
-    
-    # Box
-    box = str(data.get('box', '')).lower()
-    if "yo'q" in box or 'нет' in box: base -= 30
-    
-    # Replaced parts deductions
-    replaced_parts = data.get('replaced_parts', [])
-    if "almashtirilmagan" not in replaced_parts:
-        for part in replaced_parts:
-            if part == "ekran": base -= 100
-            elif part == "batareya": base -= 30
-            elif part == "kamera": base -= 70
-            elif part == "orqa_qopqoq": base -= 40
-            else: base -= 20
-            
-    # Defects deductions
-    defects = data.get('defects', [])
-    if "hammasi_ishlaydi" not in defects:
-        for defect in defects:
-            if defect == "face_id": base -= 150
-            elif defect == "true_tone": base -= 50
-            elif defect == "asosiy_kamera": base -= 100
-            elif defect == "old_kamera": base -= 60
-            elif defect == "wifi_bt": base -= 80
-            else: base -= 30
-
-    return round(base / 100, 1)
+    return calculate_phone_price(data)
 
 @router.message(F.text.in_(["💰 Narxlatish", "💰 Оценка"]))
 async def start_price(message: Message, state: FSMContext):
@@ -130,10 +67,13 @@ async def process_color(message: Message, state: FSMContext):
 
 @router.message(PricePhone.photos, F.photo)
 async def process_photos_photo(message: Message, state: FSMContext):
-    data = await state.get_data()
-    photos = data.get('photos', [])
-    photos.append(message.photo[-1].file_id)
-    await state.update_data(photos=photos)
+    lang = await get_user_language(message.from_user.id)
+    photo_id = message.photo[-1].file_id
+    await state.update_data(photos=[photo_id])
+    
+    # Automatically proceed after 1 photo
+    await state.set_state(PricePhone.battery)
+    await message.answer(STRINGS[lang]['prompt_price_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
 
 @router.message(PricePhone.photos, F.text)
 async def process_photos_text(message: Message, state: FSMContext):
@@ -147,19 +87,19 @@ async def process_photos_text(message: Message, state: FSMContext):
     if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
         data = await state.get_data()
         if not data.get('photos'):
-            await message.answer(STRINGS[lang]['prompt_price_photos'])
+            await message.answer(STRINGS[lang]['prompt_price_photos'], parse_mode="HTML")
             return
         await state.set_state(PricePhone.battery)
         await message.answer(STRINGS[lang]['prompt_price_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_price_photos'])
+        await message.answer(STRINGS[lang]['prompt_price_photos'], parse_mode="HTML")
 
 @router.message(PricePhone.battery)
 async def process_battery(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(PricePhone.photos)
-        await message.answer(STRINGS[lang]['prompt_price_photos'], reply_markup=get_continue_keyboard(lang))
+        await message.answer(STRINGS[lang]['prompt_price_photos'], parse_mode="HTML", reply_markup=get_continue_keyboard(lang))
         return
 
     if not message.text.isdigit() or not (1 <= int(message.text) <= 100):
@@ -206,27 +146,27 @@ async def process_replaced_parts_message(message: Message, state: FSMContext):
     # Toggle logic
     data = await state.get_data()
     selected = data.get('replaced_parts', [])
-    text = message.text.replace("✅ ", "")
     
-    # Find key by label
-    part_key = None
-    for key, label in REPLACED_PARTS:
-        if label == text:
-            part_key = key
+    # Find which part was toggled
+    toggled_key = None
+    for key, string_key, icon in REPLACED_PARTS:
+        label = STRINGS[lang][string_key]
+        if message.text == f"{icon} {label}" or message.text == f"✅ {icon} {label}":
+            toggled_key = key
             break
             
-    if part_key:
-        if part_key == "almashtirilmagan":
+    if toggled_key:
+        if toggled_key == "almashtirilmagan":
             selected = ["almashtirilmagan"]
         else:
             if "almashtirilmagan" in selected: selected.remove("almashtirilmagan")
-            if part_key in selected: selected.remove(part_key)
-            else: selected.append(part_key)
+            if toggled_key in selected: selected.remove(toggled_key)
+            else: selected.append(toggled_key)
             
         await state.update_data(replaced_parts=selected)
-        await message.answer(STRINGS[lang]['prompt_replaced_parts'], reply_markup=get_replaced_parts_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_replaced_parts'], parse_mode="HTML", reply_markup=get_replaced_parts_keyboard(selected, lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_replaced_parts'], reply_markup=get_replaced_parts_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_replaced_parts'], parse_mode="HTML", reply_markup=get_replaced_parts_keyboard(selected, lang))
 
 @router.message(PricePhone.defects)
 async def process_defects_message(message: Message, state: FSMContext):
@@ -247,17 +187,17 @@ async def process_defects_message(message: Message, state: FSMContext):
     # Toggle logic
     data = await state.get_data()
     selected = data.get('defects', [])
-    text = message.text.replace("✅ ", "")
     
-    # Find key by label
-    defect_key = None
-    for key, label in DEFECTS_LIST:
-        if label == text:
-            defect_key = key
+    # Find which defect was toggled
+    toggled_key = None
+    for key, string_key, icon in DEFECTS_LIST:
+        label = STRINGS[lang][string_key]
+        if message.text == f"{icon} {label}" or message.text == f"✅ {icon} {label}":
+            toggled_key = key
             break
             
-    if defect_key:
-        if defect_key == "hammasi_ishlaydi":
+    if toggled_key:
+        if toggled_key == "hammasi_ishlaydi":
             selected = ["hammasi_ishlaydi"]
         else:
             if "hammasi_ishlaydi" in selected: selected.remove("hammasi_ishlaydi")
@@ -265,9 +205,9 @@ async def process_defects_message(message: Message, state: FSMContext):
             else: selected.append(defect_key)
             
         await state.update_data(defects=selected)
-        await message.answer(STRINGS[lang]['prompt_defects'], reply_markup=get_defects_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(selected, lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_defects'], reply_markup=get_defects_keyboard(selected, lang))
+        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(selected, lang))
 
 @router.message(PricePhone.memory)
 async def process_memory(message: Message, state: FSMContext):
@@ -344,25 +284,29 @@ async def process_is_opened(message: Message, state: FSMContext):
     await state.update_data(is_opened=message.text)
     data = await state.get_data()
     
-    # Format replaced parts and defects for summary
+    s = STRINGS[lang]
     parts_list = data.get('replaced_parts', [])
     defects_list = data.get('defects', [])
-    parts_str = ", ".join([label for key, label in REPLACED_PARTS if key in parts_list])
-    defects_str = ", ".join([label for key, label in DEFECTS_LIST if key in defects_list])
+    
+    parts_labels = [s[string_key] for key, string_key, icon in REPLACED_PARTS if key in parts_list]
+    defects_labels = [s[string_key] for key, string_key, icon in DEFECTS_LIST if key in defects_list]
+    
+    parts_str = ", ".join(parts_labels)
+    defects_str = ", ".join(defects_labels)
 
     summary = (
-        f"{STRINGS[lang]['summary_title']}\n\n"
-        f"📱 <b>{STRINGS[lang]['lbl_model']}:</b> {data.get('model')}\n"
-        f"🎨 <b>{STRINGS[lang]['lbl_color']}:</b> {data.get('color')}\n"
-        f"💾 <b>{STRINGS[lang]['lbl_memory']}:</b> {data.get('storage')}\n"
-        f"🔋 <b>{STRINGS[lang]['lbl_battery']}:</b> {data.get('battery')}%\n"
-        f"🔄 <b>{STRINGS[lang]['lbl_cycles']}:</b> {data.get('cycles')}\n"
-        f"🔧 <b>Almashtirilgan:</b> {parts_str or 'Yo''q'}\n"
-        f"⚠️ <b>Nosozliklar:</b> {defects_str or 'Yo''q'}\n"
-        f"✨ <b>{STRINGS[lang]['lbl_condition']}:</b> {data.get('condition')}\n"
-        f"🌍 <b>{STRINGS[lang]['lbl_region']}:</b> {data.get('region')}\n"
-        f"📦 <b>{STRINGS[lang]['lbl_box']}:</b> {data.get('box')}\n"
-        f"🔧 <b>Ochilganmi:</b> {data.get('is_opened')}"
+        f"{s['summary_title']}\n\n"
+        f"📱 <b>{s['lbl_model']}:</b> {data.get('model')}\n"
+        f"🎨 <b>{s['lbl_color']}:</b> {data.get('color')}\n"
+        f"💾 <b>{s['lbl_memory']}:</b> {data.get('storage')}\n"
+        f"🔋 <b>{s['lbl_battery']}:</b> {data.get('battery')}%\n"
+        f"🔄 <b>{s['lbl_cycles']}:</b> {data.get('cycles')}\n"
+        f"🔧 <b>{s['lbl_replaced']}:</b> {parts_str or s['val_none']}\n"
+        f"⚠️ <b>{s['lbl_defects']}:</b> {defects_str or s['val_none']}\n"
+        f"✨ <b>{s['lbl_condition']}:</b> {data.get('condition')}\n"
+        f"🌍 <b>{s['lbl_region']}:</b> {data.get('region')}\n"
+        f"📦 <b>{s['lbl_box']}:</b> {data.get('box')}\n"
+        f"🛠 <b>{s['prompt_is_opened']}:</b> {data.get('is_opened')}"
     )
     
     await state.set_state(PricePhone.confirm)

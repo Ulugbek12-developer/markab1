@@ -9,6 +9,15 @@
     --card-shadow: 0 10px 40px rgba(177, 34, 65, 0.05);
 }
 
+body.dark {
+    --bg-light: #121212;
+    --bg-milky: #0D0D0D;
+    --text-main: #F5F5F5;
+    --text-muted: #A0A0A0;
+    --border-light: #2A2A2A;
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
 body {
     background-color: var(--bg-milky);
     color: var(--text-main);
@@ -43,7 +52,7 @@ body {
 
 /* Premium Card */
 .premium-card {
-    background: white;
+    background: var(--bg-light);
     border-radius: 24px;
     border: 1px solid var(--border-light);
     box-shadow: var(--card-shadow);

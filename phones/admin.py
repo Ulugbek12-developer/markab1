@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Listing, Favorite
+from .models import Category, Listing, Favorite, Branch, Review
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -16,3 +16,12 @@ class ListingAdmin(admin.ModelAdmin):
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'listing', 'created_at')
+
+@admin.register(Branch)
+class BranchAdmin(admin.ModelAdmin):
+    list_display = ('name', 'address', 'phone')
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('listing', 'user', 'rating', 'created_at')
+    list_filter = ('rating', 'created_at')
