@@ -33,9 +33,7 @@
                 <a href="{% url 'phones:price' %}" class="nav-link">Narxlash</a>
                 <a href="{% url 'phones:trade_in' %}" class="nav-link">Trade-in</a>
                 <a href="{% url 'phones:favorites' %}" class="nav-link">Saralanganlar</a>
-                {% if user.is_staff %}
-                    <a href="{% url 'phones:admin_dashboard' %}" style="opacity:0.1; font-size:10px; text-decoration:none; color:inherit; margin-left:10px;">.</a>
-                {% endif %}
+                <!-- Admin link moved to buttons area -->
             </nav>
 
             <div style="display: flex; align-items: center; gap: 20px;">
@@ -56,6 +54,11 @@
                     <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <span id="cart-count" style="display:none; position:absolute; top:-8px; right:-8px; background:var(--primary); color:white; font-size:10px; padding:2px 5px; border-radius:10px; font-weight:900;">0</span>
                 </a>
+
+                <!-- Admin Dashboard Button -->
+                {% if user.is_staff %}
+                    <a href="{% url 'phones:admin_dashboard' %}" class="btn-primary" style="background:var(--text); color:#fff; padding: 10px 20px; font-size: 14px;">Do'kon Paneli</a>
+                {% endif %}
 
                 <a href="{% url 'phones:sell' %}" class="btn-primary" style="padding: 10px 20px; font-size: 14px;">Sotish</a>
             </div>
