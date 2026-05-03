@@ -57,12 +57,8 @@ class ListingDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         listing = self.get_object()
-        
-        # Rating & Reviews
         reviews = listing.reviews.all()
         avg_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-        
-        # Installment Calculations
         price = float(listing.price)
         
         context.update({
@@ -81,35 +77,24 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Listing
     template_name = 'phones/admin_dashboard.html'
     context_object_name = 'phones'
-
-    def test_func(self):
-        return self.request.user.is_staff
-
-    def get_queryset(self):
-        return Listing.objects.all().order_by('-created_at')
+    def test_func(self): return self.request.user.is_staff
+    def get_queryset(self): return Listing.objects.all().order_by('-created_at')
 
 class SellView(LoginRequiredMixin, CreateView):
     model = Listing
     fields = ['title', 'description', 'price', 'model_name', 'memory', 'battery_health', 'condition', 'image', 'seller_phone']
     template_name = 'phones/sell.html'
     success_url = reverse_lazy('phones:home')
-
     def form_valid(self, form):
         form.instance.seller = self.request.user
         listing = form.save()
-        
-        # Bot notification
         load_dotenv()
         bot_token = os.environ.get('BOT_TOKEN')
         admin_id = os.environ.get('ADMIN_ID')
         if bot_token and admin_id:
             text = f"🆕 <b>Yangi e'lon!</b>\n\n👤 {self.request.user.username}\n📱 {listing.title}\n💰 {listing.price} so'm"
-            try:
-                requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={
-                    "chat_id": admin_id, "text": text, "parse_mode": "HTML"
-                })
+            try: requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": admin_id, "text": text, "parse_mode": "HTML"})
             except: pass
-
         messages.success(self.request, "E'loningiz qabul qilindi!")
         return super().form_valid(form)
 
@@ -124,7 +109,6 @@ class ToggleBookingView(View):
             listing.is_booked = True
             listing.booked_until = timezone.now() + timedelta(hours=48)
             msg = "Telefon 48 soatga bron qilindi!"
-        
         listing.save()
         return JsonResponse({"status": "success", "message": msg})
 
@@ -134,77 +118,51 @@ class InstallmentRequestView(View):
         load_dotenv()
         bot_token = os.environ.get('BOT_TOKEN')
         admin_id = os.environ.get('ADMIN_ID')
-        
         if bot_token and admin_id:
             text = f"💳 <b>Muddatli to'lov so'rovi!</b>\n\n📱 {listing.title}\n📞 {request.POST.get('phone')}\n📍 {request.POST.get('region')}"
-            try:
-                requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={
-                    "chat_id": admin_id, "text": text, "parse_mode": "HTML"
-                })
+            try: requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": admin_id, "text": text, "parse_mode": "HTML"})
             except: pass
-                
         return JsonResponse({"status": "success"})
 
 class FavoritesView(LoginRequiredMixin, ListView):
     model = Favorite
     template_name = 'phones/favorites.html'
     context_object_name = 'favorites'
-
-    def get_queryset(self):
-        return Favorite.objects.filter(user=self.request.user)
+    def get_queryset(self): return Favorite.objects.filter(user=self.request.user)
 
 class ToggleFavoriteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         listing = get_object_or_404(Listing, pk=pk)
         favorite, created = Favorite.objects.get_or_create(user=request.user, listing=listing)
-        if not created:
-            favorite.delete()
+        if not created: favorite.delete()
         return redirect(request.META.get('HTTP_REFERER', 'phones:home'))
 
 class TradeInView(TemplateView):
     template_name = 'phones/trade_in.html'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['models'] = list(BASE_PRICES.keys())
         target_id = self.request.GET.get('target')
-        if target_id:
-            context['target_phone'] = get_object_or_404(Listing, id=target_id)
+        if target_id: context['target_phone'] = get_object_or_404(Listing, id=target_id)
         return context
-
     def post(self, request, *args, **kwargs):
         data = request.POST
         my_phone_price = calculate_phone_price({
-            'model': data.get('my_model'),
-            'memory': data.get('my_memory'),
-            'battery': data.get('my_battery'),
-            'condition': data.get('my_condition'),
-            'box': data.get('my_box'),
-            'replaced_parts': request.POST.getlist('my_parts'),
+            'model': data.get('my_model'), 'memory': data.get('my_memory'),
+            'battery': data.get('my_battery'), 'condition': data.get('my_condition'),
+            'box': data.get('my_box'), 'replaced_parts': request.POST.getlist('my_parts'),
             'defects': request.POST.getlist('my_defects'),
         })
-        
         target_price = float(data.get('target_price', 0)) / 1000000 
         difference = round(target_price - my_phone_price, 1)
-        
         context = self.get_context_data()
-        context['result'] = {
-            'my_price': my_phone_price,
-            'target_price': target_price,
-            'difference': max(0, difference),
-            'calculated': True
-        }
+        context['result'] = {'my_price': my_phone_price, 'target_price': target_price, 'difference': max(0, difference), 'calculated': True}
         return render(request, self.template_name, context)
 
 class AddReviewView(LoginRequiredMixin, View):
     def post(self, request, pk):
         listing = get_object_or_404(Listing, id=pk)
-        Review.objects.create(
-            listing=listing,
-            user=request.user,
-            rating=int(request.POST.get('rating', 5)),
-            comment=request.POST.get('comment', '')
-        )
+        Review.objects.create(listing=listing, user=request.user, rating=int(request.POST.get('rating', 5)), comment=request.POST.get('comment', ''))
         messages.success(request, "Sharhingiz uchun rahmat!")
         return redirect('phones:detail', pk=pk)
 
@@ -218,7 +176,6 @@ class FilterView(ListView):
     model = Listing
     template_name = 'phones/filter.html'
     context_object_name = 'phones'
-
     def get_queryset(self):
         clean_expired_bookings()
         queryset = Listing.objects.filter(is_approved=True, is_booked=False)
@@ -232,14 +189,10 @@ class SearchView(ListView):
     model = Listing
     template_name = 'phones/search.html'
     context_object_name = 'phones'
-
     def get_queryset(self):
         q = self.request.GET.get('q')
         if not q: return Listing.objects.none()
-        return Listing.objects.filter(
-            Q(title__icontains=q) | Q(model_name__icontains=q),
-            is_approved=True, is_booked=False
-        )
+        return Listing.objects.filter(Q(title__icontains=q) | Q(model_name__icontains=q), is_approved=True, is_booked=False)
 
 class AdminDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self): return self.request.user.is_staff
@@ -258,5 +211,3 @@ class StorePanelView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         form.instance.seller = self.request.user
         form.instance.is_approved = True
         return super().form_valid(form)
-teView):
-    template_name = 'phones/cart.html'
