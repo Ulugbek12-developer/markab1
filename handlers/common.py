@@ -32,7 +32,7 @@ async def check_user_sub(bot, user_id):
 @router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer(STRINGS['uz']['start_welcome'], reply_markup=get_language_keyboard())
+    await message.answer(STRINGS['uz']['start_welcome'], parse_mode="HTML", reply_markup=get_language_keyboard())
 
 @router.callback_query(F.data.startswith("lang_"))
 async def set_language(callback: CallbackQuery, state: FSMContext):

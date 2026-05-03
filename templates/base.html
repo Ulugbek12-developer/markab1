@@ -14,8 +14,8 @@
 
     <style>
         .icon { width: 24px; height: 24px; stroke-width: 2; }
-        .logo-img { height: 70px; width: auto; object-fit: contain; }
-        @media (max-width: 768px) { .logo-img { height: 55px; } }
+        .logo-img { height: 65px; width: auto; object-fit: contain; }
+        @media (max-width: 768px) { .logo-img { height: 50px; } }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -24,17 +24,18 @@
     <!-- Desktop Navbar -->
     <header>
         <div class="container nav-wrapper">
-            <a href="{% url 'phones:home' %}" class="logo">
-                <img src="{% static 'img/logo_main.png' %}" alt="Markab Electronics" class="logo-img" onerror="this.src='{% static 'img/logo.png' %}';">
-            </a>
-            
-            <nav class="nav-links">
-                <a href="{% url 'phones:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Asosiy</a>
-                <a href="{% url 'phones:price' %}" class="nav-link">Narxlash</a>
-                <a href="{% url 'phones:trade_in' %}" class="nav-link">Trade-in</a>
-                <a href="{% url 'phones:favorites' %}" class="nav-link">Saralanganlar</a>
-                <!-- Admin link moved to buttons area -->
-            </nav>
+            <div style="display: flex; align-items: center; gap: 40px;">
+                <a href="{% url 'phones:home' %}" class="logo">
+                    <img src="{% static 'img/logo_main.png' %}" alt="Markab Electronics" class="logo-img" onerror="this.src='{% static 'img/logo.png' %}';">
+                </a>
+                
+                <nav class="nav-links">
+                    <a href="{% url 'phones:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Asosiy</a>
+                    <a href="{% url 'phones:price' %}" class="nav-link">Narxlash</a>
+                    <a href="{% url 'phones:trade_in' %}" class="nav-link">Trade-in</a>
+                    <a href="{% url 'phones:favorites' %}" class="nav-link">Saralanganlar</a>
+                </nav>
+            </div>
 
             <div style="display: flex; align-items: center; gap: 20px;">
                 <!-- Login/Logout Area -->

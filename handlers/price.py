@@ -38,14 +38,14 @@ async def process_choice(message: Message, state: FSMContext):
         await state.clear()
         await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_choice'])
+        await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'price'))
 
 @router.message(PricePhone.model)
 async def process_model(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(PricePhone.choice)
-        await message.answer(STRINGS[lang]['prompt_choice'], reply_markup=get_choice_keyboard(lang, 'price'))
+        await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'price'))
         return
     
     await state.update_data(model=message.text)
@@ -81,7 +81,7 @@ async def process_photos_text(message: Message, state: FSMContext):
     if message.text == STRINGS[lang]['btn_back']:
         data = await state.get_data()
         await state.set_state(PricePhone.color)
-        await message.answer(STRINGS[lang]['prompt_color'], reply_markup=get_color_keyboard(data.get('model'), lang))
+        await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(data.get('model'), lang))
         return
         
     if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:

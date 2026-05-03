@@ -32,14 +32,14 @@ async def process_choice(message: Message, state: FSMContext):
         await state.clear()
         await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_choice'])
+        await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'sell'))
 
 @router.message(SellPhone.model)
 async def process_model(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(SellPhone.choice)
-        await message.answer(STRINGS[lang]['prompt_choice'], reply_markup=get_choice_keyboard(lang, 'sell'))
+        await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'sell'))
         return
     
     await state.update_data(model=message.text)
@@ -75,7 +75,7 @@ async def process_photos_text(message: Message, state: FSMContext):
     if message.text == STRINGS[lang]['btn_back']:
         data = await state.get_data()
         await state.set_state(SellPhone.color)
-        await message.answer(STRINGS[lang]['prompt_color'], reply_markup=get_color_keyboard(data.get('model'), lang))
+        await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(data.get('model'), lang))
         return
         
     if message.text in ["➡️ Davom etish", "➡️ Продолжить"]:
@@ -97,7 +97,7 @@ async def process_battery(message: Message, state: FSMContext):
         return
 
     if not message.text.isdigit() or not (1 <= int(message.text) <= 100):
-        await message.answer(STRINGS[lang]['err_battery'])
+        await message.answer(STRINGS[lang]['err_battery'], parse_mode="HTML")
         return
 
     await state.update_data(battery=message.text)
@@ -109,7 +109,7 @@ async def process_cycles(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(SellPhone.battery)
-        await message.answer(STRINGS[lang]['prompt_battery'], reply_markup=get_back_keyboard(lang))
+        await message.answer(STRINGS[lang]['prompt_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
         return
 
     if not message.text.isdigit():
@@ -249,7 +249,7 @@ async def process_box(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(SellPhone.region)
-        await message.answer(STRINGS[lang]['prompt_region'], reply_markup=get_region_keyboard(lang))
+        await message.answer(STRINGS[lang]['prompt_region'], parse_mode="HTML", reply_markup=get_region_keyboard(lang))
         return
 
     await state.update_data(box=message.text)

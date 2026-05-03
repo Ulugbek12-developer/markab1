@@ -17,7 +17,7 @@ STRINGS = {
         'btn_open_miniapp': "🌐 Mini App'da ochish",
         'btn_continue_bot': "🤖 Botda davom etish",
         'btn_continue': "➡️ Davom etish",
-        'prompt_choice': "✨ <b>Qayerda davom ettirishni xohlaysiz?</b>\n\n<i>Mini App tezroq va qulayroq, Bot esa bosqichma-bosqich yordam beradi.</i>",
+        'prompt_choice': "✨ <b>Qanday usulda davom ettirishni xohlaysiz?</b>\n\n<i>Mini App tezroq va qulayroq, Bot esa bosqichma-bosqich yordam beradi.</i>",
         'prompt_color': "🎨 <b>Telefoningiz rangini tanlang:</b>",
         'prompt_cycles': "🔄 <b>Batareya tsiklini (cycles) kiriting (masalan: 150):</b>",
         'prompt_replaced_parts': "🔧 <b>Almashtirilgan qismlar:</b>\n\n<i>Almashtirilgan qismlarni belgilang va 'Davom etish' tugmasini bosing.</i>",

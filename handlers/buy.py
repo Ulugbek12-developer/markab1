@@ -29,14 +29,14 @@ async def process_choice(message: Message, state: FSMContext):
         await state.clear()
         await message.answer(STRINGS[lang]['main_menu'], reply_markup=get_main_menu(lang))
     else:
-        await message.answer(STRINGS[lang]['prompt_choice'])
+        await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'buy'))
 
 @router.message(BuyPhone.model, F.text)
 async def process_buy_model(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(BuyPhone.choice)
-        await message.answer(STRINGS[lang]['prompt_choice'], reply_markup=get_choice_keyboard(lang, 'buy'))
+        await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'buy'))
         return
         
     model = message.text
