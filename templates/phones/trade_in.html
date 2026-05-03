@@ -74,7 +74,7 @@
     <div class="premium-card" style="padding: 40px;">
         <div class="wizard-header">
             <button class="btn-back" id="btnBack">← Orqaga</button>
-            <div class="wizard-step-counter"><span id="currentStepText">1</span> / 8</div>
+            <div class="wizard-step-counter"><span id="currentStepText">1</span> / 9</div>
         </div>
         <div class="wizard-progress">
             <div class="wizard-progress-bar" id="progressBar" style="width: 12.5%;"></div>
@@ -125,8 +125,15 @@
                 <div class="option-grid" id="modelGrid"></div>
             </div>
 
-            <!-- STEP 3: Memory & Region -->
+            <!-- STEP 3: Color -->
             <div class="wizard-step" id="step3">
+                <h2 class="wizard-title">Telefonning rangi</h2>
+                <p class="wizard-subtitle">Sizdagi telefon qaysi rangda?</p>
+                <div class="color-grid" id="colorGrid"></div>
+            </div>
+
+            <!-- STEP 4: Memory & Region -->
+            <div class="wizard-step" id="step4">
                 <h2 class="wizard-title">Xotira va Davlat</h2>
                 <p class="wizard-subtitle">Telefon xotirasi qancha?</p>
                 <div class="option-grid" id="memoryGrid" style="margin-bottom: 30px;">
@@ -147,8 +154,8 @@
                 </div>
             </div>
 
-            <!-- STEP 4: Battery -->
-            <div class="wizard-step" id="step4">
+            <!-- STEP 5: Battery -->
+            <div class="wizard-step" id="step5">
                 <h2 class="wizard-title">Batareya quvvati</h2>
                 <p class="wizard-subtitle">Sozlamalar -> Batareya -> Batareya holati</p>
                 <div style="background:#F9F9F9; padding:40px; border-radius:24px; text-align:center;">
@@ -158,8 +165,8 @@
                 </div>
             </div>
 
-            <!-- STEP 5: Exterior -->
-            <div class="wizard-step" id="step5">
+            <!-- STEP 6: Exterior -->
+            <div class="wizard-step" id="step6">
                 <h2 class="wizard-title">Tashqi ko'rinishi</h2>
                 <p class="wizard-subtitle" style="margin-bottom:10px;">Ekran qanday?</p>
                 <div class="option-grid" id="screenGrid" style="margin-bottom: 30px;">
@@ -178,8 +185,8 @@
                 </div>
             </div>
 
-            <!-- STEP 6: Defects -->
-            <div class="wizard-step" id="step6">
+            <!-- STEP 7: Defects -->
+            <div class="wizard-step" id="step7">
                 <h2 class="wizard-title">Qo'shimcha savollar</h2>
                 <p class="wizard-subtitle" style="margin-bottom:10px;">Almashtirilgan qismlar (Ko'p tanlash mumkin)</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;" id="partsGrid">
@@ -200,8 +207,8 @@
                 <div class="multi-card ok-selected" id="noDefectsBtn" style="justify-content:center;">✅ Hammasi ishlaydi</div>
             </div>
 
-            <!-- STEP 7: Box -->
-            <div class="wizard-step" id="step7">
+            <!-- STEP 8: Box -->
+            <div class="wizard-step" id="step8">
                 <h2 class="wizard-title">To'plam</h2>
                 <p class="wizard-subtitle">Qutisi va hujjatlari bormi?</p>
                 <div class="option-grid" id="boxGrid">
@@ -210,8 +217,8 @@
                 </div>
             </div>
 
-            <!-- STEP 8: Final -->
-            <div class="wizard-step" id="step8">
+            <!-- STEP 9: Final -->
+            <div class="wizard-step" id="step9">
                 <h2 class="wizard-title">Deyarli tayyor!</h2>
                 <p class="wizard-subtitle">Barcha ma'lumotlarni hisob-kitob qilish</p>
                 <div style="text-align:center; padding:40px;">
@@ -241,8 +248,51 @@ const MODELS = [
 ];
 
 let currentStep = 1;
-const TOTAL_STEPS = 8;
-const state = { targetPrice: document.getElementById('inp_target_price').value, model: '', memory: '', region: '', battery: '', screen: '', body: '', parts: [], defects: [], box: '' };
+const TOTAL_STEPS = 9;
+const state = { targetPrice: document.getElementById('inp_target_price').value, model: '', color: '', memory: '', region: '', battery: '', screen: '', body: '', parts: [], defects: [], box: '' };
+
+const COLORS = {
+    "iPhone 11": { "Black":"#1F2020", "White":"#F9F6EF", "Green":"#AEE1CD", "Yellow":"#FFE681", "Purple":"#D1CDDA", "Red":"#BA0C2E" },
+    "iPhone 11 Pro": { "Midnight Green":"#4E5851", "Space Gray":"#535150", "Silver":"#EBEBE3", "Gold":"#FAD7BD" },
+    "iPhone 11 Pro Max": { "Midnight Green":"#4E5851", "Space Gray":"#535150", "Silver":"#EBEBE3", "Gold":"#FAD7BD" },
+    "iPhone 12": { "Black":"#1F2020", "White":"#F9F6EF", "Red":"#BA0C2E", "Green":"#E1F8DC", "Blue":"#003359", "Purple":"#B6A8CB" },
+    "iPhone 12 Pro": { "Graphite":"#4C4A46", "Silver":"#EBEBE3", "Gold":"#FAD7BD", "Pacific Blue":"#2E4755" },
+    "iPhone 12 Pro Max": { "Graphite":"#4C4A46", "Silver":"#EBEBE3", "Gold":"#FAD7BD", "Pacific Blue":"#2E4755" },
+    "iPhone 13": { "Starlight":"#F9F6EF", "Midnight":"#262D33", "Blue":"#437792", "Pink":"#FAE0D8", "Red":"#C82333", "Green":"#394C38" },
+    "iPhone 13 Pro": { "Graphite":"#54524F", "Silver":"#F3F2F3", "Gold":"#F9E5C9", "Sierra Blue":"#A7C1D9", "Alpine Green":"#576856" },
+    "iPhone 13 Pro Max": { "Graphite":"#54524F", "Silver":"#F3F2F3", "Gold":"#F9E5C9", "Sierra Blue":"#A7C1D9", "Alpine Green":"#576856" },
+    "iPhone 14": { "Midnight":"#262D33", "Starlight":"#F9F6EF", "Blue":"#A0B4C7", "Purple":"#E5DDEA", "Red":"#C82333", "Yellow":"#F9E479" },
+    "iPhone 14 Plus": { "Midnight":"#262D33", "Starlight":"#F9F6EF", "Blue":"#A0B4C7", "Purple":"#E5DDEA", "Red":"#C82333", "Yellow":"#F9E479" },
+    "iPhone 14 Pro": { "Space Black":"#424143", "Silver":"#F3F2F3", "Gold":"#F4E8CE", "Deep Purple":"#594F63" },
+    "iPhone 14 Pro Max": { "Space Black":"#424143", "Silver":"#F3F2F3", "Gold":"#F4E8CE", "Deep Purple":"#594F63" },
+    "iPhone 15": { "Black":"#353637", "Blue":"#CEDFD9", "Green":"#CFE4D6", "Yellow":"#FCE9CE", "Pink":"#E2C8CA" },
+    "iPhone 15 Plus": { "Black":"#353637", "Blue":"#CEDFD9", "Green":"#CFE4D6", "Yellow":"#FCE9CE", "Pink":"#E2C8CA" },
+    "iPhone 15 Pro": { "Black Titanium":"#464545", "White Titanium":"#F2F1ED", "Blue Titanium":"#3A4554", "Natural Titanium":"#8F8A84" },
+    "iPhone 15 Pro Max": { "Black Titanium":"#464545", "White Titanium":"#F2F1ED", "Blue Titanium":"#3A4554", "Natural Titanium":"#8F8A84" },
+    "iPhone 16": { "Black":"#353637", "White":"#F9F6EF", "Pink":"#E2C8CA", "Teal":"#008080", "Ultramarine":"#120A8F" },
+    "iPhone 16 Pro": { "Black Titanium":"#464545", "White Titanium":"#F2F1ED", "Natural Titanium":"#8F8A84", "Desert Titanium":"#BBAA99" },
+    "iPhone 16 Pro Max": { "Black Titanium":"#464545", "White Titanium":"#F2F1ED", "Natural Titanium":"#8F8A84", "Desert Titanium":"#BBAA99" },
+    "iPhone 17 Pro Max": { "Titanium":"#8F8A84" }
+};
+
+function populateColors(model) {
+    const grid = document.getElementById('colorGrid');
+    grid.innerHTML = '';
+    state.color = '';
+    const colors = COLORS[model] || { "Standart": "#CCC" };
+    for (const [name, hex] of Object.entries(colors)) {
+        const card = document.createElement('div');
+        card.className = 'color-card';
+        card.innerHTML = `<div class="color-circle"><div class="color-circle-inner" style="background-color:${hex}"></div></div><div class="color-name">${name}</div>`;
+        card.onclick = () => {
+            document.querySelectorAll('.color-card').forEach(n => n.classList.remove('selected'));
+            card.classList.add('selected');
+            state.color = name;
+            checkStepValidity();
+        };
+        grid.appendChild(card);
+    }
+}
 
 // Target price manual input handler
 const manualInput = document.getElementById('manualTargetPrice');
@@ -264,6 +314,7 @@ MODELS.reverse().forEach(model => {
         div.classList.add('selected');
         state.model = model;
         document.getElementById('inp_model').value = model;
+        populateColors(model);
         checkStepValidity();
     };
     modelGrid.appendChild(div);
@@ -325,12 +376,13 @@ function checkStepValidity() {
     let valid = false;
     if (currentStep === 1) valid = !!state.targetPrice;
     if (currentStep === 2) valid = !!state.model;
-    if (currentStep === 3) valid = !!state.memory && !!state.region;
-    if (currentStep === 4) valid = state.battery > 0 && state.battery <= 100;
-    if (currentStep === 5) valid = !!state.screen && !!state.body;
-    if (currentStep === 6) valid = true; 
-    if (currentStep === 7) valid = !!state.box;
-    if (currentStep === 8) valid = true;
+    if (currentStep === 3) valid = !!state.color;
+    if (currentStep === 4) valid = !!state.memory && !!state.region;
+    if (currentStep === 5) valid = state.battery > 0 && state.battery <= 100;
+    if (currentStep === 6) valid = !!state.screen && !!state.body;
+    if (currentStep === 7) valid = true;
+    if (currentStep === 8) valid = !!state.box;
+    if (currentStep === 9) valid = true;
     btnNext.disabled = !valid;
 }
 checkStepValidity(); // initial check for step 1 if target_price is present
