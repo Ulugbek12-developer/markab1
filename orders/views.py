@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Order
 from phones.models import Listing
-import requests
 import os
 from dotenv import load_dotenv
+from django.utils import timezone
+from datetime import timedelta
 
 class CheckoutView(View):
     def get(self, request, listing_id):
@@ -54,12 +55,18 @@ class CheckoutView(View):
                 text += f"📍 Manzil: {order.address}\n"
             
             try:
+                import requests
                 requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={
                     "chat_id": admin_id,
                     "text": text,
                     "parse_mode": "HTML"
                 })
             except: pass
+
+        # Mark listing as booked so it disappears from web app
+        listing.is_booked = True
+        listing.booked_until = timezone.now() + timedelta(hours=48)
+        listing.save()
 
         return render(request, 'orders/success.html', {'order': order})
 

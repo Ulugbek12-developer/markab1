@@ -7,7 +7,7 @@ from keyboards import (
     get_confirm_keyboard, get_back_keyboard, get_payment_type_keyboard, 
     get_location_keyboard, get_installment_plan_keyboard, get_choice_keyboard
 )
-from database import search_ads, get_user_language, get_all_branches
+from database import search_ads, get_user_language, get_all_branches, book_listing
 from config import config
 from strings import STRINGS
 
@@ -222,6 +222,12 @@ async def process_buy_confirm(message: Message, state: FSMContext):
                 reply_markup=get_order_admin_keyboard(data['selected_id'], lang)
             )
         
+        # Mark listing as booked so it disappears from web app
+        try:
+            await book_listing(int(data['selected_id']), hours=48)
+        except Exception as e:
+            pass # Continue even if booking fail notification-wise
+            
         await message.answer(s['buy_success'], parse_mode="HTML", reply_markup=get_main_menu(lang))
     elif message.text == s['btn_back']:
         data = await state.get_data()
