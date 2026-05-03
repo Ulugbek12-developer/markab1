@@ -1,52 +1,43 @@
 {% extends 'base.html' %}
-<!-- v1.1-fixed -->
-
-{% block title %}Saralanganlar | Markab{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="space-y-12">
-    <div class="text-center md:text-left">
-        <h1 class="text-4xl font-black text-slate-900 mb-3 tracking-tight">Saralanganlar</h1>
-        <p class="text-slate-400 font-bold text-sm">Sizga yoqqan va saqlab qo'yilgan e'lonlar</p>
-    </div>
+<div class="animate">
+    <h1 style="font-size:36px; font-weight:900; margin-bottom:40px;">❤️ Saralanganlar</h1>
 
     {% if favorites %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="grid grid-4">
         {% for fav in favorites %}
         {% with listing=fav.listing %}
-        <div class="hover-lift">
-            <a href="{% url 'phones:detail' listing.id %}">
-                <div class="card-shadow bg-white rounded-[2rem] overflow-hidden group border border-red-50 h-full flex flex-col relative transition-all duration-500 hover:shadow-red-100">
-                    <div class="relative h-56 overflow-hidden bg-slate-50">
+            <div class="premium-card">
+                <a href="{% url 'phones:detail' listing.id %}" style="text-decoration:none; color:inherit;">
+                    <div class="product-img-wrapper">
                         {% if listing.image %}
-                            <img src="{{ listing.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
                         {% endif %}
-                        <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST" class="absolute top-4 right-4 z-10">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <h3 style="font-size:18px; font-weight:900; margin:5px 0;">{{ listing.title }}</h3>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="price-tag">{{ listing.price|floatformat:0 }} so'm</span>
+                        <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST">
                             {% csrf_token %}
-                            <button type="submit" class="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur text-primary shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-90">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.5 3c1.38 0 2.627.56 3.522 1.465a3.522 3.522 0 013.522-1.465c2.786 0 5.25 2.322 5.25 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>
+                            <button type="submit" style="background:none; border:none; color:var(--primary); cursor:pointer;">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 24 24"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.5 3c1.38 0 2.627.56 3.522 1.465a3.522 3.522 0 013.522-1.465c2.786 0 5.25 2.322 5.25 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>
                             </button>
                         </form>
                     </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="font-black text-slate-900 text-lg line-clamp-1 mb-2">{{ listing.title }}</h3>
-                        <p class="text-primary font-black text-xl tracking-tight mt-auto">{{ listing.price|floatformat:0 }} so'm</p>
-                    </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         {% endwith %}
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-24 bg-white rounded-[2.5rem] border-2 border-dashed border-red-100/50">
-        <div class="w-20 h-20 bg-red-50 text-primary/30 rounded-3xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-16 h-16 text-slate-200" width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-        </div>
-        <p class="text-slate-400 font-black text-sm uppercase tracking-widest mb-6">Hozircha hech narsa yo'q</p>
-        <a href="{% url 'phones:home' %}" class="inline-flex items-center gap-2 bg-primary text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-red-100 transition-all hover:bg-accent active:scale-95">
-            E'LONLARNI KO'RISH <svg class="w-4 h-4" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-        </a>
+    <div style="text-align:center; padding:100px 0;">
+        <div style="font-size:64px; margin-bottom:20px;">❤️</div>
+        <p style="font-weight:700; color:var(--text-muted); margin-bottom:30px;">Hozircha hech narsa saralanmagan</p>
+        <a href="{% url 'phones:home' %}" class="btn-primary">E'lonlarni ko'rish</a>
     </div>
     {% endif %}
 </div>

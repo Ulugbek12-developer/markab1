@@ -1,103 +1,86 @@
 {% extends 'base.html' %}
-
-{% block title %}Mening Savatim | Markab{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto pb-20" x-data="cartPage()">
-    <div class="flex items-center justify-between mb-12">
-        <h1 class="text-4xl font-black text-text-main">🛍 Mening Savatim</h1>
-        <button @click="clearCart()" x-show="items.length > 0" class="text-sm font-bold text-slate-400 hover:text-primary transition-colors">Savatni tozalash</button>
+<div class="animate" style="max-width: 800px; margin: 0 auto;">
+    <h1 style="font-size:36px; font-weight:900; margin-bottom:40px;">🛍 Savatim</h1>
+
+    <div id="cart-items" style="display:flex; flex-direction:column; gap:20px;">
+        <!-- Items will be loaded by JS -->
     </div>
 
-    <!-- Empty State -->
-    <div x-show="items.length === 0" class="text-center py-24 premium-card border-dashed border-slate-200">
-        <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-12 h-12 text-slate-300" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-        </div>
-        <p class="text-slate-400 font-black text-xl mb-8">Savatingiz hozircha bo'sh</p>
-        <a href="{% url 'phones:home' %}" class="btn-primary">Xarid qilishni boshlash</a>
+    <div id="empty-cart" style="display:none; text-align:center; padding:100px 0;">
+        <div style="font-size:64px; margin-bottom:20px;">🛒</div>
+        <p style="font-weight:700; color:var(--text-muted); margin-bottom:30px;">Savatingiz hozircha bo'sh</p>
+        <a href="{% url 'phones:home' %}" class="btn-primary">Xaridni boshlash</a>
     </div>
 
-    <!-- Cart Items -->
-    <div x-show="items.length > 0" class="space-y-6 animate-fade-in">
-        <template x-for="item in items" :key="item.id">
-            <div class="premium-card p-6 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group">
-                <div class="w-32 h-32 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-shrink-0 overflow-hidden">
-                    <img :src="item.image" class="w-full h-full object-cover transition-transform group-hover:scale-110">
-                </div>
-                
-                <div class="flex-1 text-center md:text-left">
-                    <h3 class="text-xl font-black text-text-main mb-2" x-text="item.title"></h3>
-                    <p class="text-primary font-black text-2xl" x-text="formatPrice(item.price) + ' so\'m'"></p>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <a :href="'/listing/' + item.id + '/'" class="btn-secondary py-3 px-6 text-sm">Ko'rish</a>
-                    <button @click="removeFromCart(item.id); loadItems()" class="p-4 rounded-xl bg-red-50 text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
-                        <svg class="w-5 h-5" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
-                </div>
-            </div>
-        </template>
-
-        <!-- Summary & Checkout -->
-        <div class="mt-12 p-10 premium-card bg-primary/5 border-primary/10">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-                <div>
-                    <p class="text-sm font-bold text-text-muted mb-1">Umumiy hisob:</p>
-                    <p class="text-5xl font-black text-primary tracking-tighter" x-text="formatPrice(calculateTotal()) + ' so\'m'"></p>
-                </div>
-                
-                <button @click="checkout()" class="btn-primary px-12 h-16 text-xl shadow-2xl shadow-red-100 flex items-center gap-4 group">
-                    BUYURTMA BERISH
-                    <svg class="w-6 h-6 group-hover:translate-x-2 transition-transform" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </button>
-            </div>
+    <div id="cart-summary" style="display:none; margin-top:40px; padding:30px; background:var(--primary); color:white; border-radius:30px; justify-content:space-between; align-items:center;">
+        <div>
+            <p style="font-size:12px; font-weight:700; opacity:0.8;">Jami summa:</p>
+            <p id="total-price" style="font-size:32px; font-weight:900;">0 so'm</p>
         </div>
+        <button onclick="checkout()" class="btn-secondary" style="background:white; border:none; padding:20px 40px; font-size:18px; font-weight:900; color:var(--primary);">SOTIB OLISH</button>
     </div>
 </div>
 
 <script>
-function cartPage() {
-    return {
-        items: [],
-        loadItems() {
-            this.items = JSON.parse(localStorage.getItem('markab-cart') || '[]');
-        },
-        init() {
-            this.loadItems();
-        },
-        calculateTotal() {
-            return this.items.reduce((acc, item) => acc + parseFloat(item.price), 0);
-        },
-        formatPrice(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        },
-        clearCart() {
-            if(confirm('Savatingizni bo\'shatmoqchimisiz?')) {
-                localStorage.removeItem('markab-cart');
-                this.loadItems();
-                updateCartUI();
-            }
-        },
-        checkout() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                const itemsStr = this.items.map(i => i.title).join(', ');
-                const total = this.formatPrice(this.calculateTotal());
-                
-                tg.showConfirm(`Jami ${this.items.length} ta mahsulot: ${total} so'm. Buyurtmani tasdiqlaysizmi?`, (ok) => {
-                    if (ok) {
-                        alert("Rahmat! Buyurtmangiz qabul qilindi. Tez orada administrator bog'lanadi.");
-                        localStorage.removeItem('markab-cart');
-                        location.href = "{% url 'phones:home' %}";
-                    }
-                });
-            } else {
-                alert('Iltimos, buyurtma berish uchun Telegram botdan foydalaning.');
-            }
+    function loadCart() {
+        const cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
+        const container = document.getElementById('cart-items');
+        const empty = document.getElementById('empty-cart');
+        const summary = document.getElementById('cart-summary');
+
+        if (cart.length === 0) {
+            container.innerHTML = '';
+            empty.style.display = 'block';
+            summary.style.display = 'none';
+            return;
         }
+
+        empty.style.display = 'none';
+        summary.style.display = 'flex';
+        
+        let total = 0;
+        container.innerHTML = cart.map(item => {
+            total += parseFloat(item.price);
+            return `
+                <div class="premium-card" style="display:flex; align-items:center; gap:20px;">
+                    <div style="width:80px; height:80px; background:#F5F5F5; border-radius:15px; overflow:hidden;">
+                        <img src="${item.image}" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div style="flex:1;">
+                        <h4 style="font-weight:900;">${item.title}</h4>
+                        <p style="color:var(--primary); font-weight:900;">${formatPrice(item.price)} so'm</p>
+                    </div>
+                    <button onclick="removeFromCart('${item.id}')" style="background:none; border:none; color:#FF4D4D; cursor:pointer;">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            `;
+        }).join('');
+        
+        document.getElementById('total-price').innerText = formatPrice(total) + ' so\'m';
     }
-}
+
+    function formatPrice(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    function removeFromCart(id) {
+        let cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
+        cart = cart.filter(item => item.id !== id);
+        localStorage.setItem('markab-cart', JSON.stringify(cart));
+        loadCart();
+        updateCartUI();
+    }
+
+    function checkout() {
+        alert('Rahmat! Buyurtmangiz qabul qilindi. Administrator siz bilan bog\'lanadi.');
+        localStorage.removeItem('markab-cart');
+        location.href = "/";
+    }
+
+    loadCart();
 </script>
 {% endblock %}

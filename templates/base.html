@@ -6,170 +6,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Markab | Premium Marketplace{% endblock %}</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#B12241',
-                        secondary: '#666666',
-                        accent: '#8e1b34',
-                        milky: 'var(--bg-milky)',
-                        light: 'var(--bg-light)',
-                        'text-main': 'var(--text-main)',
-                    },
-                    borderRadius: {
-                        '2xl': '1.25rem',
-                        '3xl': '1.75rem',
-                    }
-                }
-            }
-        }
-    </script>
-
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Standard CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.2">
 
     <style>
-        :root {
-            --brand-color: #B12241;
-            --brand-hover: #8e1b34;
-            --bg-light: #FFFFFF;
-            --bg-milky: #FDFDFD;
-            --text-main: #1A1A1A;
-            --text-muted: #666666;
-            --border-light: #EEEEEE;
-            --card-shadow: 0 10px 40px rgba(177, 34, 65, 0.05);
-        }
-        body.dark {
-            --bg-light: #121212;
-            --bg-milky: #0D0D0D;
-            --text-main: #F5F5F5;
-            --text-muted: #A0A0A0;
-            --border-light: #2A2A2A;
-            --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-        }
-    </style>
-
-    <style type="text/tailwindcss">
-        @layer base {
-            body {
-                @apply font-['Outfit'] antialiased bg-milky text-text-main;
-                background-color: var(--bg-milky);
-                color: var(--text-main);
-                -webkit-tap-highlight-color: transparent;
-                transition: background-color 0.3s, color 0.3s;
-            }
-        }
-        @layer components {
-            .glass {
-                @apply bg-light/90 backdrop-blur-xl border-b border-slate-100/10;
-                background-color: rgba(var(--bg-light-rgb, 255, 255, 255), 0.9);
-            }
-            .card-shadow {
-                box-shadow: var(--card-shadow);
-            }
-            .btn-primary {
-                @apply bg-primary text-white font-bold py-3.5 px-6 rounded-2xl transition-all active:scale-95 shadow-lg shadow-red-100;
-                background-color: var(--brand-color);
-            }
-            .btn-secondary {
-                @apply bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl border border-slate-100 transition-all active:scale-95;
-            }
-            .nav-link {
-                @apply flex items-center gap-2 text-sm font-bold transition-colors hover:text-primary text-slate-600;
-            }
-            .premium-card {
-                @apply bg-light rounded-[2rem] border border-slate-100 transition-all duration-500;
-                background-color: var(--bg-light);
-                box-shadow: var(--card-shadow);
-            }
-        }
-        .hover-lift {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .hover-lift:hover {
-            transform: translateY(-6px);
-            @apply shadow-2xl shadow-red-100/50;
-        }
+        /* Extra polished tweaks */
+        .icon { width: 24px; height: 24px; stroke-width: 2; }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="min-h-screen">
+<body>
 
     <!-- Desktop Navbar -->
-    <header class="hidden md:block sticky top-0 z-50 glass h-20">
-        <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-            <a href="{% url 'phones:home' %}" class="flex items-center gap-3">
-                <img src="{% static 'img/logo.png' %}" alt="Markab" class="h-10 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="text-2xl font-black text-primary hidden">MARKAB</span>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="{% url 'phones:home' %}" class="logo">
+                <img src="{% static 'img/logo.png' %}" alt="Markab" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none">MARKAB</span>
             </a>
             
-            <nav class="flex items-center gap-10">
-                <a href="{% url 'phones:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}text-primary{% endif %}">Asosiy</a>
-                <a href="{% url 'phones:price' %}" class="nav-link {% if request.resolver_match.url_name == 'price' %}text-primary{% endif %}">Narxlash</a>
-                <a href="{% url 'phones:trade_in' %}" class="nav-link {% if request.resolver_match.url_name == 'trade_in' %}text-primary{% endif %}">Trade-in</a>
-                <a href="{% url 'phones:favorites' %}" class="nav-link {% if request.resolver_match.url_name == 'favorites' %}text-primary{% endif %}">Saralanganlar</a>
+            <nav class="nav-links">
+                <a href="{% url 'phones:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Asosiy</a>
+                <a href="{% url 'phones:price' %}" class="nav-link">Narxlash</a>
+                <a href="{% url 'phones:trade_in' %}" class="nav-link">Trade-in</a>
+                <a href="{% url 'phones:favorites' %}" class="nav-link">Saralanganlar</a>
                 {% if user.is_staff %}
-                    <a href="{% url 'phones:admin_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}text-primary{% endif %}">🔐 Admin Panel</a>
+                    <a href="{% url 'phones:admin_dashboard' %}" class="nav-link">🔐 Admin</a>
                 {% endif %}
-
                 <a href="{% url 'phones:sell' %}" class="btn-primary">Sotish</a>
             </nav>
 
-            <div class="flex items-center gap-6">
-                <!-- Theme Toggle -->
-                <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-all">
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                </button>
-
-                <!-- Cart Desktop -->
-                <a href="{% url 'phones:cart' %}" class="relative p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary transition-all">
-                    <svg class="w-6 h-6" style="width:24px; height:24px;" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 hidden">0</span>
+            <div class="nav-links" style="gap: 15px;">
+                <!-- Cart -->
+                <a href="{% url 'phones:cart' %}" style="position:relative; color: var(--text-muted);">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span id="cart-count" style="display:none; position:absolute; top:-5px; right:-5px; background:var(--primary); color:white; font-size:10px; padding:2px 5px; border-radius:10px;">0</span>
                 </a>
-
-                {% if user.is_authenticated %}
-                    <a href="{% url 'users:profile' %}" class="text-sm font-bold text-slate-400 hover:text-primary transition-colors flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        {{ user.username }}
-                    </a>
-                {% else %}
-                    <a href="/login" class="text-sm font-bold text-slate-400 hover:text-primary transition-colors">Kirish</a>
-                {% endif %}
             </div>
         </div>
     </header>
 
-    <!-- Mobile Nav Header -->
-    <header class="md:hidden sticky top-0 z-50 glass h-16 px-4 flex items-center justify-between">
-        <a href="{% url 'phones:home' %}" class="flex items-center">
-            <img src="{% static 'img/logo.png' %}" alt="Markab" class="h-8 w-auto">
-        </a>
-        <div class="flex items-center gap-3">
-            <button id="theme-toggle-mobile" class="p-2 text-slate-400">
-                <svg class="w-6 h-6" style="width:24px; height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-            <a href="{% url 'phones:cart' %}" class="relative p-2 text-slate-400">
-                <svg class="w-6 h-6" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span id="cart-count-mobile" class="absolute top-0 right-0 bg-primary text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white hidden">0</span>
-            </a>
-            <a href="{% url 'phones:favorites' %}" class="p-2 text-slate-400"><svg class="w-6 h-6" style="width:24px; height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></a>
-        </div>
-    </header>
-
-    <!-- Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12">
+    <!-- Main Content -->
+    <main class="container" style="padding-top: 40px; padding-bottom: 100px;">
         {% if messages %}
-            <div class="mb-8 space-y-3">
+            <div style="margin-bottom: 30px;">
                 {% for message in messages %}
-                    <div class="p-4 rounded-2xl animate-fade-in {% if message.tags == 'success' %}bg-green-50 text-green-700 border border-green-100{% else %}bg-red-50 text-red-700 border border-red-100{% endif %} font-bold flex items-center gap-3">
-                        <div class="w-2 h-2 rounded-full {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}"></div>
+                    <div style="padding: 15px 20px; border-radius: 16px; margin-bottom: 10px; font-weight: 700; {% if message.tags == 'success' %}background:#E6F4EA; color:#1E7E34;{% else %}background:#FCE8E6; color:#D93025;{% endif %}">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -179,125 +64,58 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Bottom Nav for Mobile -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 glass h-20 border-t border-slate-100 flex items-center justify-around px-4 safe-area-bottom">
-        <a href="{% url 'phones:home' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'home' %}text-primary{% else %}text-slate-400{% endif %}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-[10px] font-bold">Asosiy</span>
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <a href="{% url 'phones:home' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span>Asosiy</span>
         </a>
-        <a href="{% url 'phones:price' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'price' %}text-primary{% else %}text-slate-400{% endif %}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            <span class="text-[10px] font-bold">Narxlash</span>
+        <a href="{% url 'phones:price' %}" class="mobile-nav-link">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span>Narxlash</span>
         </a>
-        <a href="{% url 'phones:sell' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'sell' %}text-primary{% else %}text-slate-400{% endif %}">
-            <div class="bg-primary text-white p-3.5 rounded-2xl shadow-xl shadow-red-200 -translate-y-6">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <a href="{% url 'phones:sell' %}" class="mobile-nav-link" style="margin-top: -30px;">
+            <div style="background:var(--primary); width:56px; height:56px; border-radius:18px; display:flex; align-items:center; justify-content:center; color:white; box-shadow:0 10px 20px rgba(177,34,65,0.3);">
+                <svg class="icon" style="width:30px; height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
             </div>
-            <span class="text-[10px] font-bold -translate-y-4">Sotish</span>
+            <span style="margin-top:5px;">Sotish</span>
         </a>
-        <a href="{% url 'phones:favorites' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'favorites' %}text-primary{% else %}text-slate-400{% endif %}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-            <span class="text-[10px] font-bold">Saralangan</span>
+        <a href="{% url 'phones:favorites' %}" class="mobile-nav-link">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            <span>Saralangan</span>
         </a>
-        <a href="{% url 'users:profile' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'profile' %}text-primary{% else %}text-slate-400{% endif %}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span class="text-[10px] font-bold">Profil</span>
+        <a href="{% url 'users:profile' %}" class="mobile-nav-link">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <span>Profil</span>
         </a>
-        {% if user.is_staff %}
-        <a href="{% url 'phones:admin_dashboard' %}" class="flex flex-col items-center gap-1 {% if request.resolver_match.url_name == 'admin_dashboard' %}text-primary{% else %}text-slate-400{% endif %}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            <span class="text-[10px] font-bold">Admin</span>
-        </a>
-        {% endif %}
     </nav>
 
     <script>
-        // Theme Management
-        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeToggleMobileBtn = document.getElementById('theme-toggle-mobile');
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark');
-            const isDark = document.body.classList.contains('dark');
-            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
-            updateIcons();
-        }
-
-        function updateIcons() {
-            if (document.body.classList.contains('dark')) {
-                themeToggleLightIcon.classList.remove('hidden');
-                themeToggleDarkIcon.classList.add('hidden');
+        // Cart Logic (Standard JS)
+        function updateCartUI() {
+            const cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
+            const countEl = document.getElementById('cart-count');
+            if (cart.length > 0) {
+                countEl.innerText = cart.length;
+                countEl.style.display = 'block';
             } else {
-                themeToggleDarkIcon.classList.remove('hidden');
-                themeToggleLightIcon.classList.add('hidden');
+                countEl.style.display = 'none';
             }
         }
 
-        // Initialize Theme
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.body.classList.add('dark');
-        } else {
-            document.body.classList.remove('dark');
-        }
-        updateIcons();
-
-        themeToggleBtn.addEventListener('click', toggleTheme);
-        themeToggleMobileBtn.addEventListener('click', toggleTheme);
-
-        // Cart Management
-        let cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
-        
-        function updateCartUI() {
-            const counts = document.querySelectorAll('#cart-count, #cart-count-mobile');
-            counts.forEach(el => {
-                if (cart.length > 0) {
-                    el.innerText = cart.length;
-                    el.classList.remove('hidden');
-                } else {
-                    el.classList.add('hidden');
-                }
-            });
-        }
-
         function addToCart(id, title, price, image) {
+            let cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
             if (!cart.find(item => item.id === id)) {
                 cart.push({ id, title, price, image });
                 localStorage.setItem('markab-cart', JSON.stringify(cart));
                 updateCartUI();
-                
-                // Success Toast/Haptic
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                }
                 alert('Savatga qo\'shildi!');
             } else {
                 alert('Bu mahsulot savatda bor');
             }
         }
 
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            localStorage.setItem('markab-cart', JSON.stringify(cart));
-            updateCartUI();
-            location.reload();
-        }
-
         updateCartUI();
-
-        // Telegram WebApp integration
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand();
-            
-            // Sync theme with Telegram
-            if (tg.colorScheme === 'dark') {
-                document.body.classList.add('dark');
-                updateIcons();
-            }
-        }
     </script>
 </body>
 </html>
