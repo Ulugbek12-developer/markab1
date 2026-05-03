@@ -3,6 +3,7 @@ __pycache__/
 *$py.class
 .env
 db.sqlite3
+db_new.sqlite3
 smart_market.db
 staticfiles/
 media/
