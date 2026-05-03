@@ -36,6 +36,12 @@
                 {% if user.is_staff %}
                     <a href="{% url 'phones:admin_dashboard' %}" class="nav-link">🔐 Admin</a>
                 {% endif %}
+                {% if user.is_authenticated %}
+                    <form action="{% url 'users:logout' %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background:none; border:none; color:#FF4D4D; cursor:pointer; font-weight:700;">Chiqish</button>
+                    </form>
+                {% endif %}
                 <a href="{% url 'phones:sell' %}" class="btn-primary">Sotish</a>
             </nav>
 
