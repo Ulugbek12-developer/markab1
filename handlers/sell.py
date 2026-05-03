@@ -8,6 +8,7 @@ from keyboards import (
     get_admin_keyboard, get_region_keyboard, get_box_keyboard,
     get_choice_keyboard, get_color_keyboard, get_continue_keyboard,
     get_yes_no_keyboard, get_replaced_parts_keyboard, get_defects_keyboard, get_screen_body_condition_keyboard,
+    get_skip_keyboard,
     REPLACED_PARTS, DEFECTS_LIST
 )
 from database import add_ad, get_user_language
