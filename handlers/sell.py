@@ -18,7 +18,6 @@ router = Router()
 
 @router.message(F.text.in_(["📱 Telefon sotish", "📱 Продать телефон"]))
 async def start_sell(message: Message, state: FSMContext):
-    await state.clear() # ALWAYS clear state on new entry
     lang = await get_user_language(message.from_user.id)
     await state.set_state(SellPhone.choice)
     await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'sell'))
@@ -110,7 +109,7 @@ async def process_cycles(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(SellPhone.battery)
-        await message.answer(STRINGS[lang]['prompt_battery'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
+        await message.answer(STRINGS[lang]['prompt_battery'], reply_markup=get_back_keyboard(lang))
         return
 
     if not message.text.isdigit():
@@ -208,9 +207,8 @@ async def process_defects_message(message: Message, state: FSMContext):
 async def process_memory(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
     if message.text == STRINGS[lang]['btn_back']:
-        data = await state.get_data()
         await state.set_state(SellPhone.defects)
-        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard(data.get('defects', []), lang))
+        await message.answer(STRINGS[lang]['prompt_defects'], parse_mode="HTML", reply_markup=get_defects_keyboard([]))
         return
     
     await state.update_data(memory=message.text, storage=message.text)

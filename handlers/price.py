@@ -24,7 +24,6 @@ def calculate_price(data):
 
 @router.message(F.text.in_(["💰 Narxlatish", "💰 Оценка"]))
 async def start_price(message: Message, state: FSMContext):
-    await state.clear() # ALWAYS clear state on new entry
     lang = await get_user_language(message.from_user.id)
     await state.set_state(PricePhone.choice)
     await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'price'))

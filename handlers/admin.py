@@ -13,26 +13,20 @@ ADMIN_PASSWORD = "MARKAB777"
 
 @router.message(F.text.in_(["🔐 Admin Panel", "🔐 Админ-панель"]))
 async def admin_login(message: Message, state: FSMContext):
-    await state.clear() # Clear any previous state
     lang = await get_user_language(message.from_user.id)
     await state.set_state(AdminAuth.waiting_for_password)
-    await message.answer(STRINGS[lang]['prompt_admin_pass'], parse_mode="HTML", reply_markup=keyboards.get_back_keyboard(lang))
+    await message.answer(STRINGS[lang]['prompt_admin_pass'], parse_mode="HTML", reply_markup=keyboards.get_main_menu(lang))
 
 @router.message(AdminAuth.waiting_for_password)
 async def check_password(message: Message, state: FSMContext):
     lang = await get_user_language(message.from_user.id)
-    if message.text == STRINGS[lang]['btn_back'] or "orqaga" in message.text.lower() or "назад" in message.text.lower():
-        await state.clear()
-        await message.answer(STRINGS[lang]['main_menu'], reply_markup=keyboards.get_main_menu(lang))
-        return
-        
     if message.text == ADMIN_PASSWORD:
         await state.clear()
         web_admin_url = "https://markab2.pythonanywhere.com/markab-admin/"
         text = STRINGS[lang]['admin_welcome'] + f"\n\n🌐 <b>Veb Admin Panel:</b>\n{web_admin_url}"
         await message.answer(text, parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
     else:
-        await message.answer(STRINGS[lang]['err_pass'], parse_mode="HTML", reply_markup=keyboards.get_back_keyboard(lang))
+        await message.answer(STRINGS[lang]['err_pass'], parse_mode="HTML")
 
 @router.message(F.text.in_(["➕ Mahsulot qo'shish", "➕ Добавить товар"]))
 async def admin_add_product_start(message: Message, state: FSMContext):
