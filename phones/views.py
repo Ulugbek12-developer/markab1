@@ -7,6 +7,11 @@ from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
 from .utils import calculate_phone_price, BASE_PRICES
+from django.http import JsonResponse
+import requests
+import os
+from dotenv import load_dotenv
+from datetime import timedelta
 
 def clean_expired_bookings():
     Listing.objects.filter(is_booked=True, booked_until__lt=timezone.now()).update(is_booked=False, booked_until=None)
@@ -197,11 +202,6 @@ class ToggleBookingView(View):
 class PriceView(TemplateView):
     template_name = 'phones/price.html'
 
-import requests
-import os
-from dotenv import load_dotenv
-from django.http import JsonResponse
-
 class InstallmentRequestView(View):
     def post(self, request, pk):
         listing = get_object_or_404(Listing, pk=pk)
@@ -290,6 +290,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
         if not created:
             favorite.delete()
         return redirect(request.META.get('HTTP_REFERER', 'phones:home'))
+
 class TradeInView(TemplateView):
     template_name = 'phones/trade_in.html'
 
@@ -328,24 +329,20 @@ class TradeInView(TemplateView):
         }
         return render(request, self.template_name, context)
 
- c l a s s   A d d R e v i e w V i e w ( L o g i n R e q u i r e d M i x i n ,   V i e w ) : 
-         d e f   p o s t ( s e l f ,   r e q u e s t ,   p k ) : 
-                 l i s t i n g   =   g e t _ o b j e c t _ o r _ 4 0 4 ( L i s t i n g ,   i d = p k ) 
-                 r a t i n g   =   r e q u e s t . P O S T . g e t ( ' r a t i n g ' ) 
-                 c o m m e n t   =   r e q u e s t . P O S T . g e t ( ' c o m m e n t ' ) 
-                 
-                 R e v i e w . o b j e c t s . c r e a t e ( 
-                         l i s t i n g = l i s t i n g , 
-                         u s e r = r e q u e s t . u s e r , 
-                         r a t i n g = i n t ( r a t i n g ) , 
-                         c o m m e n t = c o m m e n t 
-                 ) 
-                 m e s s a g e s . s u c c e s s ( r e q u e s t ,   \  
- S h a r h i n g i z  
- u c h u n  
- r a h m a t ! \ ) 
-                 r e t u r n   r e d i r e c t ( ' p h o n e s : d e t a i l ' ,   p k = p k )  
- 
- c l a s s   C a r t V i e w ( T e m p l a t e V i e w ) : 
-         t e m p l a t e _ n a m e   =   ' p h o n e s / c a r t . h t m l '  
- 
+class AddReviewView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        listing = get_object_or_404(Listing, id=pk)
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        Review.objects.create(
+            listing=listing,
+            user=request.user,
+            rating=int(rating),
+            comment=comment
+        )
+        messages.success(request, "Sharhingiz uchun rahmat!")
+        return redirect('phones:detail', pk=pk)
+
+class CartView(TemplateView):
+    template_name = 'phones/cart.html'
