@@ -175,6 +175,23 @@ class CartView(TemplateView):
 
 class PriceView(TemplateView):
     template_name = 'phones/price.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['models'] = list(BASE_PRICES.keys())
+        return context
+
+    def post(self, request, *args, **kwargs):
+        data = request.POST
+        my_phone_price = calculate_phone_price({
+            'model': data.get('my_model'), 'memory': data.get('my_memory'),
+            'battery': data.get('my_battery'), 'condition': data.get('my_condition'),
+            'box': data.get('my_box'), 'replaced_parts': request.POST.getlist('my_parts'),
+            'defects': request.POST.getlist('my_defects'),
+        })
+        context = self.get_context_data()
+        context['result'] = {'my_price': my_phone_price, 'calculated': True}
+        return render(request, self.template_name, context)
 
 class FilterView(ListView):
     model = Listing

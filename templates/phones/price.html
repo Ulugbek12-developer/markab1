@@ -1,34 +1,109 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Narxlash | Markab{% endblock %}
+
 {% block content %}
-<div class="animate" style="max-width: 800px; margin: 0 auto;">
-    <h1 style="font-size:36px; font-weight:900; margin-bottom:10px;">📉 Telefonni baholash</h1>
-    <p style="color:var(--text-muted); font-weight:700; margin-bottom:40px;">Telefoningizning bozor narxini bir necha soniyada aniqlang</p>
-
-    <div class="premium-card" style="padding: 40px;">
-        <h2 style="font-size:24px; font-weight:900; margin-bottom:30px; text-align:center;">Tez orada...</h2>
-        
-        <div style="text-align:center; padding:40px 0;">
-            <div style="background:var(--primary); width:120px; height:120px; border-radius:60px; display:flex; align-items:center; justify-content:center; margin:0 auto 30px; color:white; box-shadow:0 20px 40px rgba(177,34,65,0.2);">
-                <svg style="width:60px; height:60px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-            </div>
-            <p style="font-size:18px; font-weight:900; color:var(--text-main); margin-bottom:10px;">Bu bo'lim hozirda takomillashtirilmoqda</p>
-            <p style="color:var(--text-muted); font-weight:700;">Hozircha narxlarni bilish uchun <a href="{% url 'phones:trade_in' %}" style="color:var(--primary);">Trade-in</a> kalkulyatoridan foydalanishingiz mumkin.</p>
-        </div>
-
-        <div style="margin-top:40px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-            <div style="background:#F9F9F9; padding:20px; border-radius:20px; text-align:center;">
-                <div style="color:var(--primary); font-size:24px; margin-bottom:10px;">⚡</div>
-                <h4 style="font-weight:900; margin-bottom:5px;">Tezkor</h4>
-                <p style="font-size:12px; color:var(--text-muted); font-weight:700;">1 daqiqada narxni bilish</p>
-            </div>
-            <div style="background:#F9F9F9; padding:20px; border-radius:20px; text-align:center;">
-                <div style="color:var(--primary); font-size:24px; margin-bottom:10px;">🎯</div>
-                <h4 style="font-weight:900; margin-bottom:5px;">Aniq</h4>
-                <p style="font-size:12px; color:var(--text-muted); font-weight:700;">Bozor narxlariga asoslangan</p>
-            </div>
-        </div>
+<div class="animate" style="max-width: 900px; margin: 40px auto 80px;">
+    <div style="text-align:center; margin-bottom:40px;">
+        <h1 style="font-size:36px; font-weight:900; margin-bottom:10px;">📈 Telefonni baholash</h1>
+        <p style="color:var(--text-muted); font-weight:700;">Telefoningizning bozor narxini bir necha soniyada aniqlang</p>
     </div>
+
+    <form method="POST" class="premium-card" style="padding: 40px; display:flex; flex-direction:column; gap:30px;">
+        {% csrf_token %}
+        
+        <div class="grid grid-2" style="gap:20px;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">MODEL <span style="color:var(--primary);">*</span></label>
+                <select name="my_model" required style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
+                    <option value="">Modelni tanlang</option>
+                    {% for model in models %}
+                        <option value="{{ model }}">{{ model }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">XOTIRA <span style="color:var(--primary);">*</span></label>
+                <select name="my_memory" required style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
+                    <option value="64GB">64 GB</option>
+                    <option value="128GB" selected>128 GB</option>
+                    <option value="256GB">256 GB</option>
+                    <option value="512GB">512 GB</option>
+                    <option value="1TB">1 TB</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-2" style="gap:20px;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">BATAREYA YOMKESTI (%)</label>
+                <input type="number" name="my_battery" value="90" min="50" max="100" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">TASHQI HOLATI <span style="color:var(--primary);">*</span></label>
+                <select name="my_condition" required style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
+                    <option value="ideal">Ideal (Yangi kabi)</option>
+                    <option value="yaxshi">Yaxshi (Ozroq chizilgan)</option>
+                    <option value="yomon">Ta'mir talab (Qattiq shikastlangan)</option>
+                </select>
+            </div>
+        </div>
+
+        <div>
+            <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">KAROBKA / DOKUMENT</label>
+            <select name="my_box" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
+                <option value="bor">Bor (To'liq)</option>
+                <option value="yo'q">Yo'q</option>
+            </select>
+        </div>
+
+        <div>
+            <label style="display:block; font-size:12px; font-weight:900; margin-bottom:15px; color:var(--text-muted); text-transform:uppercase;">ALMASHTIRILGAN QISMLARI (Agar bo'lsa)</label>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <label style="display:flex; align-items:center; gap:10px; background:#F9F9F9; padding:12px 20px; border-radius:16px; border:1px solid var(--border); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s;">
+                    <input type="checkbox" name="my_parts" value="ekran"> Ekran / Display
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F9F9F9; padding:12px 20px; border-radius:16px; border:1px solid var(--border); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s;">
+                    <input type="checkbox" name="my_parts" value="batareya"> Batareya
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F9F9F9; padding:12px 20px; border-radius:16px; border:1px solid var(--border); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s;">
+                    <input type="checkbox" name="my_parts" value="kamera"> Kamera
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F9F9F9; padding:12px 20px; border-radius:16px; border:1px solid var(--border); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s;">
+                    <input type="checkbox" name="my_parts" value="qopqoq"> Orqa qopqoq / Korpus
+                </label>
+            </div>
+        </div>
+
+        <div>
+            <label style="display:block; font-size:12px; font-weight:900; margin-bottom:15px; color:var(--text-muted); text-transform:uppercase;">NUQSONLAR / BUZILISHLAR (Agar bo'lsa)</label>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <label style="display:flex; align-items:center; gap:10px; background:#F9F9F9; padding:12px 20px; border-radius:16px; border:1px solid var(--border); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s;">
+                    <input type="checkbox" name="my_defects" value="face_id"> Face ID ishlamaydi
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F9F9F9; padding:12px 20px; border-radius:16px; border:1px solid var(--border); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s;">
+                    <input type="checkbox" name="my_defects" value="true_tone"> True Tone yo'q
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; background:#F9F9F9; padding:12px 20px; border-radius:16px; border:1px solid var(--border); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.3s;">
+                    <input type="checkbox" name="my_defects" value="wifi"> Wi-Fi / Bluetooth ishlamaydi
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="padding:20px; font-size:18px; margin-top:10px; text-transform:uppercase; letter-spacing:1px;">
+            NARXNI HISOBLASH 🚀
+        </button>
+    </form>
+
+    {% if result.calculated %}
+        <div class="premium-card animate" style="margin-top:40px; background:var(--primary); color:white; text-align:center;">
+            <h2 style="font-size:24px; font-weight:900; margin-bottom:10px;">Sizning telefoningiz bozor narxi:</h2>
+            <div style="font-size:48px; font-weight:900; margin:20px 0;">
+                ~ {{ result.my_price|floatformat:1 }} <span style="font-size:24px;">mln so'm</span>
+            </div>
+            <p style="font-size:14px; font-weight:700; opacity:0.9; margin-top:20px;">* Bu dastlabki hisob-kitob. Aniq narxni filialimizda mutaxassis ko'rigidan so'ng bilib olishingiz mumkin.</p>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

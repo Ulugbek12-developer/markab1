@@ -3,57 +3,57 @@
 {% block title %}Buyurtma berish | Markab{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto py-10 px-4" x-data="checkoutApp()">
-    <div class="bg-white rounded-[2.5rem] card-shadow border border-red-50 overflow-hidden">
+<div class="animate" style="max-width: 800px; margin: 40px auto;" x-data="checkoutApp()">
+    <div class="premium-card" style="padding: 0; overflow: hidden;">
         
         <!-- Product Header -->
-        <div class="bg-red-50/30 p-8 flex items-center gap-6 border-b border-red-50">
-            <div class="w-24 h-24 bg-white rounded-2xl overflow-hidden border border-red-100 p-2 shadow-inner">
+        <div style="background: rgba(177, 34, 65, 0.05); padding: 30px; display: flex; align-items: center; gap: 24px; border-bottom: 1px solid var(--border);">
+            <div style="width: 100px; height: 100px; background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); padding: 10px; display:flex; align-items:center; justify-content:center;">
                 {% if listing.image %}
-                    <img src="{{ listing.image.url }}" class="w-full h-full object-contain">
+                    <img src="{{ listing.image.url }}" style="width: 100%; height: 100%; object-fit: contain;">
                 {% endif %}
             </div>
             <div>
-                <h2 class="font-black text-slate-900 text-2xl leading-tight tracking-tight">{{ listing.title }}</h2>
-                <p class="text-primary font-black text-3xl mt-2 tracking-tighter">{{ listing.price|floatformat:0 }} so'm</p>
+                <h2 style="font-size: 28px; font-weight: 900; margin-bottom: 5px;">{{ listing.title }}</h2>
+                <p style="color: var(--primary); font-size: 24px; font-weight: 900;">{{ listing.price|floatformat:0 }} so'm</p>
             </div>
         </div>
 
-        <form method="POST" class="p-8 space-y-10">
+        <form method="POST" style="padding: 40px; display: flex; flex-direction: column; gap: 30px;">
             {% csrf_token %}
             
             <!-- Contact Info -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">F.I.O</label>
-                    <input type="text" name="name" required placeholder="Ismingizni kiriting" class="w-full bg-slate-50 border-transparent rounded-2xl px-5 py-4 font-bold text-slate-900 focus:bg-white focus:ring-4 focus:ring-red-100/50 outline-none transition-all">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">F.I.O</label>
+                    <input type="text" name="name" required placeholder="Ismingizni kiriting" style="width: 100%; padding: 15px; border-radius: 16px; border: 1px solid var(--border); background: #F9F9F9; font-weight: 700; outline: none;">
                 </div>
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">TELEFON</label>
-                    <input type="tel" name="phone" required placeholder="+998 90 123 45 67" class="w-full bg-slate-50 border-transparent rounded-2xl px-5 py-4 font-bold text-slate-900 focus:bg-white focus:ring-4 focus:ring-red-100/50 outline-none transition-all">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">TELEFON</label>
+                    <input type="tel" name="phone" required placeholder="+998 90 123 45 67" style="width: 100%; padding: 15px; border-radius: 16px; border: 1px solid var(--border); background: #F9F9F9; font-weight: 700; outline: none;">
                 </div>
             </div>
 
             <!-- Payment Type -->
-            <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">To'lov turi</label>
-                    <div class="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
-                        <button type="button" @click="paymentType = 'cash'" :class="paymentType === 'cash' ? 'bg-white shadow-xl text-slate-900' : 'text-slate-400'" class="px-6 py-2.5 rounded-xl text-xs font-black transition-all">Naqd pul</button>
-                        <button type="button" @click="paymentType = 'installment'" :class="paymentType === 'installment' ? 'bg-primary text-white shadow-xl shadow-red-200' : 'text-slate-400'" class="px-6 py-2.5 rounded-xl text-xs font-black transition-all">Muddatli to'lov</button>
+            <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <label style="font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase;">To'lov turi</label>
+                    <div style="display: flex; background: #F9F9F9; padding: 5px; border-radius: 16px; border: 1px solid var(--border);">
+                        <button type="button" @click="paymentType = 'cash'" :style="paymentType === 'cash' ? 'background:white; color:var(--text-main); box-shadow:0 5px 15px rgba(0,0,0,0.05);' : 'background:transparent; color:var(--text-muted);'" style="padding: 10px 20px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; transition: all 0.3s;">Naqd pul</button>
+                        <button type="button" @click="paymentType = 'installment'" :style="paymentType === 'installment' ? 'background:var(--primary); color:white; box-shadow:0 5px 15px rgba(177,34,65,0.2);' : 'background:transparent; color:var(--text-muted);'" style="padding: 10px 20px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; transition: all 0.3s;">Muddatli to'lov</button>
                     </div>
                     <input type="hidden" name="is_installment" :value="paymentType === 'installment' ? 'on' : 'off'">
                 </div>
 
                 <!-- Installment Options -->
-                <div x-show="paymentType === 'installment'" x-transition class="space-y-8 bg-red-50/30 p-8 rounded-[2rem] border border-red-100">
-                    <div>
-                        <label class="block text-xs font-black text-primary mb-4 uppercase tracking-widest">Muddatni tanlang</label>
-                        <div class="grid grid-cols-3 gap-4">
+                <div x-show="paymentType === 'installment'" style="display:none; background: rgba(177, 34, 65, 0.05); padding: 30px; border-radius: 24px; border: 1px solid rgba(177, 34, 65, 0.1); margin-top: 20px;">
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; font-size: 12px; font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 15px;">Muddatni tanlang</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                             <template x-for="m in [3, 6, 12]" :key="m">
                                 <button type="button" @click="months = m"
-                                        class="py-4 rounded-2xl text-base font-black transition-all border-2"
-                                        :class="months === m ? 'bg-white border-primary text-primary shadow-xl shadow-red-100' : 'bg-white/50 border-transparent text-slate-400 hover:border-red-200'">
+                                        style="padding: 15px; border-radius: 16px; font-weight: 900; border: 2px solid; cursor: pointer; transition: all 0.3s;"
+                                        :style="months === m ? 'background:white; border-color:var(--primary); color:var(--primary); box-shadow:0 10px 20px rgba(177,34,65,0.1);' : 'background:rgba(255,255,255,0.5); border-color:transparent; color:var(--text-muted);'">
                                     <span x-text="m + ' oy'"></span>
                                 </button>
                             </template>
@@ -61,62 +61,57 @@
                         <input type="hidden" name="months" :value="months">
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="block text-xs font-black text-primary mb-2 uppercase tracking-widest">Boshlang'ich to'lov (so'm)</label>
-                        <input type="number" name="initial_payment" x-model.number="initialPayment" class="w-full bg-white border-transparent rounded-2xl px-5 py-4 font-black text-slate-900 focus:ring-4 focus:ring-red-100/50 outline-none shadow-sm transition-all text-xl">
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; font-size: 12px; font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 10px;">Boshlang'ich to'lov (so'm)</label>
+                        <input type="number" name="initial_payment" x-model.number="initialPayment" style="width: 100%; padding: 15px; border-radius: 16px; border: none; font-size: 18px; font-weight: 900; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
                     </div>
 
                     <!-- Calculation Table -->
-                    <div class="bg-white rounded-[1.5rem] p-8 border border-red-50 space-y-4 shadow-xl shadow-red-50/50">
-                        <div class="flex justify-between text-sm font-bold text-slate-400">
+                    <div style="background: white; border-radius: 20px; padding: 25px; border: 1px solid rgba(177, 34, 65, 0.1); box-shadow: 0 15px 35px rgba(177, 34, 65, 0.05);">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px;">
                             <span>Mahsulot:</span>
-                            <span class="text-slate-900" x-text="formatPrice(basePrice) + ' so\'m'"></span>
+                            <span style="color: var(--text-main);" x-text="formatPrice(basePrice) + ' so\'m'"></span>
                         </div>
-                        <div class="flex justify-between text-sm font-bold text-slate-400">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px;">
                             <span>Boshlang'ich to'lov:</span>
-                            <span class="text-primary" x-text="'- ' + formatPrice(initialPayment || 0) + ' so\'m'"></span>
+                            <span style="color: var(--primary);" x-text="'- ' + formatPrice(initialPayment || 0) + ' so\'m'"></span>
                         </div>
-                        <div class="flex justify-between text-sm font-bold text-slate-400">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 20px;">
                             <span>Qolgan summa:</span>
-                            <span class="text-slate-900" x-text="formatPrice(getRemaining()) + ' so\'m'"></span>
+                            <span style="color: var(--text-main);" x-text="formatPrice(getRemaining()) + ' so\'m'"></span>
                         </div>
-                        <div class="pt-4 border-t border-red-50 flex justify-between items-center">
-                            <span class="text-base font-black text-slate-900 uppercase tracking-tighter">Har oylik to'lov:</span>
-                            <span class="text-3xl font-black text-primary tracking-tighter" x-text="formatPrice(getMonthly()) + ' so\'m'"></span>
-                        </div>
-                        <div class="mt-4 bg-primary rounded-2xl p-4 text-center text-white shadow-xl shadow-red-100">
-                            <p class="text-[10px] font-black opacity-80 uppercase tracking-widest mb-1">To'lov muddati</p>
-                            <p class="text-xl font-black" x-text="months + ' oy'"></p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid rgba(177, 34, 65, 0.1);">
+                            <span style="font-size: 16px; font-weight: 900; text-transform: uppercase;">Har oylik to'lov:</span>
+                            <span style="font-size: 28px; font-weight: 900; color: var(--primary);" x-text="formatPrice(getMonthly()) + ' so\'m'"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Delivery -->
-            <div class="space-y-6">
-                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Yetkazib berish</label>
-                <div class="grid grid-cols-2 gap-4">
-                    <button type="button" @click="deliveryType = 'pickup'" :class="deliveryType === 'pickup' ? 'bg-[#1A1A1A] text-white shadow-2xl' : 'bg-slate-50 text-slate-400'" class="py-5 rounded-2xl font-black text-base transition-all flex items-center justify-center gap-3">
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px;">Yetkazib berish</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <button type="button" @click="deliveryType = 'pickup'" :style="deliveryType === 'pickup' ? 'background:var(--text-main); color:white; box-shadow:0 10px 20px rgba(0,0,0,0.1);' : 'background:#F9F9F9; color:var(--text-muted);'" style="padding: 20px; border-radius: 16px; border: none; font-weight: 900; font-size: 16px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                         🏠 Do'kondan
                     </button>
-                    <button type="button" @click="deliveryType = 'delivery'" :class="deliveryType === 'delivery' ? 'bg-primary text-white shadow-2xl shadow-red-200' : 'bg-slate-50 text-slate-400'" class="py-5 rounded-2xl font-black text-base transition-all flex items-center justify-center gap-3">
+                    <button type="button" @click="deliveryType = 'delivery'" :style="deliveryType === 'delivery' ? 'background:var(--primary); color:white; box-shadow:0 10px 20px rgba(177,34,65,0.2);' : 'background:#F9F9F9; color:var(--text-muted);'" style="padding: 20px; border-radius: 16px; border: none; font-weight: 900; font-size: 16px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                         🚚 Dastavka
                     </button>
                     <input type="hidden" name="delivery_type" :value="deliveryType">
                 </div>
                 
-                <div x-show="deliveryType === 'delivery'" x-transition>
-                    <textarea name="address" placeholder="To'liq manzilingizni kiriting..." class="w-full bg-slate-50 border-transparent rounded-2xl px-5 py-5 font-bold text-slate-900 focus:bg-white focus:ring-4 focus:ring-red-100/50 outline-none transition-all resize-none" rows="3"></textarea>
+                <div x-show="deliveryType === 'delivery'" style="display:none; margin-top: 15px;">
+                    <textarea name="address" placeholder="To'liq manzilingizni kiriting..." style="width: 100%; padding: 20px; border-radius: 16px; border: 1px solid var(--border); background: #F9F9F9; font-weight: 700; outline: none; resize: none;" rows="3"></textarea>
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-2xl text-xl shadow-2xl shadow-red-200 transition-all hover:bg-accent active:scale-[0.98] tracking-widest">
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 20px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px;">
                 TASDIQLASH
             </button>
         </form>
     </div>
 </div>
-
 
 <script>
 function checkoutApp() {
