@@ -81,7 +81,7 @@
     <div class="premium-card" style="padding: 40px;">
         <div class="wizard-header">
             <button class="btn-back" id="btnBack">← Orqaga</button>
-            <div class="wizard-step-counter"><span id="currentStepText">1</span> / 8</div>
+            <div class="wizard-step-counter"><span id="currentStepText">1</span> / 7</div>
         </div>
         <div class="wizard-progress">
             <div class="wizard-progress-bar" id="progressBar" style="width: 12.5%;"></div>
@@ -106,17 +106,15 @@
                 <div class="option-grid" id="modelGrid"></div>
             </div>
 
-            <!-- STEP 2: Color -->
+            <!-- STEP 2: Color, Memory & Region -->
             <div class="wizard-step" id="step2">
-                <h2 class="wizard-title">Telefon rangi</h2>
-                <p class="wizard-subtitle">Qurilmangiz qaysi rangda?</p>
-                <div class="color-grid" id="colorGrid"></div>
-            </div>
+                <h2 class="wizard-title">Xususiyatlar</h2>
+                <p class="wizard-subtitle" style="margin-bottom:10px;">Telefon rangi</p>
+                <div class="color-grid" id="colorGrid" style="margin-bottom: 30px;">
+                    <!-- Populated by JS -->
+                </div>
 
-            <!-- STEP 3: Memory & Region -->
-            <div class="wizard-step" id="step3">
-                <h2 class="wizard-title">Xotira va Davlat</h2>
-                <p class="wizard-subtitle">Telefon xotirasi qancha?</p>
+                <p class="wizard-subtitle" style="margin-bottom:10px;">Xotira hajmi</p>
                 <div class="option-grid" id="memoryGrid" style="margin-bottom: 30px;">
                     <div class="option-card" data-val="64GB">64 GB</div>
                     <div class="option-card" data-val="128GB">128 GB</div>
@@ -125,7 +123,7 @@
                     <div class="option-card" data-val="1TB">1 TB</div>
                 </div>
 
-                <p class="wizard-subtitle">Qaysi davlat uchun ishlab chiqarilgan?</p>
+                <p class="wizard-subtitle">Qaysi mamlakat uchun?</p>
                 <div class="option-grid" id="regionGrid">
                     <div class="option-card" data-val="LL/A">LL/A (AQSh)</div>
                     <div class="option-card" data-val="ZA/A">ZA/A (Ikki simkartali)</div>
@@ -135,8 +133,8 @@
                 </div>
             </div>
 
-            <!-- STEP 4: Battery -->
-            <div class="wizard-step" id="step4">
+            <!-- STEP 3: Battery -->
+            <div class="wizard-step" id="step3">
                 <h2 class="wizard-title">Batareya quvvati</h2>
                 <p class="wizard-subtitle">Sozlamalar -> Batareya -> Batareya holati</p>
                 <div style="background:#F9F9F9; padding:40px; border-radius:24px; text-align:center;">
@@ -146,8 +144,8 @@
                 </div>
             </div>
 
-            <!-- STEP 5: Exterior -->
-            <div class="wizard-step" id="step5">
+            <!-- STEP 4: Exterior -->
+            <div class="wizard-step" id="step4">
                 <h2 class="wizard-title">Tashqi ko'rinishi</h2>
                 <p class="wizard-subtitle" style="margin-bottom:10px;">Ekran qanday?</p>
                 <div class="option-grid" id="screenGrid" style="margin-bottom: 30px;">
@@ -166,8 +164,8 @@
                 </div>
             </div>
 
-            <!-- STEP 6: Defects -->
-            <div class="wizard-step" id="step6">
+            <!-- STEP 5: Defects -->
+            <div class="wizard-step" id="step5">
                 <h2 class="wizard-title">Qo'shimcha savollar</h2>
                 <p class="wizard-subtitle" style="margin-bottom:10px;">Almashtirilgan qismlar (Ko'p tanlash mumkin)</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;" id="partsGrid">
@@ -188,8 +186,8 @@
                 <div class="multi-card ok-selected" id="noDefectsBtn" style="justify-content:center;">✅ Hammasi ishlaydi</div>
             </div>
 
-            <!-- STEP 7: Box -->
-            <div class="wizard-step" id="step7">
+            <!-- STEP 6: Box -->
+            <div class="wizard-step" id="step6">
                 <h2 class="wizard-title">To'plam</h2>
                 <p class="wizard-subtitle">Qutisi va hujjatlari bormi?</p>
                 <div class="option-grid" id="boxGrid">
@@ -198,8 +196,8 @@
                 </div>
             </div>
 
-            <!-- STEP 8: Final -->
-            <div class="wizard-step" id="step8">
+            <!-- STEP 7: Final -->
+            <div class="wizard-step" id="step7">
                 <h2 class="wizard-title">Deyarli tayyor!</h2>
                 <p class="wizard-subtitle">Ma'lumotlaringiz asosida narxni hisoblaymiz.</p>
                 <div style="text-align:center; padding:40px;">
@@ -229,7 +227,7 @@ const MODELS = [
 ];
 
 let currentStep = 1;
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 7;
 const state = { model: '', color: '', memory: '', region: '', battery: '', screen: '', body: '', parts: [], defects: [], box: '' };
 
 const COLORS = IPHONE_COLORS;
@@ -326,13 +324,12 @@ const btnSubmit = document.getElementById('btnSubmit');
 function checkStepValidity() {
     let valid = false;
     if (currentStep === 1) valid = !!state.model;
-    if (currentStep === 2) valid = !!state.color;
-    if (currentStep === 3) valid = !!state.memory && !!state.region;
-    if (currentStep === 4) valid = state.battery > 0 && state.battery <= 100;
-    if (currentStep === 5) valid = !!state.screen && !!state.body;
-    if (currentStep === 6) valid = true;
-    if (currentStep === 7) valid = !!state.box;
-    if (currentStep === 8) valid = true;
+    if (currentStep === 2) valid = !!state.color && !!state.memory && !!state.region;
+    if (currentStep === 3) valid = state.battery > 0 && state.battery <= 100;
+    if (currentStep === 4) valid = !!state.screen && !!state.body;
+    if (currentStep === 5) valid = true;
+    if (currentStep === 6) valid = !!state.box;
+    if (currentStep === 7) valid = true;
     btnNext.disabled = !valid;
 }
 

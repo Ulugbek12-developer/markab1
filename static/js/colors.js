@@ -20,5 +20,5 @@ const IPHONE_COLORS = {
     "iPhone 16":         { "Black":"#353637", "White":"#F9F6EF", "Pink":"#E2C8CA", "Teal":"#008080", "Ultramarine":"#120A8F" },
     "iPhone 16 Pro":     { "Black Titanium":"#464545", "White Titanium":"#F2F1ED", "Natural Titanium":"#8F8A84", "Desert Titanium":"#BBAA99" },
     "iPhone 16 Pro Max": { "Black Titanium":"#464545", "White Titanium":"#F2F1ED", "Natural Titanium":"#8F8A84", "Desert Titanium":"#BBAA99" },
-    "iPhone 17 Pro Max": { "Black Titanium":"#464545", "White Titanium":"#F2F1ED", "Natural Titanium":"#8F8A84", "Desert Titanium":"#BBAA99" }
+    "iPhone 17 Pro Max": { "Orange":"#FFA500", "Silver":"#EBEBE3", "Blue":"#003359" }
 };
