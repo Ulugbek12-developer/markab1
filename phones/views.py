@@ -172,6 +172,24 @@ class TradeInView(TemplateView):
         difference = round(target_price - my_phone_price, 1)
         context = self.get_context_data()
         context['result'] = {'my_price': my_phone_price, 'target_price': target_price, 'difference': max(0, difference), 'calculated': True}
+        
+        # Telegram Notification
+        load_dotenv()
+        bot_token = os.environ.get('BOT_TOKEN')
+        admin_id = os.environ.get('ADMIN_ID')
+        if bot_token and admin_id:
+            text = f"🔄 <b>Trade-in so'rovi!</b>\n\n"
+            text += f"📱 Mijoz telefoni: {data.get('my_model', '?')}\n"
+            text += f"💾 Xotira: {data.get('my_memory', '?')}\n"
+            text += f"🔋 Batareya: {data.get('my_battery', '?')}%\n"
+            text += f"📦 Qutisi: {data.get('my_box', '?')}\n"
+            text += f"💰 Baholangan narx: {my_phone_price} mln so'm\n"
+            text += f"🎯 Maqsad narx: {target_price} mln so'm\n"
+            text += f"💵 Farq: {max(0, difference)} mln so'm"
+            try:
+                requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": admin_id, "text": text, "parse_mode": "HTML"})
+            except: pass
+        
         return render(request, self.template_name, context)
 
 class AddReviewView(LoginRequiredMixin, View):
@@ -206,6 +224,25 @@ class PriceView(TemplateView):
             'price': my_phone_price,
             'model': data.get('model_name')
         }
+        
+        # Telegram Notification
+        load_dotenv()
+        bot_token = os.environ.get('BOT_TOKEN')
+        admin_id = os.environ.get('ADMIN_ID')
+        if bot_token and admin_id:
+            text = f"📊 <b>Narxlash so'rovi!</b>\n\n"
+            text += f"📱 Model: {data.get('model_name', '?')}\n"
+            text += f"🎨 Rang: {data.get('color', '?')}\n"
+            text += f"💾 Xotira: {data.get('memory', '?')}\n"
+            text += f"🌍 Region: {data.get('region', '?')}\n"
+            text += f"🔋 Batareya: {data.get('battery_health', '?')}%\n"
+            text += f"📱 Ekran: {data.get('screen_condition', '?')}\n"
+            text += f"📦 Qutisi: {data.get('has_box', '?')}\n"
+            text += f"💰 Natija: {my_phone_price} mln so'm"
+            try:
+                requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": admin_id, "text": text, "parse_mode": "HTML"})
+            except: pass
+        
         return render(request, self.template_name, context)
 
 class FilterView(ListView):
