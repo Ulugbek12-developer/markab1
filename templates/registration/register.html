@@ -1,67 +1,37 @@
 {% extends 'base.html' %}
-
-{% block title %}Ro'yxatdan o'tish | Markab{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="max-w-md mx-auto py-16 px-4">
-    <div class="bg-white rounded-[2.5rem] p-10 md:p-12 card-shadow border border-red-50">
-        <div class="text-center mb-10">
-            <div class="w-20 h-20 bg-red-50 text-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-red-100/50">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-            </div>
-            <h1 class="text-3xl font-black text-slate-900 mb-2 tracking-tight">Yangi Profil</h1>
-            <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Platformamizga qo'shiling</p>
-        </div>
+<div class="animate" style="max-width: 500px; margin: 40px auto;">
+    <div class="premium-card" style="padding: 40px;">
+        <h1 style="font-size:32px; font-weight:900; margin-bottom:10px; text-align:center;">Ro'yxatdan o'tish</h1>
+        <p style="color:var(--text-muted); font-weight:700; margin-bottom:30px; text-align:center;">Markab olamiga qo'shiling!</p>
 
-        <form method="POST" class="space-y-6">
+        <form method="POST" style="display:flex; flex-direction:column; gap:20px;">
             {% csrf_token %}
             
             {% for field in form %}
-            <div class="space-y-2">
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    {% if field.name == 'username' %}Foydalanuvchi nomi
-                    {% elif 'password' in field.name and '2' in field.name or 'confirmation' in field.name %}Parolni tasdiqlang
-                    {% elif 'password' in field.name %}Parol
-                    {% else %}{{ field.label }}{% endif %}
-                </label>
-                {{ field }}
-                {% if field.errors %}
-                <p class="text-[10px] text-primary font-black mt-1 ml-1 uppercase tracking-widest">{{ field.errors.0 }}</p>
-                {% endif %}
-            </div>
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p style="color:#FF4D4D; font-size:10px; margin-top:5px; font-weight:700;">{{ field.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+                <style>
+                    /* Style the Django form inputs */
+                    input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); font-weight: 700; }
+                </style>
             {% endfor %}
 
-            <button type="submit" class="w-full bg-primary text-white font-black py-6 rounded-2xl text-lg shadow-2xl shadow-red-200 transition-all hover:bg-accent active:scale-95 mt-4">
-                RO'YXATDAN O'TISH
-            </button>
-
-            <div class="text-center pt-6">
-                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">
-                    Profilingiz bormi? <a href="/login" class="text-primary hover:underline">Kirish</a>
-                </p>
-            </div>
+            <button type="submit" class="btn-primary" style="padding:18px; font-size:18px; margin-top:10px;">RO'YXATDAN O'TISH 🚀</button>
         </form>
+
+        <div style="margin-top:30px; text-align:center; padding-top:20px; border-top:1px solid var(--border);">
+            <p style="font-size:14px; color:var(--text-muted); font-weight:700;">
+                Akkauntingiz bormi? <a href="{% url 'users:login' %}" style="color:var(--primary); text-decoration:none;">Kirish</a>
+            </p>
+        </div>
     </div>
 </div>
-
-<style>
-    /* Styling Django forms to match premium theme */
-    input[type="text"], input[type="password"], input[type="email"], input[type="tel"] {
-        width: 100%;
-        background-color: #f8fafc; /* bg-slate-50 */
-        border: 2px solid transparent;
-        border-radius: 1rem; /* rounded-2xl */
-        padding: 1.25rem 1.5rem; /* px-6 py-5 */
-        font-weight: 900; /* font-black */
-        color: #0f172a; /* text-slate-900 */
-        transition: all 0.3s ease;
-        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-    }
-    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
-        outline: none;
-        background-color: #ffffff;
-        border-color: #B12241; /* border-primary */
-        box-shadow: 0 0 0 4px rgba(177, 34, 65, 0.1);
-    }
-</style>
 {% endblock %}

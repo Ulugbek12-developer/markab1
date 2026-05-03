@@ -33,14 +33,17 @@
                 <a href="{% url 'phones:price' %}" class="nav-link">Narxlash</a>
                 <a href="{% url 'phones:trade_in' %}" class="nav-link">Trade-in</a>
                 <a href="{% url 'phones:favorites' %}" class="nav-link">Saralanganlar</a>
-                {% if user.is_staff %}
-                    <a href="{% url 'phones:admin_dashboard' %}" class="nav-link">🔐 Admin</a>
-                {% endif %}
                 {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                        <a href="{% url 'phones:admin_dashboard' %}" class="nav-link">🔐 Admin</a>
+                    {% endif %}
                     <form action="{% url 'users:logout' %}" method="POST" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="nav-link" style="background:none; border:none; color:#FF4D4D; cursor:pointer; font-weight:700;">Chiqish</button>
                     </form>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="nav-link">Kirish</a>
+                    <a href="{% url 'users:register' %}" class="nav-link">Ro'yxatdan o'tish</a>
                 {% endif %}
                 <a href="{% url 'phones:sell' %}" class="btn-primary">Sotish</a>
             </nav>
