@@ -62,8 +62,8 @@ header {
     font-weight: 900;
 }
 
-.logo svg { height: 42px; width: auto; }
-@media (max-width: 768px) { .logo svg { height: 35px; } }
+.logo svg { height: 38px; width: auto; }
+@media (max-width: 768px) { .logo svg { height: 30px; } }
 
 .nav-links {
     display: flex;
