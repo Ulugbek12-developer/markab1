@@ -6,7 +6,7 @@
 <div class="max-w-6xl mx-auto pb-10">
     <!-- Breadcrumbs / Back -->
     <a href="{% url 'phones:home' %}" class="inline-flex items-center gap-2 text-slate-400 hover:text-primary mb-8 font-bold transition-all group">
-        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
         Asosiy sahifaga qaytish
     </a>
 
@@ -18,7 +18,7 @@
                     <img src="{{ listing.image.url }}" alt="{{ listing.title }}" class="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105">
                 {% else %}
                     <div class="w-full h-full flex items-center justify-center text-slate-200">
-                        <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002-2z"></path></svg>
+                        <svg class="w-20 h-20" width="80" height="80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002-2z"></path></svg>
                     </div>
                 {% endif %}
                 
@@ -40,14 +40,14 @@
                     <div class="flex items-center gap-4 text-slate-400 font-bold text-sm">
                         <div class="flex items-center gap-1 text-amber-400">
                             {% for i in "12345" %}
-                                <svg class="w-4 h-4 {% if forloop.counter <= avg_rating %}fill-current{% else %}fill-slate-200 text-slate-200{% endif %}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                <svg class="w-4 h-4 {% if forloop.counter <= avg_rating %}fill-current{% else %}fill-slate-200 text-slate-200{% endif %}" width="16" height="16" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                             {% endfor %}
                             <span class="text-text-main ml-1">{{ avg_rating|floatformat:1 }}</span>
                             <span class="text-slate-300 font-medium">({{ rating_count }} ta sharh)</span>
                         </div>
                         <span>•</span>
                         <div class="flex items-center gap-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                            <svg class="w-4 h-4" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                             {{ listing.location }}
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                     <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST">
                         {% csrf_token %}
                         <button type="submit" class="p-4 rounded-2xl bg-white border border-red-100 text-slate-400 hover:text-primary transition-all shadow-xl shadow-red-50/50 active:scale-90">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <svg class="w-7 h-7" width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                         </button>
                     </form>
                 </div>
@@ -79,7 +79,7 @@
                     </div>
                 {% else %}
                     <a href="{% url 'orders:checkout' listing.id %}?type=cash" class="w-full bg-[#1A1A1A] text-white py-5 rounded-2xl font-black text-xl flex items-center justify-center gap-4 transition-all hover:bg-black active:scale-95 shadow-2xl shadow-slate-200 group">
-                        <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <svg class="w-6 h-6 transition-transform group-hover:rotate-12" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         SOTIB OLISH
                     </a>
 
@@ -135,7 +135,7 @@
             <!-- Installment Calculator -->
             <div class="premium-card p-8 bg-red-50/30 border-red-100" x-data="installmentCalculator()">
                 <h3 class="font-black text-primary mb-6 flex items-center gap-3 text-sm uppercase tracking-widest">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <svg class="w-5 h-5" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                     Kalkulyator
                 </h3>
                 
