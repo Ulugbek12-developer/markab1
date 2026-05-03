@@ -51,7 +51,7 @@ def get_main_menu(lang):
         KeyboardButton(text=s['btn_branches'])
     )
     builder.row(
-        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markab2.pythonanywhere.com")),
+        KeyboardButton(text=s['btn_miniapp'], web_app=WebAppInfo(url="https://markabstore.pythonanywhere.com")),
         KeyboardButton(text=s['btn_help'])
     )
     builder.row(KeyboardButton(text=s['btn_admin']))
@@ -59,7 +59,7 @@ def get_main_menu(lang):
 
 def get_choice_keyboard(lang, action_type):
     s = STRINGS[lang]
-    base_url = "https://markab2.pythonanywhere.com"
+    base_url = "https://markabstore.pythonanywhere.com"
     urls = {
         'sell': f"{base_url}/sell/",
         'buy': f"{base_url}/",

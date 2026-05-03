@@ -9,7 +9,7 @@ async def main():
     
     # Set WebApp Menu Button (O'zingizning havolangizni shu yerga yozing)
     from aiogram.types import MenuButtonWebApp, WebAppInfo
-    WEBAPP_URL = "https://markab2.pythonanywhere.com/" # <-- SHU YERNI O'ZGARTIRING
+    WEBAPP_URL = "https://markabstore.pythonanywhere.com/" # <-- Yangi havola
     
     await bot.set_chat_menu_button(
         menu_button=MenuButtonWebApp(
