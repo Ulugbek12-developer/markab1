@@ -27,9 +27,20 @@ class Listing(models.Model):
     
     # Specific attributes (can be JSON or separate fields, keeping it simple for now)
     model_name = models.CharField(max_length=100, blank=True)
+    color = models.CharField(max_length=50, blank=True)
     memory = models.CharField(max_length=50, blank=True)
+    region = models.CharField(max_length=50, blank=True)
     battery_health = models.IntegerField(null=True, blank=True)
-    condition = models.CharField(max_length=20, choices=CONDITION_CHOICES)
+    
+    # Detailed Condition
+    condition = models.CharField(max_length=20, choices=CONDITION_CHOICES, default='ideal') # Legacy fallback
+    screen_condition = models.CharField(max_length=50, blank=True)
+    body_condition = models.CharField(max_length=50, blank=True)
+    
+    # Hardware & Documents
+    replaced_parts = models.JSONField(default=list, blank=True)
+    defects = models.JSONField(default=list, blank=True)
+    has_box = models.BooleanField(default=False)
     
     location = models.CharField(max_length=100, default='Toshkent')
     image = models.ImageField(upload_to='listings/', blank=True, null=True)

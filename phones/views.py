@@ -86,11 +86,22 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 class SellView(LoginRequiredMixin, CreateView):
     model = Listing
-    fields = ['title', 'description', 'price', 'model_name', 'memory', 'battery_health', 'condition', 'image', 'seller_phone']
+    fields = ['title', 'description', 'price', 'model_name', 'color', 'memory', 'region', 'battery_health', 'condition', 'screen_condition', 'body_condition', 'has_box', 'image', 'seller_phone']
     template_name = 'phones/sell.html'
     success_url = reverse_lazy('phones:home')
     def form_valid(self, form):
         form.instance.seller = self.request.user
+        
+        # Handle string arrays from hidden inputs
+        parts_str = self.request.POST.get('replaced_parts_list', '')
+        defects_str = self.request.POST.get('defects_list', '')
+        form.instance.replaced_parts = parts_str.split(',') if parts_str else []
+        form.instance.defects = defects_str.split(',') if defects_str else []
+        
+        # Handle Box string boolean ("Bor" vs "Yo'q")
+        box_str = self.request.POST.get('has_box', '')
+        form.instance.has_box = "Bor" in box_str
+        
         listing = form.save()
         load_dotenv()
         bot_token = os.environ.get('BOT_TOKEN')
@@ -175,22 +186,26 @@ class CartView(TemplateView):
 
 class PriceView(TemplateView):
     template_name = 'phones/price.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['models'] = list(BASE_PRICES.keys())
-        return context
 
     def post(self, request, *args, **kwargs):
         data = request.POST
         my_phone_price = calculate_phone_price({
-            'model': data.get('my_model'), 'memory': data.get('my_memory'),
-            'battery': data.get('my_battery'), 'condition': data.get('my_condition'),
-            'box': data.get('my_box'), 'replaced_parts': request.POST.getlist('my_parts'),
-            'defects': request.POST.getlist('my_defects'),
+            'model': data.get('model_name'), 
+            'storage': data.get('memory'),
+            'region': data.get('region'),
+            'battery': data.get('battery_health'), 
+            'screen_condition': data.get('screen_condition'),
+            'body_condition': data.get('body_condition'),
+            'box': data.get('has_box'), 
+            'replaced_parts': data.get('replaced_parts_list', '').split(','),
+            'defects': data.get('defects_list', '').split(','),
         })
+        
         context = self.get_context_data()
-        context['result'] = {'my_price': my_phone_price, 'calculated': True}
+        context['result'] = {
+            'price': my_phone_price,
+            'model': data.get('model_name')
+        }
         return render(request, self.template_name, context)
 
 class FilterView(ListView):
@@ -224,7 +239,7 @@ class AdminDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
 
 class StorePanelView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Listing
-    fields = ['title', 'description', 'price', 'model_name', 'memory', 'battery_health', 'condition', 'image']
+    fields = ['title', 'description', 'price', 'model_name', 'color', 'memory', 'region', 'battery_health', 'condition', 'screen_condition', 'body_condition', 'has_box', 'image']
     template_name = 'phones/store_panel.html'
     success_url = reverse_lazy('phones:admin_dashboard')
     def test_func(self): return self.request.user.is_staff

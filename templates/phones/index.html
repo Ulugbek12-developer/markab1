@@ -13,7 +13,31 @@
         </form>
     </section>
 
+    <!-- Branches -->
+    <section style="margin-bottom: 40px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:24px; font-weight:900;">Bizning Filiallarimiz</h2>
+        </div>
+        <div class="grid grid-3">
+            {% for branch in branches %}
+                <div class="premium-card" style="padding: 20px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <div style="width:40px; height:40px; border-radius:12px; background:rgba(177,34,65,0.1); display:flex; align-items:center; justify-content:center; color:var(--primary);">
+                            <svg style="width:20px; height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <h3 style="font-size:18px; font-weight:900;">{{ branch.name }}</h3>
+                    </div>
+                    <p style="font-size:12px; color:var(--text-muted); font-weight:700; margin-bottom:15px; height: 36px; overflow:hidden;">{{ branch.address }}</p>
+                    <a href="{{ branch.map_url }}" target="_blank" class="btn-secondary" style="display:block; text-align:center; padding:10px; font-size:12px; font-weight:900;">Xaritada ko'rish</a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
     <!-- Categories / Filters (Simple) -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="font-size:24px; font-weight:900;">Telefonlar</h2>
+    </div>
     <div style="display:flex; gap:10px; margin-bottom:40px; overflow-x:auto; padding-bottom:10px;">
         <a href="{% url 'phones:home' %}" class="btn-secondary" style="background:var(--primary); color:white;">Barchasi</a>
         {% for cat in categories %}
@@ -54,18 +78,6 @@
         {% endfor %}
     </div>
 
-    <!-- Branches -->
-    <section style="margin-top: 80px;">
-        <h2 style="font-size:28px; font-weight:900; margin-bottom:30px;">Bizning Filiallarimiz</h2>
-        <div class="grid grid-3">
-            {% for branch in branches %}
-                <div class="premium-card">
-                    <h3 style="font-size:20px; font-weight:900; margin-bottom:10px;">{{ branch.name }}</h3>
-                    <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">{{ branch.address }}</p>
-                    <a href="{{ branch.map_url }}" target="_blank" class="btn-secondary" style="display:block; text-align:center;">Xaritada ko'rish</a>
-                </div>
-            {% endfor %}
-        </div>
-    </section>
+
 </div>
 {% endblock %}

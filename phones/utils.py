@@ -34,14 +34,24 @@ def calculate_phone_price(data):
         elif cycles > 500: base -= 30
     except: pass
 
-    # Condition
-    cond = str(data.get('condition', "")).lower()
-    if any(x in cond for x in ["yaxshi", "хороший", "good"]): base -= 50
-    elif any(x in cond for x in ["yomon", "плохое", "bad"]): base -= 150
+    # Region adjustments
+    region = str(data.get('region', "")).upper()
+    if "CH/A" in region or "HN/A" in region: base -= 30
+    elif "KH/A" in region or "J/A" in region: base -= 20
+    elif "LL/A" in region or "ZA/A" in region: base += 20
+    
+    # Detailed Condition
+    screen_cond = str(data.get('screen_condition', data.get('condition', ""))).lower()
+    if any(x in screen_cond for x in ["chiziq", "scratch", "minor"]): base -= 30
+    elif any(x in screen_cond for x in ["singan", "yorilgan", "cracked", "bad"]): base -= 150
+    
+    body_cond = str(data.get('body_condition', "")).lower()
+    if any(x in body_cond for x in ["chiziq", "scratch", "minor"]): base -= 20
+    elif any(x in body_cond for x in ["singan", "pachoq", "cracked", "bad"]): base -= 80
     
     # Box
-    box = str(data.get('box', '')).lower()
-    if any(x in box for x in ["yo'q", "нет", "no"]): base -= 30
+    box = str(data.get('box', data.get('has_box', ''))).lower()
+    if any(x in box for x in ["yo'q", "нет", "no", "false"]): base -= 30
     
     # Replaced parts deductions
     replaced_parts = data.get('replaced_parts', [])
