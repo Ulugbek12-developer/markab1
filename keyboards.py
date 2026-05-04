@@ -283,14 +283,38 @@ def get_admin_keyboard(ad_id: int, lang):
 def get_price_admin_keyboard(req_id: int, lang):
     s = STRINGS[lang]
     builder = InlineKeyboardBuilder()
-    builder.row(InlineKeyboardButton(text=s['btn_set_price'], callback_data=f"setprice_{req_id}"))
+    builder.row(
+        InlineKeyboardButton(text="✅ Roziman", callback_data=f"price_agree_direct_{req_id}"),
+        InlineKeyboardButton(text="✍️ Narx to'g'irlash", callback_data=f"setprice_{req_id}")
+    )
+    builder.row(
+        InlineKeyboardButton(text="🏢 Magazinga olib keling", callback_data=f"price_bring_{req_id}")
+    )
     return builder.as_markup()
+
+def get_esim_keyboard(lang):
+    s = STRINGS[lang]
+    builder = ReplyKeyboardBuilder()
+    if lang == 'uz':
+        builder.row(KeyboardButton(text="📱 eSim"), KeyboardButton(text="💳 Fizik Sim (Fizichka)"))
+    else:
+        builder.row(KeyboardButton(text="📱 eSim"), KeyboardButton(text="💳 Физическая Sim"))
+    builder.row(KeyboardButton(text=s['btn_back']))
+    return builder.as_markup(resize_keyboard=True)
 
 def get_user_counter_response_keyboard(ad_id: int):
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(text="✅ Roziman", callback_data=f"user_agree_{ad_id}"),
         InlineKeyboardButton(text="❌ Noroziman", callback_data=f"user_disagree_{ad_id}")
+    )
+    return builder.as_markup()
+
+def get_price_response_keyboard(req_id: int):
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="✅ Roziman", callback_data=f"price_agree_{req_id}"),
+        InlineKeyboardButton(text="❌ Noroziman", callback_data=f"price_disagree_{req_id}")
     )
     return builder.as_markup()
 

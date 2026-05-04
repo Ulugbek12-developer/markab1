@@ -255,8 +255,24 @@ async def get_user_language(user_id):
                 await db.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?)", (user_id,))
                 await db.commit()
                 return 'uz'
+def validate_price(price_text: str):
+    if not price_text: return False
+    clean = "".join(filter(str.isdigit, price_text))
+    if not clean:
+        # Check if contains 'mln'
+        if 'mln' in price_text.lower(): return True
+        return False
+    
+    val = int(clean)
+    # Reject very small numbers like 1, 2, 3, 4 or repetitive patterns like 777
+    if val < 100 and 'mln' not in price_text.lower(): return False
+    if len(set(clean)) == 1 and len(clean) < 6: return False # e.g. 7777, but 777777 (777k) might be ok
+    if val < 1000 and 'mln' not in price_text.lower() and 'k' not in price_text.lower(): return False
+    
+    return True
+
 async def get_admin_stats():
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(config.DB_NAME) as db:
         async with db.execute("SELECT COUNT(*) FROM users") as cursor:
             total_users = (await cursor.fetchone())[0]
         async with db.execute("SELECT COUNT(*) FROM ads") as cursor:
@@ -266,9 +282,20 @@ async def get_admin_stats():
         async with db.execute("SELECT COUNT(*) FROM ads WHERE status = 'approved'") as cursor:
             active_ads = (await cursor.fetchone())[0]
             
+        # Count sales from orders table
+        django_db_path = 'db.sqlite3'
+        sales = 0
+        try:
+            async with aiosqlite.connect(django_db_path) as dj_db:
+                async with dj_db.execute("SELECT COUNT(*) FROM orders_order") as dj_cursor:
+                    sales = (await dj_cursor.fetchone())[0]
+        except:
+            pass
+
         return {
             'users': total_users,
             'ads': total_ads,
             'price_requests': total_price_requests,
-            'active_ads': active_ads
+            'active_ads': active_ads,
+            'sales': sales
         }

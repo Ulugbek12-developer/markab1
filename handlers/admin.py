@@ -127,77 +127,79 @@ async def admin_add_photos_text(message: Message, state: FSMContext):
         
         await add_ad(data)
     
-    # Sync to Django (Web App)
-    try:
-        from asgiref.sync import sync_to_async
-        import os
-        from core.settings import MEDIA_ROOT
-        
-        # Convert battery to int safely
-        battery_str = str(data.get('battery', '100')).replace('%', '').strip()
-        battery_val = int(battery_str) if battery_str.isdigit() else 100
-        
-        # Robust Price Parsing
-        price_str = str(data.get('price', 0)).lower().replace(' ', '').replace(',', '').replace('so\'m', '').replace('som', '')
-        if 'mln' in price_str:
-            try: price_val = int(float(price_str.replace('mln', '').strip()) * 1000000)
-            except: price_val = 0
-        elif 'k' in price_str:
-            try: price_val = int(float(price_str.replace('k', '').strip()) * 1000)
-            except: price_val = 0
-        else:
-            import re
-            nums = re.findall(r'\d+', price_str)
-            price_val = int(''.join(nums)) if nums else 0
-
-        # Map model and memory to match Django choices
-        model_name = data.get('model', '')
-        if model_name.startswith('iPhone '):
-            model_name = model_name.replace('iPhone ', '')
-        memory = str(data.get('storage', ''))
-        if ' GB' in memory:
-            memory = memory.replace(' GB', '')
+        # Sync to Django (Web App)
+        try:
+            from asgiref.sync import sync_to_async
+            import os
+            from core.settings import MEDIA_ROOT
             
-        # Download photo
-        image_rel_path = None
-        if data.get('photos'):
-            photo_id = data['photos'][0]
-            file = await message.bot.get_file(photo_id)
-            local_filename = f"{photo_id}.jpg"
-            local_full_path = os.path.join(MEDIA_ROOT, 'listings', local_filename)
-            os.makedirs(os.path.dirname(local_full_path), exist_ok=True)
-            await message.bot.download_file(file.file_path, local_full_path)
-            image_rel_path = f"listings/{local_filename}"
+            # Convert battery to int safely
+            battery_str = str(data.get('battery', '100')).replace('%', '').strip()
+            battery_val = int(battery_str) if battery_str.isdigit() else 100
+            
+            # Robust Price Parsing
+            price_str = str(data.get('price', 0)).lower().replace(' ', '').replace(',', '').replace('so\'m', '').replace('som', '')
+            if 'mln' in price_str:
+                try: price_val = int(float(price_str.replace('mln', '').strip()) * 1000000)
+                except: price_val = 0
+            elif 'k' in price_str:
+                try: price_val = int(float(price_str.replace('k', '').strip()) * 1000)
+                except: price_val = 0
+            else:
+                import re
+                nums = re.findall(r'\d+', price_str)
+                price_val = int(''.join(nums)) if nums else 0
 
-        # Map condition to Django choices
-        bot_cond = str(data.get('condition', '')).lower()
-        if 'ideal' in bot_cond or 'yangi' in bot_cond: django_cond = 'ideal'
-        elif 'yaxshi' in bot_cond or 'medium' in bot_cond: django_cond = 'good'
-        else: django_cond = 'bad'
+            # Map model and memory to match Django choices
+            model_name = data.get('model', '')
+            if model_name.startswith('iPhone '):
+                model_name = model_name.replace('iPhone ', '')
+            memory = str(data.get('storage', ''))
+            if ' GB' in memory:
+                memory = memory.replace(' GB', '')
+                
+            # Download photo
+            image_rel_path = None
+            if data.get('photos'):
+                photo_id = data['photos'][0]
+                file = await message.bot.get_file(photo_id)
+                local_filename = f"{photo_id}.jpg"
+                local_full_path = os.path.join(MEDIA_ROOT, 'listings', local_filename)
+                os.makedirs(os.path.dirname(local_full_path), exist_ok=True)
+                await message.bot.download_file(file.file_path, local_full_path)
+                image_rel_path = f"listings/{local_filename}"
 
-        from phones.models import Listing, Category
-        apple_cat = await sync_to_async(Category.objects.filter(name__icontains='iPhone').first)()
-        
-        listing_obj = await sync_to_async(Listing.objects.create)(
-            title=f"iPhone {model_name} {memory}",
-            model_name=model_name,
-            memory=memory,
-            battery_health=battery_val,
-            price=price_val,
-            condition=django_cond,
-            is_approved=True,
-            seller_phone=str(data.get('contact', '')),
-            image=image_rel_path,
-            category=apple_cat
-        )
-        with open('sync_debug.log', 'a') as f: f.write(f"DEBUG: SUCCESS! Product created in Django with ID: {listing_obj.id}\n")
-    except Exception as e:
-        import traceback
-        err_msg = f"DEBUG: Sync Bot -> Web App error: {e}\n{traceback.format_exc()}\n"
-        with open('sync_debug.log', 'a') as f: f.write(err_msg)
+            # Map condition to Django choices
+            bot_cond = str(data.get('condition', '')).lower()
+            if 'ideal' in bot_cond or 'yangi' in bot_cond: django_cond = 'ideal'
+            elif 'yaxshi' in bot_cond or 'medium' in bot_cond: django_cond = 'good'
+            else: django_cond = 'bad'
 
-    await message.answer(STRINGS[lang]['admin_add_success'], parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
-    await state.clear()
+            from phones.models import Listing, Category
+            apple_cat = await sync_to_async(Category.objects.filter(name__icontains='iPhone').first)()
+            
+            listing_obj = await sync_to_async(Listing.objects.create)(
+                title=f"iPhone {model_name} {memory}",
+                model_name=model_name,
+                memory=memory,
+                battery_health=battery_val,
+                price=price_val,
+                condition=django_cond,
+                is_approved=True,
+                seller_phone=str(data.get('contact', '')),
+                image=image_rel_path,
+                category=apple_cat
+            )
+            with open('sync_debug.log', 'a') as f: f.write(f"DEBUG: SUCCESS! Product created in Django with ID: {listing_obj.id}\n")
+        except Exception as e:
+            import traceback
+            err_msg = f"DEBUG: Sync Bot -> Web App error: {e}\n{traceback.format_exc()}\n"
+            with open('sync_debug.log', 'a') as f: f.write(err_msg)
+
+        await message.answer(STRINGS[lang]['admin_add_success'], parse_mode="HTML", reply_markup=keyboards.get_admin_panel_keyboard(lang))
+        await state.clear()
+    else:
+        await message.answer(STRINGS[lang]['prompt_admin_photos'], parse_mode="HTML")
 
 @router.message(F.text.in_(["⬅️ Chiqish", "⬅️ Выход"]))
 async def admin_exit(message: Message, state: FSMContext):
@@ -213,7 +215,8 @@ async def admin_show_stats(message: Message):
         users=stats['users'],
         ads=stats['ads'],
         active=stats['active_ads'],
-        prices=stats['price_requests']
+        prices=stats['price_requests'],
+        sales=stats['sales']
     )
     await message.answer(text, parse_mode="HTML")
 
@@ -328,7 +331,10 @@ async def approve_ad(callback: CallbackQuery, state: FSMContext):
     
     user_lang = await get_user_language(ad['user_id'])
     await callback.message.bot.send_message(ad['user_id'], STRINGS[user_lang]['ad_approved_user'].format(id=ad_id, branch=branch), parse_mode="HTML")
-    await callback.message.edit_text(STRINGS[lang]['ad_approved_admin'].format(id=ad_id, branch=branch))
+    try:
+        await callback.message.edit_text(STRINGS[lang]['ad_approved_admin'].format(id=ad_id, branch=branch))
+    except Exception:
+        pass
     await callback.answer()
 
 @router.callback_query(F.data.startswith("reject_"))
@@ -340,7 +346,10 @@ async def reject_ad(callback: CallbackQuery):
     
     user_lang = await get_user_language(ad['user_id'])
     await callback.message.bot.send_message(ad['user_id'], STRINGS[user_lang]['ad_rejected_user'].format(id=ad_id), parse_mode="HTML")
-    await callback.message.edit_text(STRINGS[lang]['ad_rejected_admin'].format(id=ad_id))
+    try:
+        await callback.message.edit_text(STRINGS[lang]['ad_rejected_admin'].format(id=ad_id))
+    except Exception:
+        pass
     await callback.answer()
 
 @router.callback_query(F.data.startswith("setprice_"))
@@ -365,9 +374,78 @@ async def process_admin_price(message: Message, state: FSMContext):
     req = await get_price_request(req_id)
     
     user_lang = await get_user_language(req['user_id'])
-    await message.bot.send_message(req['user_id'], STRINGS[user_lang]['price_sent_user'].format(model=req['model'], price=price), parse_mode="HTML")
+    await message.bot.send_message(
+        req['user_id'], 
+        STRINGS[user_lang]['price_sent_user'].format(model=req['model'], price=price), 
+        parse_mode="HTML",
+        reply_markup=keyboards.get_price_response_keyboard(req_id)
+    )
     await message.answer(STRINGS[lang]['price_sent_admin'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
     await state.clear()
+
+@router.callback_query(F.data.startswith("price_agree_direct_"))
+async def handle_price_agree_direct(callback: CallbackQuery):
+    req_id = int(callback.data.split("_")[3])
+    req = await get_price_request(req_id)
+    user_lang = await get_user_language(req['user_id'])
+    await callback.bot.send_message(req['user_id'], "✅ <b>Admin sizning narxingizni tasdiqladi!</b>\n\nSotishni xohlasangiz 'Telefon sotish' bo'limiga o'ting.", parse_mode="HTML")
+    try:
+        await callback.message.edit_text(callback.message.text + "\n\n✅ Tasdiqlandi (Mijozga xabar yuborildi).")
+    except Exception: pass
+    await callback.answer()
+
+@router.callback_query(F.data.startswith("price_bring_"))
+async def handle_price_bring(callback: CallbackQuery):
+    req_id = int(callback.data.split("_")[2])
+    req = await get_price_request(req_id)
+    user_lang = await get_user_language(req['user_id'])
+    await callback.bot.send_message(req['user_id'], STRINGS[user_lang]['price_bring_user'], parse_mode="HTML")
+    try:
+        await callback.message.edit_text(callback.message.text + "\n\n🏢 Magazinga olib kelish taklifi yuborildi.")
+    except Exception: pass
+    await callback.answer()
+
+@router.callback_query(F.data.startswith("price_agree_"))
+async def handle_price_agree(callback: CallbackQuery):
+    req_id = int(callback.data.split("_")[2])
+    req = await get_price_request(req_id)
+    
+    try:
+        await callback.message.edit_text(
+            callback.message.text + "\n\n✅ <b>Roziligingiz uchun rahmat!</b>\nAdminlarimiz tez orada siz bilan bog'lanishadi. 🚀",
+            parse_mode="HTML"
+        )
+    except Exception:
+        pass
+    
+    if config.ADMIN_ID:
+        await callback.bot.send_message(
+            config.ADMIN_ID,
+            f"🎉 <b>Mijoz narxga rozi bo'ldi!</b>\n\n🆔 So'rov ID: {req_id}\n📱 Model: {req['model']}\n💰 Narx: {req['admin_price']} mln so'm",
+            parse_mode="HTML"
+        )
+    await callback.answer()
+
+@router.callback_query(F.data.startswith("price_disagree_"))
+async def handle_price_disagree(callback: CallbackQuery):
+    req_id = int(callback.data.split("_")[2])
+    req = await get_price_request(req_id)
+    
+    try:
+        await callback.message.edit_text(
+            callback.message.text + "\n\n❌ <b>Taklifimiz ma'qul kelmaganidan afsusdamiz.</b>\nBatafsil gaplashish uchun admin bilan bog'lanishingiz mumkin: @markab_admin",
+            parse_mode="HTML"
+        )
+    except Exception:
+        pass
+    
+    if config.ADMIN_ID:
+        await callback.bot.send_message(
+            config.ADMIN_ID,
+            f"❌ <b>Mijoz narxga rozi bo'lmadi.</b>\n\n🆔 So'rov ID: {req_id}\n📱 Model: {req['model']}\n💰 Narx: {req['admin_price']} mln so'm",
+            parse_mode="HTML"
+        )
+    await callback.answer()
 
 @router.callback_query(F.data.startswith("counter_"))
 async def counter_offer_start(callback: CallbackQuery, state: FSMContext):

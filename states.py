@@ -3,6 +3,7 @@ from aiogram.fsm.state import State, StatesGroup
 class SellPhone(StatesGroup):
     choice = State()
     model = State()
+    esim = State()
     color = State()
     memory = State()
     photos = State()
@@ -33,6 +34,7 @@ class BuyPhone(StatesGroup):
 class PricePhone(StatesGroup):
     choice = State()
     model = State()
+    esim = State()
     color = State()
     memory = State()
     photos = State()

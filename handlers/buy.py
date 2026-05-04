@@ -5,7 +5,8 @@ from states import BuyPhone
 from keyboards import (
     get_iphone_models_keyboard, get_branches_keyboard, get_main_menu, 
     get_confirm_keyboard, get_back_keyboard, get_payment_type_keyboard, 
-    get_location_keyboard, get_installment_plan_keyboard, get_choice_keyboard
+    get_location_keyboard, get_installment_plan_keyboard, get_choice_keyboard,
+    get_memory_keyboard, get_skip_keyboard
 )
 from database import search_ads, get_user_language, get_all_branches, book_listing
 from config import config
@@ -33,12 +34,10 @@ async def process_choice(message: Message, state: FSMContext):
         await state.update_data(model=model)
         results = await search_ads(model=model, branch=None)
         if not results:
-            err_msg = STRINGS[lang]['no_results'].replace('{branch} filialida ', '').replace('в {branch} филиале ', '')
-            await message.answer(err_msg.format(branch='', model=model), parse_mode="HTML", reply_markup=get_main_menu(lang))
+            await message.answer(STRINGS[lang]['no_results'], parse_mode="HTML", reply_markup=get_main_menu(lang))
             await state.clear()
         else:
-            title_msg = STRINGS[lang]['results_title'].replace('{branch} filialidagi', 'Barcha filiallardagi').replace('В {branch} филиале', 'Во всех филиалах')
-            await message.answer(title_msg.format(branch='', model=model), parse_mode="HTML")
+            await message.answer(STRINGS[lang]['results_title'], parse_mode="HTML")
             # ... rest of search logic ...
             await state.set_state(BuyPhone.select_ad)
     else:
@@ -54,7 +53,7 @@ async def process_buy_model(message: Message, state: FSMContext):
         
     await state.update_data(model=message.text)
     await state.set_state(BuyPhone.memory)
-    await message.answer(STRINGS[lang]['prompt_buy_memory'], parse_mode="HTML", reply_markup=get_memory_keyboard(lang))
+    await message.answer(STRINGS[lang]['prompt_buy_memory'], parse_mode="HTML", reply_markup=get_skip_keyboard(lang))
 
 @router.message(BuyPhone.memory, F.text)
 async def process_buy_memory(message: Message, state: FSMContext):
@@ -64,7 +63,8 @@ async def process_buy_memory(message: Message, state: FSMContext):
         await message.answer(STRINGS[lang]['prompt_buy_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
         return
     
-    await state.update_data(memory=message.text)
+    memory = None if message.text in ["Hammasi", "O'tkazish", "Пропустить", "Все"] else message.text
+    await state.update_data(memory=memory)
     await state.set_state(BuyPhone.color)
     data = await state.get_data()
     await message.answer(STRINGS[lang]['prompt_buy_color'], parse_mode="HTML", reply_markup=get_skip_keyboard(lang))

@@ -10,16 +10,16 @@ async def main():
     # Initialize database
     await init_db()
     
-    # Set WebApp Menu Button (O'zingizning havolangizni shu yerga yozing)
-    from aiogram.types import MenuButtonWebApp, WebAppInfo
-    WEBAPP_URL = "https://markabstore.pythonanywhere.com/" # <-- Yangi havola
+    # Set Bot Commands
+    from aiogram.types import BotCommand, MenuButtonDefault
+    commands = [
+        BotCommand(command="start", description="Botni qayta yuklash / Перезагрузить бот"),
+        BotCommand(command="branches", description="Bizning filiallar / Наши филиалы"),
+        BotCommand(command="help", description="Yordam / Помощь")
+    ]
+    await bot.set_my_commands(commands)
     
-    await bot.set_chat_menu_button(
-        menu_button=MenuButtonWebApp(
-            text="🌐 Mini App",
-            web_app=WebAppInfo(url=WEBAPP_URL)
-        )
-    )
+    await bot.set_chat_menu_button(menu_button=MenuButtonDefault())
     
     # Delete webhook to prevent conflicts with polling
     await bot.delete_webhook(drop_pending_updates=True)

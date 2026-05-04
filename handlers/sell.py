@@ -8,10 +8,10 @@ from keyboards import (
     get_admin_keyboard, get_region_keyboard, get_box_keyboard,
     get_choice_keyboard, get_color_keyboard, get_continue_keyboard,
     get_yes_no_keyboard, get_replaced_parts_keyboard, get_defects_keyboard, get_screen_body_condition_keyboard,
-    get_skip_keyboard,
+    get_skip_keyboard, get_esim_keyboard,
     REPLACED_PARTS, DEFECTS_LIST
 )
-from database import add_ad, get_user_language
+from database import add_ad, get_user_language, validate_price
 from config import config
 from strings import STRINGS
 
@@ -33,9 +33,14 @@ async def process_choice(message: Message, state: FSMContext):
         await state.clear()
         await message.answer(STRINGS[lang]['main_menu'], parse_mode="HTML", reply_markup=get_main_menu(lang))
     elif message.text.startswith("iPhone"):
-        await state.update_data(model=message.text)
-        await state.set_state(SellPhone.color)
-        await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(message.text, lang))
+        model = message.text
+        await state.update_data(model=model)
+        if any(m in model for m in ["14", "15", "16", "17"]):
+            await state.set_state(SellPhone.esim)
+            await message.answer(STRINGS[lang]['prompt_esim'], parse_mode="HTML", reply_markup=get_esim_keyboard(lang))
+        else:
+            await state.set_state(SellPhone.color)
+            await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(model, lang))
     else:
         await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'sell'))
 
@@ -47,9 +52,27 @@ async def process_model(message: Message, state: FSMContext):
         await message.answer(STRINGS[lang]['prompt_choice'], parse_mode="HTML", reply_markup=get_choice_keyboard(lang, 'sell'))
         return
     
-    await state.update_data(model=message.text)
+    model = message.text
+    await state.update_data(model=model)
+    if any(m in model for m in ["14", "15", "16", "17"]):
+        await state.set_state(SellPhone.esim)
+        await message.answer(STRINGS[lang]['prompt_esim'], parse_mode="HTML", reply_markup=get_esim_keyboard(lang))
+    else:
+        await state.set_state(SellPhone.color)
+        await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(model, lang))
+
+@router.message(SellPhone.esim)
+async def process_esim(message: Message, state: FSMContext):
+    lang = await get_user_language(message.from_user.id)
+    if message.text == STRINGS[lang]['btn_back']:
+        await state.set_state(SellPhone.model)
+        await message.answer(STRINGS[lang]['prompt_model'], parse_mode="HTML", reply_markup=get_iphone_models_keyboard(lang))
+        return
+    
+    await state.update_data(esim=message.text)
+    data = await state.get_data()
     await state.set_state(SellPhone.color)
-    await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(message.text, lang))
+    await message.answer(STRINGS[lang]['prompt_color'], parse_mode="HTML", reply_markup=get_color_keyboard(data.get('model'), lang))
 
 @router.message(SellPhone.color)
 async def process_color(message: Message, state: FSMContext):
@@ -293,6 +316,10 @@ async def process_price(message: Message, state: FSMContext):
     if message.text == STRINGS[lang]['btn_back']:
         await state.set_state(SellPhone.box)
         await message.answer(STRINGS[lang]['prompt_box'], parse_mode="HTML", reply_markup=get_box_keyboard(lang))
+        return
+
+    if not validate_price(message.text):
+        await message.answer(STRINGS[lang]['err_price'], parse_mode="HTML")
         return
 
     await state.update_data(price=message.text)
