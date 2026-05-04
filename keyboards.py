@@ -302,19 +302,21 @@ def get_esim_keyboard(lang):
     builder.row(KeyboardButton(text=s['btn_back']))
     return builder.as_markup(resize_keyboard=True)
 
-def get_user_counter_response_keyboard(ad_id: int):
+def get_user_counter_response_keyboard(ad_id: int, lang='uz'):
+    s = STRINGS[lang]
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="✅ Roziman", callback_data=f"user_agree_{ad_id}"),
-        InlineKeyboardButton(text="❌ Noroziman", callback_data=f"user_disagree_{ad_id}")
+        InlineKeyboardButton(text=s['btn_agree'], callback_data=f"user_agree_{ad_id}"),
+        InlineKeyboardButton(text=s['btn_disagree'], callback_data=f"user_disagree_{ad_id}")
     )
     return builder.as_markup()
 
-def get_price_response_keyboard(req_id: int):
+def get_price_response_keyboard(req_id: int, lang='uz'):
+    s = STRINGS[lang]
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="✅ Roziman", callback_data=f"price_agree_{req_id}"),
-        InlineKeyboardButton(text="❌ Noroziman", callback_data=f"price_disagree_{req_id}")
+        InlineKeyboardButton(text=s['btn_agree'], callback_data=f"price_agree_{req_id}"),
+        InlineKeyboardButton(text=s['btn_disagree'], callback_data=f"price_disagree_{req_id}")
     )
     return builder.as_markup()
 

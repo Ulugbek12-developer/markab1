@@ -244,6 +244,64 @@ async def update_user_language(user_id, lang):
         await db.execute("UPDATE users SET language = ? WHERE user_id = ?", (lang, user_id))
         await db.commit()
 
+async def sync_ad_to_django(ad_data: dict):
+    import os
+    from datetime import datetime
+    import json
+    
+    django_db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3')
+    if not os.path.exists(django_db_path): django_db_path = 'db.sqlite3'
+    
+    async with aiosqlite.connect(django_db_path) as db:
+        # Get category_id for iPhone (usually 1 or check)
+        category_id = 1 
+        async with db.execute("SELECT id FROM phones_category WHERE name LIKE '%iPhone%' LIMIT 1") as cursor:
+            row = await cursor.fetchone()
+            if row: category_id = row[0]
+            
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Prepare photos
+        main_photo = ""
+        photos_list = ad_data.get('photos', "").split(",") if ad_data.get('photos') else []
+        if photos_list: main_photo = photos_list[0]
+        images_json = json.dumps(photos_list)
+        
+        await db.execute("""
+            INSERT INTO phones_listing (
+                model_name, memory, battery_health, condition, price, 
+                color, region, has_box, description, image, 
+                is_approved, seller_phone, created_at, branch, is_booked,
+                category_id, screen_condition, body_condition, 
+                replaced_parts, defects, seller_id, images_json, booked_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            ad_data.get('model'),
+            ad_data.get('storage') or ad_data.get('memory'),
+            ad_data.get('battery', 100),
+            ad_data.get('condition', 'Good'),
+            ad_data.get('price', 0),
+            ad_data.get('color', 'N/A'),
+            ad_data.get('region', 'N/A'),
+            1 if ad_data.get('box') == "Bor" else 0,
+            ad_data.get('description', ''),
+            main_photo,
+            1, # is_approved
+            ad_data.get('contact', ''),
+            now,
+            ad_data.get('branch', 'malika').lower(),
+            0, # is_booked
+            category_id,
+            ad_data.get('screen_condition', ''),
+            ad_data.get('body_condition', ''),
+            json.dumps(ad_data.get('replaced_parts', [])),
+            json.dumps(ad_data.get('defects', [])),
+            ad_data.get('user_id'),
+            images_json,
+            '' # booked_by
+        ))
+        await db.commit()
+
 async def get_user_language(user_id):
     async with aiosqlite.connect(config.DB_NAME) as db:
         # First ensure user exists

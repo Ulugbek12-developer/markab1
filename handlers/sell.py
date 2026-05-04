@@ -334,7 +334,15 @@ async def process_contact(message: Message, state: FSMContext):
         await message.answer(STRINGS[lang]['prompt_price'], parse_mode="HTML", reply_markup=get_back_keyboard(lang))
         return
 
-    phone = message.contact.phone_number if message.contact else message.text
+    if message.contact:
+        phone = message.contact.phone_number
+    else:
+        phone = message.text.strip()
+        # Validation
+        if not phone.startswith('+998'):
+            await message.answer(STRINGS[lang]['err_phone'], parse_mode="HTML")
+            return
+            
     username = message.from_user.username
     if username: phone = f"{phone} (@{username})"
     await state.update_data(contact=phone)

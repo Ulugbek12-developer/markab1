@@ -14,8 +14,8 @@
 
     <style>
         .icon { width: 24px; height: 24px; stroke-width: 2; }
-        .logo-img { height: 65px; width: auto; object-fit: contain; }
-        @media (max-width: 768px) { .logo-img { height: 50px; } }
+        .logo-img { height: 50px; width: auto; object-fit: contain; }
+        @media (max-width: 768px) { .logo-img { height: 38px; } }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -27,7 +27,7 @@
             <div style="display: flex; align-items: center; gap: 40px;">
                 <a href="{% url 'phones:home' %}" class="logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
                     <!-- SVG Logo with wider viewBox to prevent cutoff -->
-                    <svg width="140" height="35" viewBox="0 0 500 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img">
+                    <svg viewBox="0 0 500 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img">
                         <path d="M10 40C10 40 40 10 80 10C120 10 100 40 130 40C160 40 160 20 160 20V45C160 45 130 75 90 75C50 75 70 45 40 45C10 45 10 65 10 65V40Z" fill="#B12241"/>
                         <text x="180" y="55" font-family="'Outfit', sans-serif" font-weight="900" font-size="65" fill="#B12241">Markab</text>
                         <text x="185" y="90" font-family="'Outfit', sans-serif" font-weight="400" font-size="35" fill="#B12241" style="letter-spacing: 2px;">Electronics</text>

@@ -309,23 +309,10 @@ async def approve_ad(callback: CallbackQuery, state: FSMContext):
     await update_ad_status(ad_id, "approved", branch=branch)
     ad = await get_ad_by_id(ad_id)
     
-    # Save to Django DB
+    # Save to Django DB (Sync with Web App)
     try:
-        from asgiref.sync import sync_to_async
-        from phones.models import Listing, Category
-        apple_cat = await sync_to_async(Category.objects.filter(name__icontains='iPhone').first)()
-        
-        await sync_to_async(Listing.objects.create)(
-            title=f"iPhone {ad['model']} {ad['storage']}",
-            model_name=ad['model'],
-            memory=ad['storage'],
-            battery_health=int(ad['battery']),
-            condition='ideal' if 'ideal' in ad['condition'].lower() else 'good',
-            price=int(ad['price']),
-            seller_phone=ad['contact'],
-            is_approved=True,
-            category=apple_cat
-        )
+        from database import sync_ad_to_django
+        await sync_ad_to_django(dict(ad))
     except Exception as e:
         print(f"Error saving to Django DB: {e}")
     
@@ -378,7 +365,7 @@ async def process_admin_price(message: Message, state: FSMContext):
         req['user_id'], 
         STRINGS[user_lang]['price_sent_user'].format(model=req['model'], price=price), 
         parse_mode="HTML",
-        reply_markup=keyboards.get_price_response_keyboard(req_id)
+        reply_markup=keyboards.get_price_response_keyboard(req_id, user_lang)
     )
     await message.answer(STRINGS[lang]['price_sent_admin'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
     await state.clear()
@@ -472,7 +459,7 @@ async def process_counter_price(message: Message, state: FSMContext):
             ad['user_id'], 
             STRINGS[user_lang]['counter_sent_user'].format(price=price), 
             parse_mode="HTML",
-            reply_markup=keyboards.get_user_counter_response_keyboard(ad_id)
+            reply_markup=keyboards.get_user_counter_response_keyboard(ad_id, user_lang)
         )
         await message.answer(STRINGS[lang]['counter_sent_admin'], reply_markup=keyboards.get_admin_panel_keyboard(lang))
     
@@ -491,9 +478,10 @@ async def handle_user_agree(callback: CallbackQuery):
     # Notify Admin
     ad = await get_ad_by_id(ad_id)
     if ad:
+        contact = ad['contact'] if 'contact' in ad.keys() else "Noma'lum"
         await callback.bot.send_message(
             config.ADMIN_ID, 
-            f"🎉 <b>Mijoz rozi bo'ldi!</b> (E'lon ID: {ad_id})\n\n📞 Aloqa: {ad.get('contact', 'Noma\'lum')}",
+            f"🎉 <b>Mijoz rozi bo'ldi!</b> (E'lon ID: {ad_id})\n\n📞 Aloqa: {contact}",
             parse_mode="HTML"
         )
     await callback.answer()

@@ -383,3 +383,5 @@ ERROR: Sync in sell.py: no such table: phones_category
 ERROR: Sync in sell.py: table phones_listing has no column named title
 ERROR: Sync in sell.py: table phones_listing has no column named title
 ERROR: Sync in sell.py: table phones_listing has no column named title
+ERROR: Sync in sell.py: table phones_listing has no column named title
+ERROR: Sync in sell.py: table phones_listing has no column named title
