@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     
     <!-- Standard CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.5">
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -37,187 +37,171 @@
 
         body { background: var(--bg); color: var(--text-main); transition: background 0.3s, color 0.3s; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .premium-card { background: var(--card-bg); border: 1px solid var(--border); transition: 0.3s; }
         
-        /* Floating Contact Button */
-        .floating-contact {
-            position: fixed; bottom: 90px; right: 25px; z-index: 1500;
-            display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
-        }
-        .contact-trigger {
-            width: 60px; height: 60px; border-radius: 20px; background: var(--primary);
-            color: white; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px rgba(177,34,65,0.4); cursor: pointer; transition: 0.4s;
-            animation: pulse-red 2s infinite;
-        }
-        @keyframes pulse-red {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(177,34,65,0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(177,34,65,0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(177,34,65,0); }
-        }
-        .contact-options {
-            display: none; flex-direction: column; gap: 10px; margin-bottom: 10px;
-            animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .contact-item {
-            width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center;
-            color: white; text-decoration: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+        /* Navbar aesthetics */
+        header { background: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; padding: 12px 0; }
+        .search-bar { flex: 1; display: flex; max-width: 500px; margin: 0 20px; }
+        .search-input { width: 100%; padding: 10px 18px; border-radius: 12px 0 0 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text-main); outline: none; font-weight: 700; }
+        .search-btn { background: var(--primary); color: white; border: none; padding: 0 18px; border-radius: 0 12px 12px 0; cursor: pointer; }
 
-        /* Theme & Lang Toggles */
-        .utility-btn {
-            background: var(--primary-soft); color: var(--primary); border: none;
-            padding: 8px 12px; border-radius: 10px; font-weight: 900; font-size: 11px;
-            cursor: pointer; display: flex; align-items: center; gap: 5px;
-        }
+        /* Icon Buttons */
+        .header-icon-btn { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-main); font-size: 11px; font-weight: 800; gap: 4px; position: relative; cursor: pointer; border: none; background: none; }
+        .header-icon-btn svg { width: 24px; height: 24px; stroke-width: 2.2; }
+        
+        /* Floating Button */
+        .floating-contact { position: fixed; bottom: 90px; right: 25px; z-index: 1500; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+        .contact-trigger { width: 60px; height: 60px; border-radius: 20px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(177,34,65,0.4); cursor: pointer; animation: pulse-red 2s infinite; }
+        @keyframes pulse-red { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(177,34,65,0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(177,34,65,0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(177,34,65,0); } }
+        
+        .about-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 3000; backdrop-filter: blur(10px); }
 
-        /* About Modal */
-        #about-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000;
-            backdrop-filter: blur(10px);
+        @media (max-width: 768px) {
+            .search-bar, .hide-on-mobile { display: none !important; }
         }
-        .about-card {
-            background: var(--card-bg); padding: 40px; border-radius: 30px; width: 90%; max-width: 500px;
-            text-align: center; border: 1px solid var(--border);
-        }
-
-        header { background: var(--card-bg); border-bottom: 1px solid var(--border); transition: 0.3s; }
-        footer { background: var(--card-bg); border-top: 1px solid var(--border); }
-        .footer-title { color: var(--text-main); }
-        .footer-link { color: var(--text-muted); }
-        .mobile-nav { background: var(--card-bg); border-top: 1px solid var(--border); }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
 
     <!-- About Modal -->
-    <div id="about-modal" onclick="this.style.display='none'">
-        <div class="about-card animate" onclick="event.stopPropagation()">
-            <div style="width: 70px; height: 70px; background: var(--primary-soft); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 20px;">🛡️</div>
-            <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 15px;">Markab Haqida</h2>
-            <p style="color: var(--text-muted); font-weight: 700; line-height: 1.6; margin-bottom: 25px;">
+    <div id="about-modal" class="about-modal" onclick="this.style.display='none'">
+        <div style="background: var(--card-bg); padding: 40px; border-radius: 30px; width: 90%; max-width: 500px; text-align: center; border: 1px solid var(--border);" onclick="event.stopPropagation()">
+            <h2 id="about-title" style="font-size: 26px; font-weight: 900; margin-bottom: 15px;">Markab Haqida</h2>
+            <p id="about-text" style="color: var(--text-muted); font-weight: 700; line-height: 1.6; margin-bottom: 25px;">
                 Markab Electronics — O'zbekiston bozorida 5 yildan buyon faoliyat yurituvchi premium iPhone do'koni. 
-                Biz faqat original, kafolatlangan va ishonchli texnikalarni taqdim etamiz. 
-                Sizning ishonchingiz — bizning eng oliy maqsadimiz!
+                Biz faqat original, kafolatlangan va ishonchli texnikalarni taqdim etamiz.
             </p>
-            <button onclick="document.getElementById('about-modal').style.display='none'" class="btn-primary" style="width: 100%; padding: 15px;">TUSHUNARLI</button>
-        </div>
-    </div>
-
-    <!-- Floating Contact Button -->
-    <div class="floating-contact">
-        <div class="contact-options" id="contact-options">
-            <a href="tel:+998901234567" class="contact-item" style="background: #22C55E;">📞</a>
-            <a href="https://t.me/markab_admin" target="_blank" class="contact-item" style="background: #0088cc;">✈️</a>
-            <a href="https://instagram.com/markab" target="_blank" class="contact-item" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);">📸</a>
-        </div>
-        <div class="contact-trigger" onclick="toggleContact()">
-            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <button onclick="document.getElementById('about-modal').style.display='none'" class="btn-primary" style="width: 100%; padding: 15px; border-radius: 15px;" id="about-close">TUSHUNARLI</button>
         </div>
     </div>
 
     <!-- Header -->
-    <header style="padding: 12px 0; position: sticky; top: 0; z-index: 1000;">
-        <div class="container" style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-            <a href="{% url 'phones:home' %}" class="logo">
-                <img src="{% static 'images/logo_.png' %}" alt="Markab" style="height: 38px;">
-            </a>
-            
-            <div style="display: flex; gap: 8px;" class="hide-on-mobile">
-                <button class="utility-btn" onclick="toggleTheme()" id="theme-btn">🌙 Tun</button>
-                <button class="utility-btn" onclick="toggleLang()" id="lang-btn">🇺🇿 UZ</button>
-                <button class="utility-btn" onclick="document.getElementById('about-modal').style.display='flex'">ℹ️ Biz haqimizda</button>
+    <header>
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+            <!-- Left: Logo & Catalog -->
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="{% url 'phones:home' %}">
+                    <img src="{% static 'images/logo_.png' %}" alt="Markab" style="height: 40px;">
+                </a>
+                <a href="{% url 'phones:catalog' %}" class="btn-primary hide-on-mobile" style="padding: 10px 18px; font-size: 13px; border-radius: 10px; gap: 6px;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <span id="nav-catalog">Katalog</span>
+                </a>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <a href="{% url 'phones:cart' %}" style="position: relative; color: var(--text-main);">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <span id="cart-count" style="display:none; position:absolute; top:-5px; right:-5px; background:var(--primary); color:white; font-size:9px; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900;">0</span>
+            <!-- Center: Search -->
+            <form action="{% url 'phones:search' %}" method="GET" class="search-bar">
+                <input type="text" name="q" id="search-placeholder" placeholder="Telefonlarni qidirish..." class="search-input">
+                <button type="submit" class="search-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
+            </form>
+
+            <!-- Right: Icons -->
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button onclick="toggleLang()" class="header-icon-btn">
+                    <span id="lang-flag" style="font-size: 20px;">🇺🇿</span>
+                    <span id="lang-label">UZ</span>
+                </button>
+                <button onclick="toggleTheme()" class="header-icon-btn">
+                    <svg id="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <span id="theme-label">Tun</span>
+                </button>
+                <button onclick="document.getElementById('about-modal').style.display='flex'" class="header-icon-btn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="about-btn-label">Haqida</span>
+                </button>
+                <a href="{% url 'phones:cart' %}" class="header-icon-btn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span id="cart-label">Savat</span>
+                    <span id="cart-count" style="display:none; position:absolute; top:-5px; right:0; background:var(--primary); color:white; font-size:9px; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;">0</span>
                 </a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'users:profile' %}" style="color: var(--text-main);"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></a>
-                {% else %}
-                    <a href="{% url 'users:login' %}" class="btn-primary" style="padding: 8px 18px; font-size: 13px; border-radius: 10px;">KIRISH</a>
-                {% endif %}
+                <a href="{% url 'users:profile' %}" class="header-icon-btn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span id="profile-label">Profil</span>
+                </a>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container" style="padding-top: 30px; padding-bottom: 80px;">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer (Simplified) -->
-    <footer style="padding: 40px 0;">
-        <div class="container" style="text-align: center;">
-            <p style="font-weight: 900; color: var(--primary); margin-bottom: 10px;">MARKAB ELECTRONICS</p>
-            <p style="font-size: 12px; color: var(--text-muted); font-weight: 700;">Premium iPhone Marketplace & Service</p>
-            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-                <button class="utility-btn" onclick="toggleTheme()">🌙 Tun / Kun</button>
-                <button class="utility-btn" onclick="document.getElementById('about-modal').style.display='flex'">🛡️ Markab haqida</button>
-            </div>
+    <!-- Floating Contact -->
+    <div class="floating-contact">
+        <div id="contact-options" style="display:none; flex-direction:column; gap:10px; margin-bottom:10px;">
+            <a href="tel:+998901234567" style="background:#22C55E; width:50px; height:50px; border-radius:15px; display:flex; align-items:center; justify-content:center; color:white; text-decoration:none;">📞</a>
+            <a href="https://t.me/markab_admin" target="_blank" style="background:#0088cc; width:50px; height:50px; border-radius:15px; display:flex; align-items:center; justify-content:center; color:white; text-decoration:none;">✈️</a>
         </div>
-    </footer>
-
-    <!-- Mobile Nav (Fixed) -->
-    <nav class="mobile-nav">
-        <a href="{% url 'phones:home' %}" class="mobile-nav-link active">🏠<span>Asosiy</span></a>
-        <a href="{% url 'phones:catalog' %}" class="mobile-nav-link">📂<span>Katalog</span></a>
-        <a href="{% url 'phones:price' %}" class="mobile-nav-link">💰<span>Narxlash</span></a>
-        <a href="{% url 'phones:favorites' %}" class="mobile-nav-link">❤️<span>Sevimli</span></a>
-        <a href="{% url 'users:profile' %}" class="mobile-nav-link">👤<span>Profil</span></a>
-    </nav>
+        <div class="contact-trigger" onclick="const o=document.getElementById('contact-options'); o.style.display=o.style.display==='flex'?'none':'flex'">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        </div>
+    </div>
 
     <script>
-        // Theme Toggle
+        const translations = {
+            uz: {
+                catalog: "Katalog", search: "Telefonlarni qidirish...", about: "Haqida",
+                cart: "Savat", profile: "Profil", theme_dark: "Tun", theme_light: "Kun",
+                about_title: "Markab Haqida", about_close: "TUSHUNARLI",
+                about_text: "Markab Electronics — O'zbekiston bozorida 5 yildan buyon faoliyat yurituvchi premium iPhone do'koni. Biz faqat original va ishonchli texnikalarni taqdim etamiz."
+            },
+            ru: {
+                catalog: "Каталог", search: "Поиск телефонов...", about: "О нас",
+                cart: "Корзина", profile: "Профиль", theme_dark: "Ночь", theme_light: "День",
+                about_title: "О Markab", about_close: "ПОНЯТНО",
+                about_text: "Markab Electronics — премиальный магазин iPhone, работающий на рынке Узбекистана более 5 лет. Мы предлагаем только оригинальную и надежную технику."
+            }
+        };
+
+        function updateLangUI(lang) {
+            const t = translations[lang];
+            document.getElementById('nav-catalog').innerText = t.catalog;
+            document.getElementById('search-placeholder').placeholder = t.search;
+            document.getElementById('about-btn-label').innerText = t.about;
+            document.getElementById('cart-label').innerText = t.cart;
+            document.getElementById('profile-label').innerText = t.profile;
+            document.getElementById('lang-label').innerText = lang.toUpperCase();
+            document.getElementById('lang-flag').innerText = lang === 'uz' ? '🇺🇿' : '🇷🇺';
+            document.getElementById('about-title').innerText = t.about_title;
+            document.getElementById('about-text').innerText = t.about_text;
+            document.getElementById('about-close').innerText = t.about_close;
+            
+            const theme = document.documentElement.getAttribute('data-theme');
+            document.getElementById('theme-label').innerText = theme === 'dark' ? t.theme_dark : t.theme_light;
+        }
+
+        function toggleLang() {
+            const current = localStorage.getItem('lang') || 'uz';
+            const target = current === 'uz' ? 'ru' : 'uz';
+            localStorage.setItem('lang', target);
+            updateLangUI(target);
+        }
+
         function toggleTheme() {
             const html = document.documentElement;
             const current = html.getAttribute('data-theme');
             const target = current === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', target);
             localStorage.setItem('theme', target);
-            document.getElementById('theme-btn').innerText = target === 'light' ? '🌙 Tun' : '☀️ Kun';
+            
+            const lang = localStorage.getItem('lang') || 'uz';
+            document.getElementById('theme-label').innerText = target === 'dark' ? translations[lang].theme_dark : translations[lang].theme_light;
         }
-        
-        // Initial Theme
+
+        // Initialize
+        const savedLang = localStorage.getItem('lang') || 'uz';
+        updateLangUI(savedLang);
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
-            document.getElementById('theme-btn').innerText = '☀️ Kun';
         }
-
-        // Contact Toggle
-        function toggleContact() {
-            const opts = document.getElementById('contact-options');
-            opts.style.display = opts.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        // Language Toggle (Mock)
-        function toggleLang() {
-            const btn = document.getElementById('lang-btn');
-            const current = btn.innerText.includes('UZ');
-            btn.innerText = current ? '🇷🇺 RU' : '🇺🇿 UZ';
-            Swal.fire({
-                title: 'Til o\'zgartirildi',
-                text: current ? 'Русский язык активирован' : 'O\'zbek tili faollashtirildi',
-                icon: 'success',
-                timer: 1500,
-                showConfirmButton: false
-            });
-        }
-
+        
         function updateCartUI() {
             const cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
             const countEl = document.getElementById('cart-count');
-            if (cart.length > 0) {
-                countEl.innerText = cart.length;
-                countEl.style.display = 'flex';
-            } else {
-                countEl.style.display = 'none';
-            }
+            if (cart.length > 0) { countEl.innerText = cart.length; countEl.style.display = 'flex'; }
+            else { countEl.style.display = 'none'; }
         }
         updateCartUI();
     </script>
