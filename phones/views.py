@@ -11,7 +11,7 @@ import requests
 import os
 from dotenv import load_dotenv
 
-from .models import Category, Listing, Favorite, Branch, Review
+from .models import Category, Listing, Favorite, Branch, Review, PriceAssessment, SiteAnalytics
 from orders.models import Order
 from .utils import calculate_phone_price, BASE_PRICES
 
