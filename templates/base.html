@@ -12,6 +12,9 @@
     <!-- Standard CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.5">
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         .icon { width: 24px; height: 24px; stroke-width: 2; }
         .logo-img { height: 50px; width: auto; object-fit: contain; }
@@ -160,6 +163,24 @@
         }
 
         updateCartUI();
+
+        // Show Django messages as SweetAlert
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    title: "{% if message.tags == 'success' %}Ajoyib!{% else %}Xatolik!{% endif %}",
+                    text: "{{ message }}",
+                    icon: "{% if message.tags == 'success' %}success{% else %}error{% endif %}",
+                    confirmButtonColor: 'var(--primary)',
+                    confirmButtonText: 'Tushunarli',
+                    customClass: {
+                        popup: 'premium-card',
+                        title: 'wizard-title',
+                        confirmButton: 'btn-next'
+                    }
+                });
+            {% endfor %}
+        {% endif %}
     </script>
 </body>
 </html>

@@ -111,7 +111,7 @@ class SellView(LoginRequiredMixin, CreateView):
             text = f"🆕 <b>Yangi e'lon!</b>\n\n👤 {self.request.user.username}\n📱 {listing.title}\n💰 {listing.price} so'm"
             try: requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": admin_id, "text": text, "parse_mode": "HTML"})
             except: pass
-        messages.success(self.request, "E'loningiz qabul qilindi!")
+        messages.success(self.request, "✅ Tabriklaymiz! E'loningiz barchaga ko'rinishni boshladi 🎉")
         return super().form_valid(form)
 
 class ToggleBookingView(View):
