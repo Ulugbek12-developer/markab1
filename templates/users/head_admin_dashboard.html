@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Direktor Paneli | Markab{% endblock %}
+
+{% block content %}
+<div class="animate">
+    <div style="margin-bottom: 40px;">
+        <h1 style="font-size: 32px; font-weight: 900; color: var(--text-main); letter-spacing: -1px;">👨‍💼 Direktor Paneli (Head Admin)</h1>
+        <p style="color: var(--text-muted); font-weight: 700; font-size: 14px; margin-top: 5px;">Xodimlar va foydalanuvchilarni boshqarish</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
+        {% for u in users_list %}
+        <div class="premium-card" style="padding: 25px; display: flex; flex-direction: column; gap: 15px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="width: 50px; height: 50px; background: #F5F5F5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    {% if u.role == 'head_admin' %}👑{% elif u.role == 'staff_cashier' %}🏦{% elif u.role == 'staff_seller' %}💼{% elif u.role == 'seller_user' %}💰{% else %}👤{% endif %}
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="font-size: 18px; font-weight: 900; margin: 0;">{{ u.username }}</h3>
+                    <span style="font-size: 11px; font-weight: 900; color: var(--primary); text-transform: uppercase; background: rgba(177,34,65,0.08); padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 4px;">
+                        {{ u.get_role_display }}
+                    </span>
+                </div>
+            </div>
+
+            <div style="font-size: 13px; color: var(--text-muted); font-weight: 700;">
+                <p style="margin-bottom: 5px;">📧 Email: {{ u.email|default:"Kiritilmagan" }}</p>
+                <p>📞 Tel: {{ u.phone_number|default:"Kiritilmagan" }}</p>
+            </div>
+
+            <form action="{% url 'users:user_manage' u.pk %}" method="POST" style="margin-top: 10px; border-top: 1px solid #F0F0F0; padding-top: 15px;">
+                {% csrf_token %}
+                <label style="display: block; font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px;">Rolni o'zgartirish:</label>
+                <div style="display: flex; gap: 10px;">
+                    <select name="role" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #DDD; font-weight: 800; outline: none;">
+                        {% for r_val, r_label in u.USER_ROLE_CHOICES %}
+                        <option value="{{ r_val }}" {% if u.role == r_val %}selected{% endif %}>{{ r_label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" style="background: var(--text-main); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='var(--primary)'" onmouseout="this.style.background='var(--text-main)'">SAQLASH</button>
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

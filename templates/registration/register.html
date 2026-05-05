@@ -2,34 +2,91 @@
 {% load static %}
 
 {% block content %}
-<div class="animate" style="max-width: 500px; margin: 40px auto;">
-    <div class="premium-card" style="padding: 40px;">
-        <h1 style="font-size:32px; font-weight:900; margin-bottom:10px; text-align:center;">Ro'yxatdan o'tish</h1>
-        <p style="color:var(--text-muted); font-weight:700; margin-bottom:30px; text-align:center;">Markab olamiga qo'shiling!</p>
+<style>
+    .role-card {
+        border: 2px solid #F5F5F5;
+        border-radius: 20px;
+        padding: 25px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        flex: 1;
+        background: #FCFCFC;
+    }
+    .role-card:hover {
+        border-color: var(--primary);
+        background: #FFF5F7;
+    }
+    input[type="radio"] {
+        display: none;
+    }
+    input[type="radio"]:checked + .role-card {
+        border-color: var(--primary);
+        background: #FFF5F7;
+        box-shadow: 0 10px 20px rgba(177,34,65,0.05);
+    }
+    .role-emoji { font-size: 40px; margin-bottom: 10px; display: block; }
+    .role-title { font-size: 16px; font-weight: 900; color: var(--text-main); display: block; }
+    .role-desc { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-top: 5px; display: block; }
+</style>
 
-        <form method="POST" style="display:flex; flex-direction:column; gap:20px;">
+<div class="animate" style="max-width: 550px; margin: 40px auto; padding: 0 15px;">
+    <div class="premium-card" style="padding: 40px;">
+        <h1 style="font-size:32px; font-weight:900; margin-bottom:10px; text-align:center; letter-spacing: -1px;">Ro'yxatdan o'tish</h1>
+        <p style="color:var(--text-muted); font-weight:700; margin-bottom:35px; text-align:center;">Markab olamiga qo'shiling!</p>
+
+        <form method="POST" style="display:flex; flex-direction:column; gap:25px;">
             {% csrf_token %}
+
+            <!-- Role Selection -->
+            <div>
+                <label style="display:block; font-size:11px; font-weight:900; margin-bottom:15px; color:var(--text-muted); text-transform:uppercase; letter-spacing: 1px;">Siz kimsiz?</label>
+                <div style="display: flex; gap: 15px;">
+                    <label style="flex:1;">
+                        <input type="radio" name="role" value="customer" checked>
+                        <div class="role-card">
+                            <span class="role-emoji">🛍️</span>
+                            <span class="role-title">Oluvchi</span>
+                            <span class="role-desc">Telefonlarni ko'rish va sotib olish</span>
+                        </div>
+                    </label>
+                    <label style="flex:1;">
+                        <input type="radio" name="role" value="seller_user" {% if form.role.value == 'seller_user' %}checked{% endif %}>
+                        <div class="role-card">
+                            <span class="role-emoji">💰</span>
+                            <span class="role-title">Sotuvchi</span>
+                            <span class="role-desc">O'z telefoningizni sotuvga qo'yish</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
             
             {% for field in form %}
+                {% if field.name != 'role' %}
                 <div>
-                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">{{ field.label }}</label>
+                    <label style="display:block; font-size:11px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase; letter-spacing: 1px;">{{ field.label }}</label>
                     {{ field }}
                     {% if field.errors %}
-                        <p style="color:#FF4D4D; font-size:10px; margin-top:5px; font-weight:700;">{{ field.errors.as_text }}</p>
+                        <p style="color:#FF4D4D; font-size:11px; margin-top:5px; font-weight:700;">{{ field.errors.as_text }}</p>
                     {% endif %}
                 </div>
-                <style>
-                    /* Style the Django form inputs */
-                    input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); font-weight: 700; }
-                </style>
+                {% endif %}
             {% endfor %}
 
-            <button type="submit" class="btn-primary" style="padding:18px; font-size:18px; margin-top:10px;">RO'YXATDAN O'TISH 🚀</button>
+            <style>
+                input[type="text"], input[type="password"], input[type="email"] { 
+                    width: 100%; padding: 18px 20px; border-radius: 16px; border: 2px solid #F5F5F5; 
+                    background: #F9F9F9; font-weight: 800; font-size: 15px; outline: none; transition: 0.2s;
+                }
+                input:focus { border-color: var(--primary); background: #fff; }
+            </style>
+
+            <button type="submit" class="btn-primary" style="padding:20px; font-size:16px; margin-top:10px; text-transform: uppercase; letter-spacing: 1px;">Ro'yxatdan o'tish 🚀</button>
         </form>
 
-        <div style="margin-top:30px; text-align:center; padding-top:20px; border-top:1px solid var(--border);">
-            <p style="font-size:14px; color:var(--text-muted); font-weight:700;">
-                Akkauntingiz bormi? <a href="{% url 'users:login' %}" style="color:var(--primary); text-decoration:none;">Kirish</a>
+        <div style="margin-top:35px; text-align:center; padding-top:25px; border-top:1px solid var(--border);">
+            <p style="font-size:14px; color:var(--text-muted); font-weight:800;">
+                Akkauntingiz bormi? <a href="{% url 'users:login' %}" style="color:var(--primary); text-decoration:none;">Tizimga kirish</a>
             </p>
         </div>
     </div>

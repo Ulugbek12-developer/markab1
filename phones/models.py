@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -25,7 +25,7 @@ class Listing(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=15, decimal_places=0)
     
-    # Specific attributes (can be JSON or separate fields, keeping it simple for now)
+    # Specific attributes
     model_name = models.CharField(max_length=100, blank=True)
     color = models.CharField(max_length=50, blank=True)
     memory = models.CharField(max_length=50, blank=True)
@@ -33,7 +33,7 @@ class Listing(models.Model):
     battery_health = models.IntegerField(null=True, blank=True)
     
     # Detailed Condition
-    condition = models.CharField(max_length=20, choices=CONDITION_CHOICES, default='ideal') # Legacy fallback
+    condition = models.CharField(max_length=20, choices=CONDITION_CHOICES, default='ideal') 
     screen_condition = models.CharField(max_length=50, blank=True)
     body_condition = models.CharField(max_length=50, blank=True)
     
@@ -46,7 +46,7 @@ class Listing(models.Model):
     image = models.ImageField(upload_to='listings/', blank=True, null=True)
     images_json = models.JSONField(default=list, blank=True, help_text="Multiple image URLs if any")
     
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings', null=True, blank=True)
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='listings', null=True, blank=True)
     seller_phone = models.CharField(max_length=20, blank=True)
     seller_telegram = models.CharField(max_length=50, blank=True)
     
@@ -77,7 +77,7 @@ class Branch(models.Model):
 
 class Review(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     rating = models.IntegerField(default=5, choices=[(i, i) for i in range(1, 6)])
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -89,7 +89,7 @@ class Review(models.Model):
         ordering = ['-created_at']
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favorites')
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='favorited_by')
     created_at = models.DateTimeField(auto_now_add=True)
 
