@@ -72,6 +72,16 @@
 
         <form id="sellWizardForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+            {% if form.errors %}
+            <div style="background:#FFEBEF; color:var(--primary); padding:15px; border-radius:16px; margin-bottom:20px; font-weight:700; font-size:14px;">
+                Xatolik yuz berdi. Iltimos tekshiring:
+                <ul style="margin-top:5px; margin-left:20px;">
+                {% for field, errors in form.errors.items %}
+                    <li>{{ field }}: {{ errors|join:", " }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
             <!-- Hidden inputs to store data -->
             <input type="hidden" name="title" id="inp_title">
             <input type="hidden" name="model_name" id="inp_model">
@@ -82,7 +92,7 @@
             <input type="hidden" name="screen_condition" id="inp_screen">
             <input type="hidden" name="body_condition" id="inp_body">
             <input type="hidden" name="has_box" id="inp_box">
-            <input type="hidden" name="price" id="inp_price" value="0">
+            <input type="hidden" name="condition" value="ideal">
             <!-- Arrays will be converted to comma separated strings before submit, handled by backend or JSON field -->
             <input type="hidden" name="replaced_parts_list" id="inp_parts">
             <input type="hidden" name="defects_list" id="inp_defects">
