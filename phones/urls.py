@@ -25,5 +25,6 @@ urlpatterns = [
 
     path('listing/<int:pk>/review/', views.AddReviewView.as_view(), name='add_review'),
     path('track-region/', views.TrackRegionView.as_view(), name='track_region'),
+    path('nasiya/', views.NasiyaView.as_view(), name='nasiya'),
     path('nasiya-submit/', views.nasiya_submit, name='nasiya_submit'),
 ]

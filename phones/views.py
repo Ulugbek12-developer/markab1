@@ -423,6 +423,9 @@ class AdminBranchDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
 class NasiyaView(TemplateView):
     template_name = 'phones/nasiya.html'
 
+class NasiyaView(TemplateView):
+    template_name = 'phones/nasiya.html'
+
 def nasiya_submit(request):
     import json
     if request.method == 'POST':
