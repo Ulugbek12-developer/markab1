@@ -35,6 +35,31 @@ class HeadAdminDashboardView(HeadAdminRequiredMixin, ListView):
 
     def get_queryset(self):
         return User.objects.exclude(id=self.request.user.id).order_by('role')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['role_choices'] = User.USER_ROLE_CHOICES
+        return context
+
+class AddStaffView(HeadAdminRequiredMixin, View):
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        role = request.POST.get('role')
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, f"Xatolik: {username} nomli foydalanuvchi allaqachon mavjud!")
+        else:
+            is_staff = role in ['staff_seller', 'staff_cashier', 'head_admin']
+            user = User.objects.create_user(
+                username=username, 
+                password=password, 
+                role=role,
+                is_staff=is_staff
+            )
+            messages.success(request, f"Yangi xodim qo'shildi: {username} ({user.get_role_display()})")
+        
+        return redirect('users:head_dashboard')
 
 class AdminUserManageView(HeadAdminRequiredMixin, View):
     def post(self, request, pk):

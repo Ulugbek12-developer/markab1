@@ -11,5 +11,6 @@ urlpatterns = [
     path('sell/', views.SellPhoneView.as_view(), name='sell'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('head-admin/', views.HeadAdminDashboardView.as_view(), name='head_dashboard'),
+    path('head-admin/add-staff/', views.AddStaffView.as_view(), name='add_staff'),
     path('user/<int:pk>/manage/', views.AdminUserManageView.as_view(), name='user_manage'),
 ]
