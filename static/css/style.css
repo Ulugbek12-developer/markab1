@@ -139,9 +139,99 @@ header {
 .grid-3 { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
 .grid-2 { grid-template-columns: 1fr 1fr; }
 
+/* Compact Product Grid */
+.grid-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
 @media (max-width: 768px) {
     .grid-2 { grid-template-columns: 1fr; }
+    .grid-products { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .nav-links { display: none; }
+}
+
+/* Compact Card (Mobiks Style - Red/White) */
+.compact-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #F0F0F0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(177,34,65,0.04);
+    transition: transform 0.2s;
+    position: relative;
+}
+.compact-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(177,34,65,0.1);
+}
+.compact-img-area {
+    position: relative;
+    background: #F8F8F8;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+}
+.compact-img-area img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+.compact-badge {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(0,0,0,0.6); color: white;
+    font-size: 10px; font-weight: 800;
+    padding: 2px 6px; border-radius: 8px;
+}
+.compact-fav {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    background: white; border: none; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: pointer; color: #CCC; transition: 0.2s;
+}
+.compact-fav:hover { color: var(--primary); }
+.compact-info {
+    padding: 12px 10px;
+    display: flex; flex-direction: column; flex: 1;
+}
+.compact-price {
+    font-size: 16px; font-weight: 900; color: var(--text-main);
+}
+.compact-monthly {
+    font-size: 10px; font-weight: 800; color: var(--primary);
+    margin-bottom: 4px;
+}
+.compact-title {
+    font-size: 13px; font-weight: 700; color: var(--text-main);
+    margin: 2px 0 8px; line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.compact-meta {
+    display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.compact-memory {
+    font-size: 10px; font-weight: 800; color: var(--text-muted);
+    background: #F5F5F5; padding: 2px 6px; border-radius: 6px;
+}
+.compact-bottom {
+    display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;
+}
+.compact-seller {
+    font-size: 10px; font-weight: 700; color: #AAA;
+}
+.compact-cart-btn {
+    width: 32px; height: 32px;
+    background: var(--primary); color: white;
+    border: none; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 10px rgba(177,34,65,0.25);
+    transition: 0.2s;
+}
+.compact-cart-btn:hover {
+    background: var(--primary-hover); transform: scale(1.05);
 }
 
 /* Hero Section */

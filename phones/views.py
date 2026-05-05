@@ -91,6 +91,7 @@ class SellView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('phones:home')
     def form_valid(self, form):
         form.instance.seller = self.request.user
+        form.instance.is_approved = True  # Auto-approve so it shows to others immediately
         
         # Handle string arrays from hidden inputs
         parts_str = self.request.POST.get('replaced_parts_list', '')
