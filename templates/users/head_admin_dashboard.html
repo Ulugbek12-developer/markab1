@@ -6,44 +6,69 @@
 {% block content %}
 <style>
     .staff-field {
-        width: 100%; padding: 14px; border: 2px solid #F0F0F0; border-radius: 14px;
-        background: #F9F9F9; font-weight: 800; outline: none; transition: 0.2s;
+        width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 14px;
+        background: var(--input-bg); color: var(--text-main); font-weight: 700; outline: none; transition: 0.2s;
+        font-size: 14px;
     }
-    .staff-field:focus { border-color: var(--primary); background: #fff; }
+    .staff-field:focus { border-color: var(--primary); background: var(--bg); }
     .btn-add {
         background: var(--primary); color: white; border: none; padding: 14px 30px;
-        border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.3s;
+        border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s;
         box-shadow: 0 8px 20px rgba(177,34,65,0.2);
+        font-size: 14px;
     }
     .btn-add:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(177,34,65,0.3); }
+
+    .user-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        transition: 0.2s;
+    }
+    .user-card:hover { border-color: var(--primary); }
+    
+    .role-badge {
+        font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase; 
+        background: var(--primary-soft); padding: 4px 10px; border-radius: 8px; display: inline-block;
+    }
+
+    .select-role {
+        flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); 
+        background: var(--input-bg); color: var(--text-main);
+        font-weight: 700; font-size: 12px; outline: none;
+    }
 </style>
 
 <div class="animate">
-    <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;">
+    <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px;">
         <div>
-            <h1 style="font-size: 32px; font-weight: 900; color: var(--text-main); letter-spacing: -1px; margin: 0;">👨‍💼 Direktor Paneli</h1>
-            <p style="color: var(--text-muted); font-weight: 700; font-size: 14px; margin-top: 5px;">Xodimlar va foydalanuvchilarni boshqarish</p>
+            <h1 style="font-size: 28px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">👨‍💼 Direktor Paneli</h1>
+            <p style="color: var(--text-muted); font-weight: 600; font-size: 13px; margin-top: 4px;">Xodimlar va foydalanuvchilarni boshqarish</p>
         </div>
-        <a href="{% url 'phones:admin_dashboard' %}" style="text-decoration: none; color: var(--text-muted); font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 5px;">
-            ← Admin Panelga qaytish
+        <a href="{% url 'users:profile' %}" style="text-decoration: none; color: var(--text-muted); font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 5px;">
+            ← Profilga qaytish
         </a>
     </div>
 
     <!-- Add New Staff Form -->
-    <div class="premium-card" style="padding: 35px; margin-bottom: 40px; border-left: 6px solid var(--primary);">
-        <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 25px; color: var(--text-main);">➕ Yangi xodim qo'shish</h2>
-        <form action="{% url 'users:add_staff' %}" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: flex-end;">
+    <div class="premium-card" style="padding: 25px; margin-bottom: 30px; border-top: 4px solid var(--primary);">
+        <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">➕ Yangi xodim qo'shish</h2>
+        <form action="{% url 'users:add_staff' %}" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: flex-end;">
             {% csrf_token %}
             <div>
-                <label style="display:block; font-size:11px; font-weight:900; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Username</label>
-                <input type="text" name="username" class="staff-field" placeholder="Masalan: kassir_ali" required>
+                <label style="display:block; font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Username</label>
+                <input type="text" name="username" class="staff-field" placeholder="kassir_ali" required>
             </div>
             <div>
-                <label style="display:block; font-size:11px; font-weight:900; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Parol</label>
+                <label style="display:block; font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Parol</label>
                 <input type="password" name="password" class="staff-field" placeholder="Kamida 8 belgi" required>
             </div>
             <div>
-                <label style="display:block; font-size:11px; font-weight:900; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Lavozimi</label>
+                <label style="display:block; font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Lavozimi</label>
                 <select name="role" class="staff-field" style="appearance:none;">
                     {% for r_val, r_label in role_choices %}
                         {% if r_val != 'customer' and r_val != 'seller_user' %}
@@ -58,37 +83,35 @@
     </div>
 
     <!-- User List -->
-    <h2 style="font-size: 18px; font-weight: 900; margin-bottom: 20px; color: var(--text-main);">👥 Mavjud foydalanuvchilar ({{ users_list|length }})</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+    <h2 style="font-size: 17px; font-weight: 800; margin-bottom: 15px; color: var(--text-main);">👥 Mavjud foydalanuvchilar ({{ users_list|length }})</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; padding-bottom: 50px;">
         {% for u in users_list %}
-        <div class="premium-card" style="padding: 25px; display: flex; flex-direction: column; gap: 15px;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div style="width: 50px; height: 50px; background: #F5F5F5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+        <div class="user-card">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 44px; height: 44px; background: var(--input-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid var(--border);">
                     {% if u.role == 'head_admin' %}👑{% elif u.role == 'staff_cashier' %}🏦{% elif u.role == 'staff_seller' %}💼{% elif u.role == 'seller_user' %}💰{% else %}👤{% endif %}
                 </div>
                 <div style="flex: 1;">
-                    <h3 style="font-size: 17px; font-weight: 900; margin: 0;">{{ u.username }}</h3>
-                    <span style="font-size: 11px; font-weight: 900; color: var(--primary); text-transform: uppercase; background: rgba(177,34,65,0.08); padding: 4px 10px; border-radius: 8px; display: inline-block; margin-top: 5px;">
-                        {{ u.get_role_display }}
-                    </span>
+                    <h3 style="font-size: 15px; font-weight: 800; margin: 0; color: var(--text-main);">{{ u.username }}</h3>
+                    <span class="role-badge">{{ u.get_role_display }}</span>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F0F0F0; padding-top: 15px;">
-                <form action="{% url 'users:user_manage' u.pk %}" method="POST" style="flex: 1; display: flex; gap: 10px;">
+            <div style="border-top: 1px solid var(--border); padding-top: 12px;">
+                <form action="{% url 'users:user_manage' u.pk %}" method="POST" style="display: flex; gap: 8px;">
                     {% csrf_token %}
-                    <select name="role" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #EEE; font-weight: 800; font-size: 12px; outline: none;">
+                    <select name="role" class="select-role">
                         {% for r_val, r_label in role_choices %}
                         <option value="{{ r_val }}" {% if u.role == r_val %}selected{% endif %}>{{ r_label }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit" style="background: var(--text-main); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: 900; font-size: 12px; cursor: pointer;">O'zgartirish</button>
+                    <button type="submit" style="background: var(--text-main); color: var(--bg); border: none; padding: 10px 15px; border-radius: 10px; font-weight: 800; font-size: 11px; cursor: pointer;">SAQLASH</button>
                 </form>
             </div>
         </div>
         {% empty %}
-        <div style="grid-column: 1/-1; text-align: center; padding: 50px; background: #fff; border-radius: 30px; border: 2px dashed #EEE;">
-            <p style="color: var(--text-muted); font-weight: 700;">Hali birorta ham foydalanuvchi yo'q</p>
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: var(--card-bg); border-radius: 20px; border: 1.5px dashed var(--border);">
+            <p style="color: var(--text-muted); font-weight: 600; font-size: 14px;">Hali birorta ham foydalanuvchi yo'q</p>
         </div>
         {% endfor %}
     </div>

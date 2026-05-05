@@ -80,11 +80,13 @@
         <h1 style="font-size: 22px; font-weight: 700; margin-bottom: 4px;">{{ user.username }}</h1>
         <p style="font-size: 12px; font-weight: 500; opacity: 0.8;">{{ user.get_role_display }}</p>
     </div>
-
     <div class="profile-tabs">
-        <button class="tab-btn active" onclick="switchTab('my-listings', this)" data-lang-key="my_listings">E'lonlarim</button>
-        <button class="tab-btn" onclick="switchTab('my-favorites', this)" data-lang-key="favorites">Saralanganlar</button>
-        <button class="tab-btn" onclick="switchTab('my-orders', this)" data-lang-key="orders">Buyurtmalar</button>
+        <button class="tab-btn active" onclick="switchTab('my-listings', this)">E'lonlar</button>
+        <button class="tab-btn" onclick="switchTab('my-favorites', this)">Saralangan</button>
+        <button class="tab-btn" onclick="switchTab('my-orders', this)">Buyurtmalar</button>
+        {% if user.role == 'head_admin' or user.role == 'staff_seller' or user.role == 'staff_cashier' %}
+        <button class="tab-btn" onclick="switchTab('staff-mgmt', this)">Boshqaruv</button>
+        {% endif %}
     </div>
 
     <!-- My Listings -->
@@ -150,6 +152,29 @@
         </div>
         {% endfor %}
     </div>
+
+    {% if user.role == 'head_admin' or user.role == 'staff_seller' or user.role == 'staff_cashier' %}
+    <!-- Management Section -->
+    <div id="staff-mgmt" class="tab-content">
+        <div style="display: grid; gap: 15px;">
+            {% if user.role == 'head_admin' %}
+            <div style="background: var(--primary-soft); border: 1.5px dashed var(--primary); padding: 20px; border-radius: 20px; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 10px;">👥</div>
+                <h3 style="font-weight: 700; color: var(--text-main); margin-bottom: 5px;">Xodimlar boshqaruvi</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Sotuvchilar va kassirlarni qo'shish, rollarni o'zgartirish.</p>
+                <a href="{% url 'users:head_dashboard' %}" class="btn-primary" style="display: block; width: 100%; text-align: center; text-decoration: none;">Director Paneli 🚀</a>
+            </div>
+            {% endif %}
+            
+            <div style="background: var(--input-bg); border: 1px solid var(--border); padding: 20px; border-radius: 20px; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 10px;">📊</div>
+                <h3 style="font-weight: 700; color: var(--text-main); margin-bottom: 5px;">Asosiy Panel</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Buyurtmalar, e'lonlarni tasdiqlash va statistika.</p>
+                <a href="{% url 'phones:admin_dashboard' %}" class="btn-primary" style="display: block; width: 100%; text-align: center; text-decoration: none; background: var(--text-main);">Master Panel ⚙️</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <div style="padding: 20px 10px 100px;">
         <form action="{% url 'users:logout' %}" method="POST">
