@@ -341,3 +341,41 @@ class AdminBranchDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         get_object_or_404(Branch, pk=pk).delete()
         messages.success(request, "Filial o'chirildi.")
         return redirect('phones:admin_dashboard')
+
+class NasiyaView(TemplateView):
+    template_name = 'phones/nasiya.html'
+
+def nasiya_submit(request):
+    import json
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except:
+            data = request.POST
+
+        load_dotenv()
+        bot_token = os.getenv('BOT_TOKEN', '')
+        admin_id = os.getenv('ADMIN_ID', '')
+
+        text = (
+            f"📋 <b>Nasiyaga ariza!</b>\n\n"
+            f"👤 Ism: {data.get('name', '—')}\n"
+            f"📞 Tel: {data.get('phone', '—')}\n"
+            f"🎂 Tug'ilgan: {data.get('birthday', '—')} ({data.get('age', '—')} yosh)\n"
+            f"💳 Bank karta: {data.get('bank', '—')}\n"
+            f"📱 Brend: {data.get('brand', '—')}\n"
+            f"💰 Oylik to'lov: {data.get('payment', '—')}\n"
+            f"⏰ Qachon: {data.get('when', '—')}"
+        )
+
+        if bot_token and admin_id:
+            try:
+                requests.post(
+                    f"https://api.telegram.org/bot{bot_token}/sendMessage",
+                    data={"chat_id": admin_id, "text": text, "parse_mode": "HTML"}
+                )
+            except:
+                pass
+
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"error": "POST only"}, status=405)
