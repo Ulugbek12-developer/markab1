@@ -113,8 +113,11 @@ class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         # Real user data
         user_listings = Listing.objects.filter(seller=request.user).order_by('-created_at')
-        favorite_listings = request.user.favorite_listings.all().order_by('-created_at')
-        user_orders = Order.objects.filter(customer_phone=request.user.username).order_by('-created_at') # Assuming username is phone or linked
+        # Access listings via Favorite model
+        favorite_ids = request.user.favorites.values_list('listing_id', flat=True)
+        favorite_listings = Listing.objects.filter(id__in=favorite_ids).order_by('-created_at')
+        
+        user_orders = Order.objects.filter(customer_phone=request.user.username).order_by('-created_at')
 
         return render(request, 'users/profile.html', {
             'listings': user_listings,
