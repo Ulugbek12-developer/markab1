@@ -2,31 +2,44 @@
 {% load static %}
 
 {% block content %}
-<div class="animate" style="max-width: 500px; margin: 40px auto;">
+<div class="animate" style="max-width: 500px; margin: 40px auto; padding: 0 15px;">
     <div class="premium-card" style="padding: 40px;">
-        <h1 style="font-size:32px; font-weight:900; margin-bottom:10px; text-align:center;">Kirish</h1>
-        <p style="color:var(--text-muted); font-weight:700; margin-bottom:30px; text-align:center;">Xush kelibsiz! Hisobingizga kiring</p>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 70px; height: 70px; background: rgba(177,34,65,0.08); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 30px;">
+                👋
+            </div>
+            <h1 style="font-size:32px; font-weight:900; margin-bottom:10px; letter-spacing: -1px;">Xush kelibsiz!</h1>
+            <p style="color:var(--text-muted); font-weight:700;">Tizimga kirish uchun ma'lumotlarni kiriting</p>
+        </div>
+
+        {% if form.errors %}
+            <div style="background: #FFF5F7; border: 1px solid rgba(177,34,65,0.2); color: var(--primary); padding: 15px; border-radius: 12px; margin-bottom: 25px; font-weight: 800; font-size: 13px; text-align: center;">
+                ❌ Login yoki parol noto'g'ri!
+            </div>
+        {% endif %}
 
         <form method="POST" style="display:flex; flex-direction:column; gap:20px;">
             {% csrf_token %}
             
             <div>
-                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Login (Username)</label>
+                <label style="display:block; font-size:11px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase; letter-spacing: 1px;">Username (Login)</label>
                 <input type="text" name="username" required 
-                       style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+                       style="width:100%; padding:18px 20px; border-radius:16px; border:2px solid #F5F5F5; background: #F9F9F9; font-weight:800; font-size:15px; outline:none; transition: 0.2s;"
+                       onfocus="this.style.borderColor='var(--primary)'; this.style.background='#fff';">
             </div>
 
             <div>
-                <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Parol</label>
+                <label style="display:block; font-size:11px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase; letter-spacing: 1px;">Parol</label>
                 <input type="password" name="password" required 
-                       style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+                       style="width:100%; padding:18px 20px; border-radius:16px; border:2px solid #F5F5F5; background: #F9F9F9; font-weight:800; font-size:15px; outline:none; transition: 0.2s;"
+                       onfocus="this.style.borderColor='var(--primary)'; this.style.background='#fff';">
             </div>
 
-            <button type="submit" class="btn-primary" style="padding:18px; font-size:18px; margin-top:10px;">KIRISH 🚀</button>
+            <button type="submit" class="btn-primary" style="padding:20px; font-size:16px; margin-top:10px; text-transform: uppercase; letter-spacing: 1px;">Kirish 🚀</button>
         </form>
 
-        <div style="margin-top:30px; text-align:center; padding-top:20px; border-top:1px solid var(--border);">
-            <p style="font-size:14px; color:var(--text-muted); font-weight:700;">
+        <div style="margin-top:35px; text-align:center; padding-top:25px; border-top:1px solid var(--border);">
+            <p style="font-size:14px; color:var(--text-muted); font-weight:800;">
                 Akkauntingiz yo'qmi? <a href="{% url 'users:register' %}" style="color:var(--primary); text-decoration:none;">Ro'yxatdan o'tish</a>
             </p>
         </div>
