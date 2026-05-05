@@ -14,122 +14,94 @@
         </div>
         <div style="display: flex; gap: 10px;">
             {% if user.role == 'head_admin' %}
-            <div style="background: rgba(177,34,65,0.1); color: var(--primary); padding: 8px 15px; border-radius: 10px; font-weight: 900; font-size: 12px; display: flex; align-items: center; gap: 8px;">
-                👑 DIREKTOR
-            </div>
-            {% endif %}
-            {% if user.role == 'staff_cashier' %}
-            <div style="background: #E6F4EA; color: #1E7E34; padding: 8px 15px; border-radius: 10px; font-weight: 900; font-size: 12px; display: flex; align-items: center; gap: 8px;">
-                🏦 KASSIR
-            </div>
+            <div style="background: rgba(177,34,65,0.1); color: var(--primary); padding: 8px 15px; border-radius: 10px; font-weight: 900; font-size: 12px;">👑 DIREKTOR</div>
             {% endif %}
         </div>
     </div>
 
-    <!-- Action Buttons (Conditional Visibility) -->
-    <div style="display:flex; gap:10px; margin-bottom:40px; flex-wrap:wrap;">
-        {% if user.role == 'head_admin' or user.role == 'staff_seller' %}
-        <a href="{% url 'phones:admin_branch_add' %}" class="btn-secondary" style="font-size:13px; padding:10px 16px; border-radius:12px; font-weight:800; border: 1px solid var(--border);">
-            🏪 Filial Qo'shish
-        </a>
-        <a href="{% url 'phones:admin_add' %}" class="btn-primary" style="font-size:13px; padding:10px 16px; border-radius:12px;">
-            ➕ Mahsulot Qo'shish
-        </a>
-        {% endif %}
-        
-        {% if user.role == 'head_admin' %}
-        <a href="{% url 'users:head_dashboard' %}" class="btn-secondary" style="font-size:13px; padding:10px 16px; border-radius:12px; font-weight:800; background: var(--text-main); color: #fff; border: none;">
-            👥 Xodimlarni Boshqarish
-        </a>
-        {% endif %}
+    <!-- STATS SECTION (Head Admin Only) -->
+    {% if user.role == 'head_admin' %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
+        <div class="premium-card" style="padding: 25px; text-align: center; border-bottom: 4px solid var(--primary);">
+            <div style="font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Bugungi kirishlar</div>
+            <div style="font-size: 32px; font-weight: 900; color: var(--text-main);">{{ stats.total_visits|default:0 }}</div>
+        </div>
+        <div class="premium-card" style="padding: 25px; text-align: center; border-bottom: 4px solid #3B82F6;">
+            <div style="font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Narxlashlar</div>
+            <div style="font-size: 32px; font-weight: 900; color: var(--text-main);">{{ assessments|length }}</div>
+        </div>
+        <div class="premium-card" style="padding: 25px; text-align: center; border-bottom: 4px solid #22C55E;">
+            <div style="font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Buyurtmalar</div>
+            <div style="font-size: 32px; font-weight: 900; color: var(--text-main);">{{ orders|length }}</div>
+        </div>
+        <div class="premium-card" style="padding: 25px; text-align: center; border-bottom: 4px solid #F59E0B;">
+            <div style="font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">Jami foydalanuvchilar</div>
+            <div style="font-size: 32px; font-weight: 900; color: var(--text-main);">{{ total_users }}</div>
+        </div>
     </div>
 
-    <!-- KASSIR & DIRECTOR SECTION: Orders & Assessments -->
-    {% if user.role == 'head_admin' or user.role == 'staff_cashier' %}
-    <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 50px;">
-        
-        <!-- Orders Section -->
-        <div>
-            <h2 style="font-size:18px; font-weight:900; margin-bottom:16px; color:var(--text-main); display: flex; align-items: center; gap: 10px;">
-                🛒 Buyurtmalar 
-                <span style="font-size: 12px; background: var(--primary); color: white; padding: 2px 8px; border-radius: 6px;">{{ orders|length }}</span>
-            </h2>
-            <div style="display:flex; flex-direction:column; gap:12px;">
-                {% for order in orders %}
-                <div class="premium-card" style="padding:20px; border-left: 5px solid #22C55E;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                        <h3 style="font-size: 15px; font-weight: 900;">#{{ order.id }} - {{ order.customer_name }}</h3>
-                        <span style="font-size: 11px; font-weight: 800; color: #999;">{{ order.created_at|date:"d.m.Y H:i" }}</span>
-                    </div>
-                    <div style="font-size: 13px; font-weight: 700; color: var(--text-muted);">
-                        <p style="margin-bottom: 5px;">📱 Mahsulot: <span style="color: var(--text-main);">{{ order.listing.title }}</span></p>
-                        <p style="margin-bottom: 5px;">📞 Tel: <span style="color: var(--primary);">{{ order.customer_phone }}</span></p>
-                        <p>📍 Filial: {{ order.branch|default:"—" }}</p>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="premium-card" style="padding:20px; text-align:center; color: #999; font-weight: 700;">Hali buyurtmalar yo'q</div>
-                {% endfor %}
+    <!-- Region Stats -->
+    <div class="premium-card" style="padding: 30px; margin-bottom: 50px;">
+        <h2 style="font-size: 18px; font-weight: 900; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            📍 Foydalanuvchilar geografiyasi (Bugun)
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
+            {% for region, count in stats.region_stats.items %}
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 800; font-size: 13px;">{{ region }}</span>
+                <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 8px; font-size: 12px; font-weight: 900;">{{ count }}</span>
             </div>
-        </div>
-
-        <!-- Price Assessments Section -->
-        <div>
-            <h2 style="font-size:18px; font-weight:900; margin-bottom:16px; color:var(--text-main); display: flex; align-items: center; gap: 10px;">
-                📊 Narxlash Tarixi (Price My iPhone)
-                <span style="font-size: 12px; background: #3B82F6; color: white; padding: 2px 8px; border-radius: 6px;">{{ assessments|length }}</span>
-            </h2>
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:15px;">
-                {% for ass in assessments %}
-                <div class="premium-card" style="padding:18px; border-top: 4px solid #3B82F6;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 15px; font-weight: 900;">{{ ass.model_name }}</span>
-                        <span style="font-size: 14px; font-weight: 900; color: #16A34A;">{{ ass.calculated_price }} $</span>
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-muted); font-weight: 700; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <span>🔋 Batareya: {{ ass.battery_health }}%</span>
-                        <span>💾 Xotira: {{ ass.memory }}</span>
-                        <span>📱 Ekran: {{ ass.details.screen }}</span>
-                        <span>📦 Quti: {{ ass.details.box }}</span>
-                    </div>
-                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #F0F0F0; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 11px; color: #BBB;">👤 @{{ ass.user.username|default:"Mehmon" }}</span>
-                        <span style="font-size: 11px; color: #BBB;">{{ ass.created_at|date:"H:i | d.m" }}</span>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="premium-card" style="padding:20px; text-align:center; color: #999; font-weight: 700; grid-column: 1/-1;">Hali narxlashlar bo'lmagan</div>
-                {% endfor %}
-            </div>
+            {% empty %}
+            <p style="grid-column: 1/-1; color: var(--text-muted); font-weight: 700;">Bugun hali hududlar bo'yicha ma'lumot yo'q.</p>
+            {% endfor %}
         </div>
     </div>
     {% endif %}
 
-    <!-- SELLER & DIRECTOR SECTION: Products -->
-    {% if user.role == 'head_admin' or user.role == 'staff_seller' %}
-    <h2 style="font-size:18px; font-weight:900; margin-bottom:16px; color:var(--text-main);">📱 Do'kon Mahsulotlari</h2>
-    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:40px;">
-        {% for phone in phones %}
-        <div class="premium-card" style="padding:16px; display:flex; align-items:center; gap:14px;">
-            <div style="width:56px; height:56px; background:#F5F5F5; border-radius:12px; overflow:hidden; flex-shrink:0;">
-                {% if phone.image %}
-                    <img src="{{ phone.image.url }}" style="width:100%; height:100%; object-fit:cover;">
-                {% else %}
-                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:22px;">📱</div>
-                {% endif %}
-            </div>
-            <div style="flex:1; min-width:0;">
-                <div style="font-size:14px; font-weight:900; color:var(--text-main);">{{ phone.title }}</div>
-                <div style="font-size:13px; font-weight:800; color:var(--primary); margin-top:2px;">{{ phone.price|floatformat:0 }} $</div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">👤 {{ phone.seller.username }}</div>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
-                <a href="{% url 'phones:admin_delete' phone.id %}" onclick="return confirm('O\'chirishni tasdiqlaysizmi?')" style="color:#FF4D4D; text-decoration:none; font-weight:900; font-size:11px;">🗑 O'CHIRISH</a>
+    <!-- Action Buttons -->
+    <div style="display:flex; gap:10px; margin-bottom:40px; flex-wrap:wrap;">
+        {% if user.role == 'head_admin' or user.role == 'staff_seller' %}
+        <a href="{% url 'phones:admin_branch_add' %}" class="btn-secondary" style="font-size:13px; padding:10px 16px; border-radius:12px; font-weight:800; border: 1px solid var(--border);">🏪 Filial Qo'shish</a>
+        <a href="{% url 'phones:admin_add' %}" class="btn-primary" style="font-size:13px; padding:10px 16px; border-radius:12px;">➕ Mahsulot Qo'shish</a>
+        {% endif %}
+        {% if user.role == 'head_admin' %}
+        <a href="{% url 'users:head_dashboard' %}" class="btn-secondary" style="font-size:13px; padding:10px 16px; border-radius:12px; font-weight:800; background: var(--text-main); color: #fff; border: none;">👥 Xodimlarni Boshqarish</a>
+        {% endif %}
+    </div>
+
+    <!-- Orders & Assessments -->
+    {% if user.role == 'head_admin' or user.role == 'staff_cashier' %}
+    <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 50px;">
+        <!-- Orders -->
+        <div>
+            <h2 style="font-size:18px; font-weight:900; margin-bottom:16px; color:var(--text-main);">🛒 Buyurtmalar <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 6px; font-size: 12px;">{{ orders|length }}</span></h2>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                {% for order in orders %}
+                <div class="premium-card" style="padding:20px; border-left: 5px solid #22C55E;">
+                    <h3 style="font-size: 15px; font-weight: 900;">#{{ order.id }} - {{ order.customer_name }}</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); font-weight: 700;">📞 {{ order.customer_phone }} | 📱 {{ order.listing.title }}</p>
+                </div>
+                {% empty %}
+                <div class="premium-card" style="padding:20px; text-align:center; color: #999;">Buyurtmalar yo'q</div>
+                {% endfor %}
             </div>
         </div>
-        {% empty %}
-        <div class="premium-card" style="padding:30px; text-align:center; color: #999;">Hali mahsulotlar yo'q</div>
-        {% endfor %}
+
+        <!-- Assessments -->
+        <div>
+            <h2 style="font-size:18px; font-weight:900; margin-bottom:16px; color:var(--text-main);">📊 Narxlash Tarixi <span style="background: #3B82F6; color: white; padding: 2px 8px; border-radius: 6px; font-size: 12px;">{{ assessments|length }}</span></h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:15px;">
+                {% for ass in assessments %}
+                <div class="premium-card" style="padding:18px; border-top: 4px solid #3B82F6;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-weight: 900;">{{ ass.model_name }}</span>
+                        <span style="font-weight: 900; color: #16A34A;">{{ ass.calculated_price }} $</span>
+                    </div>
+                    <p style="font-size: 11px; color: var(--text-muted); font-weight: 700;">🔋 {{ ass.battery_health }}% | 💾 {{ ass.memory }} | 👤 @{{ ass.user.username|default:"Mehmon" }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     {% endif %}
 

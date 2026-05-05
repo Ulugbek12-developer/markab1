@@ -7,12 +7,29 @@
         .mobiks-hero-grid { grid-template-columns: 1fr !important; }
         .mobiks-action-boxes { grid-template-columns: repeat(2, 1fr) !important; }
     }
+    
+    .sale-badge {
+        position: absolute; top: 12px; left: 12px; z-index: 5;
+        background: var(--primary); color: #fff; padding: 6px 12px;
+        border-radius: 12px; font-size: 11px; font-weight: 900;
+        box-shadow: 0 4px 10px rgba(177,34,65,0.3);
+    }
+    .discount-floating {
+        position: absolute; top: 12px; right: 12px; z-index: 5;
+        background: #22C55E; color: #fff; padding: 4px 8px;
+        border-radius: 10px; font-size: 11px; font-weight: 900;
+    }
 </style>
+
 <div class="animate">
     <!-- Hero Grid -->
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;" class="mobiks-hero-grid">
         <!-- Banner -->
         <div style="background: url('{% static 'images/banner.png' %}') center/cover; border-radius: 24px; min-height: 350px; position: relative; overflow: hidden; background-color: var(--primary);">
+            <div style="position:absolute; bottom:30px; left:30px; color:white; max-width:400px;">
+                <h1 style="font-size:42px; font-weight:900; margin-bottom:10px; line-height:1.1;">Premium iPhone <br> Marketplace</h1>
+                <p style="font-size:16px; font-weight:700; opacity:0.9;">O'zbekistondagi eng ishonchli va premium do'kon</p>
+            </div>
         </div>
         
         <!-- Action Cards -->
@@ -57,22 +74,22 @@
             </div>
             <div style="font-weight: 900; font-size: 14px;">Nasiya</div>
         </a>
-        <a href="{% url 'phones:price' %}" class="premium-card" style="text-align: center; padding: 20px; text-decoration: none; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
-            <div style="width: 50px; height: 50px; border-radius: 16px; background: #F9F9F9; display: flex; align-items: center; justify-content: center; color: var(--primary);">
-                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        <a href="?filter=sale" class="premium-card" style="text-align: center; padding: 20px; text-decoration: none; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
+            <div style="width: 50px; height: 50px; border-radius: 16px; background: #FCE8E6; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
             </div>
-            <div style="font-weight: 900; font-size: 14px;">Baholash</div>
+            <div style="font-weight: 900; font-size: 14px;">Aksiya</div>
         </a>
     </div>
 
-    <!-- Toggles & Products Title -->
+    <!-- Toggles -->
     <div style="display: flex; gap: 15px; margin-bottom: 30px;">
-        <a href="?filter=sale" class="btn-secondary {% if request.GET.filter == 'sale' %}active-installment{% endif %}" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'sale' %}background: var(--primary); color: white;{% endif %}">Aksiya</a>
-        <a href="?filter=week" class="btn-secondary {% if request.GET.filter == 'week' %}active-installment{% endif %}" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'week' %}background: var(--primary); color: white;{% endif %}">Yangi tovarlar</a>
+        <a href="?filter=sale" class="btn-secondary" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'sale' %}background: var(--primary); color: white;{% endif %}">🔥 AKSIYALAR</a>
+        <a href="?filter=week" class="btn-secondary" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'week' %}background: var(--primary); color: white;{% endif %}">Yangi e'lonlar</a>
     </div>
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="font-size:24px; font-weight:900;">Barcha mahsulotlar</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+        <h2 style="font-size:24px; font-weight:900;">{% if request.GET.filter == 'sale' %}Aksiya Mahsulotlari{% else %}Barcha mahsulotlar{% endif %}</h2>
     </div>
 
     <!-- Products Grid -->
@@ -83,12 +100,19 @@
                     
                     <!-- Image Area -->
                     <div class="compact-img-area">
+                        {% if listing.is_sale %}
+                            <div class="sale-badge">AKSIYA 🔥</div>
+                            {% if listing.get_discount_percentage %}
+                            <div class="discount-floating">-{{ listing.get_discount_percentage }}%</div>
+                            {% endif %}
+                        {% endif %}
+
                         {% if listing.image %}
                             <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
                         {% else %}
                             <div class="no-img">Rasm yo'q</div>
                         {% endif %}
-                        <div class="compact-badge">1/1</div>
+                        
                         <button class="compact-fav" onclick="event.preventDefault(); window.location.href='{% url 'phones:toggle_favorite' listing.id %}'">
                             ❤️
                         </button>
@@ -96,34 +120,34 @@
 
                     <!-- Info Area -->
                     <div class="compact-info">
-                        <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
-                        <span class="compact-monthly">Bo'lib to'lash mavjud</span>
+                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px;">
+                            <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
+                            {% if listing.old_price %}
+                            <span style="font-size: 13px; color: var(--text-muted); text-decoration: line-through; font-weight: 700;">{{ listing.old_price|floatformat:0 }} $</span>
+                            {% endif %}
+                        </div>
                         
                         <h3 class="compact-title">{{ listing.title }}</h3>
                         
                         <div class="compact-meta">
-                            {% if listing.memory %}
-                                <span class="compact-memory">{{ listing.memory }}</span>
-                            {% endif %}
+                            <span class="compact-memory">{{ listing.memory }}GB</span>
+                            <span class="compact-memory" style="background:rgba(34,197,94,0.1); color:#16A34A;">🔋 {{ listing.battery_health }}%</span>
                         </div>
 
-                        <div class="compact-bottom">
+                        <div class="compact-bottom" style="margin-top: auto; padding-top: 15px;">
                             <p class="compact-seller">@{{ listing.seller.username }}</p>
-                            
                             <button class="compact-cart-btn" onclick="event.preventDefault(); event.stopPropagation(); addToCart('{{ listing.id }}', '{{ listing.title|escapejs }}', '{{ listing.price }}', '{% if listing.image %}{{ listing.image.url }}{% endif %}')">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                             </button>
                         </div>
                     </div>
                 </a>
             </div>
         {% empty %}
-            <div style="grid-column: 1/-1; text-align:center; padding: 60px;">
-                <h3 style="color:var(--text-muted);">Hozircha hech narsa yo'q</h3>
+            <div style="grid-column: 1/-1; text-align:center; padding: 100px 20px; background: #fff; border-radius: 30px; border: 2px dashed #EEE;">
+                <h3 style="color:var(--text-muted); font-weight: 800;">Hozircha mahsulot topilmadi</h3>
             </div>
         {% endfor %}
     </div>
-
-
 </div>
 {% endblock %}

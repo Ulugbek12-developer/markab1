@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     
     <!-- Standard CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.5">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.6">
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -25,106 +25,166 @@
             .mobile-only { display: flex !important; }
         }
         .mobile-only { display: none; }
+
+        /* Social Icons */
+        .social-link {
+            width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: #fff; transition: 0.3s; text-decoration: none;
+        }
+        .social-instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); }
+        .social-telegram { background: #0088cc; }
+        .social-phone { background: #22C55E; }
+        .social-link:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        footer { background: #fff; border-top: 1px solid var(--border); padding: 60px 0 30px; margin-top: 60px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-title { font-size: 18px; font-weight: 900; margin-bottom: 20px; color: var(--text-main); }
+        .footer-link { display: block; color: var(--text-muted); text-decoration: none; font-weight: 700; margin-bottom: 12px; transition: 0.2s; }
+        .footer-link:hover { color: var(--primary); padding-left: 5px; }
+
+        /* Region Modal */
+        #region-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 9999;
+            backdrop-filter: blur(8px);
+        }
+        .region-card {
+            background: #fff; padding: 40px; border-radius: 30px; width: 90%; max-width: 500px;
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        .region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .region-btn {
+            padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #F9F9F9;
+            font-weight: 800; cursor: pointer; transition: 0.2s;
+        }
+        .region-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
 
+    <!-- Region Selection Modal -->
+    <div id="region-modal">
+        <div class="region-card animate">
+            <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 10px;">Xush kelibsiz! 👋</h2>
+            <p id="region-question" style="font-weight: 700; color: var(--text-muted);">Siz Toshkent shahridanmisiz?</p>
+            
+            <div id="region-confirm" style="display: flex; gap: 15px; margin-top: 30px;">
+                <button onclick="selectRegion('Toshkent')" class="btn-primary" style="flex: 1; padding: 15px;">HA</button>
+                <button onclick="showRegionList()" class="btn-secondary" style="flex: 1; padding: 15px; border: 1px solid var(--border);">YO'Q</button>
+            </div>
+
+            <div id="region-selector" style="display: none;">
+                <p style="font-weight: 900; margin-bottom: 15px;">Viloyatingizni tanlang:</p>
+                <div class="region-grid">
+                    <button onclick="selectRegion('Andijon')" class="region-btn">Andijon</button>
+                    <button onclick="selectRegion('Buxoro')" class="region-btn">Buxoro</button>
+                    <button onclick="selectRegion('Farg\'ona')" class="region-btn">Farg'ona</button>
+                    <button onclick="selectRegion('Jizzax')" class="region-btn">Jizzax</button>
+                    <button onclick="selectRegion('Xorazm')" class="region-btn">Xorazm</button>
+                    <button onclick="selectRegion('Namangan')" class="region-btn">Namangan</button>
+                    <button onclick="selectRegion('Navoiy')" class="region-btn">Navoiy</button>
+                    <button onclick="selectRegion('Qashqadaryo')" class="region-btn">Qashqadaryo</button>
+                    <button onclick="selectRegion('Samarqand')" class="region-btn">Samarqand</button>
+                    <button onclick="selectRegion('Sirdaryo')" class="region-btn">Sirdaryo</button>
+                    <button onclick="selectRegion('Surxondaryo')" class="region-btn">Surxondaryo</button>
+                    <button onclick="selectRegion('Qoraqalpog\'iston')" class="region-btn">Qoraqalpog'iston</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Desktop Navbar -->
-    <header style="background: #fff; padding: 15px 0; border-bottom: 1px solid var(--border);">
+    <header style="background: #fff; padding: 15px 0; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000;">
         <div class="container" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-            <!-- Logo -->
-            <a href="{% url 'phones:home' %}" class="logo" style="display: flex; align-items: center; text-decoration: none; min-width: max-content;">
+            <a href="{% url 'phones:home' %}" class="logo">
                 <img src="{% static 'images/logo_.png' %}" alt="Markab Logo" class="logo-img" style="height: 40px;">
             </a>
             
-            <!-- Katalog Button -->
-            <a href="{% url 'phones:catalog' %}" class="btn-primary hide-on-mobile" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 14px; min-width: max-content; border-radius: 12px;">
+            <a href="{% url 'phones:catalog' %}" class="btn-primary hide-on-mobile" style="gap: 8px; padding: 12px 20px; font-size: 14px; border-radius: 12px;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                 Katalog
             </a>
 
-            <!-- Search Bar -->
-            <form action="{% url 'phones:search' %}" method="GET" style="flex: 1; position: relative; display: flex; max-width: 600px;" class="hide-on-mobile">
+            <form action="{% url 'phones:search' %}" method="GET" style="flex: 1; display: flex; max-width: 600px;" class="hide-on-mobile">
                 <input type="text" name="q" placeholder="Telefonlarni qidirish..." style="width: 100%; padding: 12px 20px; border-radius: 12px 0 0 12px; border: 1px solid var(--border); border-right: none; background: #F9F9F9; outline: none; font-weight: 700;">
                 <button type="submit" style="background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 0 12px 12px 0; cursor: pointer;">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </button>
             </form>
 
-            <!-- Action Icons -->
             <div style="display: flex; align-items: center; gap: 20px;">
-                <a href="{% url 'users:profile' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 12px; font-weight: 700; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                    Profil
-                </a>
-                <a href="{% url 'phones:favorites' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 12px; font-weight: 700; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+                <a href="{% url 'phones:favorites' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 12px; font-weight: 700;">
                     <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     Sevimliklar
                 </a>
-                <a href="{% url 'phones:cart' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 12px; font-weight: 700; position: relative; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+                <a href="{% url 'phones:cart' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 12px; font-weight: 700; position: relative;">
                     <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Savat
                     <span id="cart-count" style="display:none; position:absolute; top:-5px; right:-5px; background:var(--primary); color:white; font-size:10px; padding:2px 5px; border-radius:10px; font-weight:900;">0</span>
                 </a>
                 
                 {% if user.is_authenticated %}
-                    <form action="{% url 'users:logout' %}" method="POST" style="margin:0;">
-                        {% csrf_token %}
-                        <button type="submit" class="hide-on-mobile" style="background:none; border:none; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #FF4D4D; font-size: 12px; font-weight: 700; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                            Chiqish
-                        </button>
-                    </form>
+                    <a href="{% url 'users:profile' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 12px; font-weight: 700;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        Profil
+                    </a>
                 {% else %}
-                    <a href="{% url 'users:login' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--primary); font-size: 12px; font-weight: 700; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                    <a href="{% url 'users:login' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--primary); font-size: 12px; font-weight: 700;">
                         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
                         Kirish
                     </a>
                 {% endif %}
                 
-                {% if user.is_staff %}
-                    <a href="{% url 'phones:admin_dashboard' %}" class="btn-primary hide-on-mobile" style="background:var(--text-main); color:#fff; padding: 10px 20px; font-size: 14px; border-radius: 12px;">Do'kon Paneli</a>
+                {% if user.role == 'head_admin' or user.role == 'staff_seller' or user.role == 'staff_cashier' %}
+                    <a href="{% url 'phones:admin_dashboard' %}" class="btn-primary" style="background:var(--text-main); color:#fff; padding: 10px 20px; font-size: 14px; border-radius: 12px;">Panel</a>
                 {% endif %}
-
-                <!-- Mobile Only Search Icon -->
-                <a href="{% url 'phones:search' %}" class="mobile-only" style="color: var(--text-main);">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </a>
             </div>
         </div>
     </header>
-    
-    <!-- Secondary Nav / Categories (Desktop) -->
-    <div class="hide-on-mobile" style="border-bottom: 1px solid var(--border); background: #fff; padding: 12px 0;">
-        <div class="container" style="display: flex; gap: 30px; overflow-x: auto; font-weight: 700; font-size: 14px; color: var(--text-muted);">
-            <a href="?filter=week" style="text-decoration:none; color:inherit; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Hafta tovarlari</a>
-            <a href="?model=iPhone" style="text-decoration:none; color:inherit; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">iPhone</a>
-            <a href="?model=Samsung" style="text-decoration:none; color:inherit; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Samsung</a>
-            <a href="?model=Xiaomi" style="text-decoration:none; color:inherit; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Xiaomi</a>
-            <a href="{% url 'phones:home' %}" style="text-decoration:none; color:inherit; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Nasiya</a>
-            <a href="?filter=sale" style="text-decoration:none; color:inherit; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Cheklangan taklif</a>
-        </div>
-    </div>
 
     <!-- Main Content -->
     <main class="container" style="padding-top: 40px; padding-bottom: 100px;">
-        {% if messages %}
-            <div style="margin-bottom: 30px;">
-                {% for message in messages %}
-                    <div style="padding: 15px 20px; border-radius: 16px; margin-bottom: 10px; font-weight: 700; {% if message.tags == 'success' %}background:#E6F4EA; color:#1E7E34;{% else %}background:#FCE8E6; color:#D93025;{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-        
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <img src="{% static 'images/logo_.png' %}" alt="Markab" style="height: 40px; margin-bottom: 20px;">
+                    <p style="color: var(--text-muted); font-weight: 700; line-height: 1.6;">Markab Electronics — O'zbekistondagi eng premium va ishonchli iPhone marketplace. Biz bilan sifatli texnikani kafolat bilan oling.</p>
+                    <div style="display: flex; gap: 15px; margin-top: 25px;">
+                        <a href="tel:+998901234567" class="social-link social-phone">📞</a>
+                        <a href="https://t.me/markab_admin" target="_blank" class="social-link social-telegram">✈️</a>
+                        <a href="https://instagram.com/markab" target="_blank" class="social-link social-instagram">📸</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="footer-title">Xaridorlarga</h3>
+                    <a href="{% url 'phones:catalog' %}" class="footer-link">Barcha telefonlar</a>
+                    <a href="{% url 'phones:price' %}" class="footer-link">Telefonni narxlash</a>
+                    <a href="{% url 'phones:home' %}" class="footer-link">Muddatli to'lov (Nasiya)</a>
+                    <a href="{% url 'phones:favorites' %}" class="footer-link">Saralanganlar</a>
+                </div>
+                <div>
+                    <h3 class="footer-title">Biz haqimizda</h3>
+                    <a href="#" class="footer-link">Bizning do'konlar</a>
+                    <a href="#" class="footer-link">Kafolat va qaytarish</a>
+                    <a href="#" class="footer-link">Yetkazib berish</a>
+                    <a href="#" class="footer-link">Kontaktlar</a>
+                </div>
+            </div>
+            <div style="text-align: center; border-top: 1px solid var(--border); padding-top: 30px; font-size: 14px; color: var(--text-muted); font-weight: 800;">
+                © 2026 Markab Electronics. Barcha huquqlar himoyalangan.
+            </div>
+        </div>
+    </footer>
+
     <!-- Mobile Navigation -->
     <nav class="mobile-nav">
-        <a href="{% url 'phones:home' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <a href="{% url 'phones:home' %}" class="mobile-nav-link active">
             <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
             <span>Asosiy</span>
         </a>
@@ -133,22 +193,14 @@
             <span>Narxlash</span>
         </a>
         <a href="{% url 'phones:sell' %}" class="mobile-nav-link" style="margin-top: -30px;">
-            <div style="background:var(--primary); width:56px; height:56px; border-radius:18px; display:flex; align-items:center; justify-content:center; color:white; box-shadow:0 10px 20px rgba(177,34,65,0.3);">
+            <div style="background:var(--primary); width:56px; height:56px; border-radius:18px; display:flex; align-items:center; justify-content:center; color:white;">
                 <svg class="icon" style="width:30px; height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
             </div>
-            <span style="margin-top:5px;">Sotish</span>
         </a>
-        {% if user.is_staff %}
-        <a href="{% url 'phones:admin_dashboard' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
-            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-            <span>Panel</span>
-        </a>
-        {% else %}
         <a href="{% url 'phones:favorites' %}" class="mobile-nav-link">
             <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-            <span>Saralangan</span>
+            <span>Sevimli</span>
         </a>
-        {% endif %}
         <a href="{% url 'users:profile' %}" class="mobile-nav-link">
             <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
             <span>Profil</span>
@@ -156,7 +208,34 @@
     </nav>
 
     <script>
-        // Cart Logic (Standard JS)
+        // Region Selection Logic
+        window.addEventListener('load', function() {
+            if (!localStorage.getItem('user_region')) {
+                document.getElementById('region-modal').style.display = 'flex';
+            }
+        });
+
+        function showRegionList() {
+            document.getElementById('region-confirm').style.display = 'none';
+            document.getElementById('region-question').innerText = 'Hududingizni tanlang';
+            document.getElementById('region-selector').style.display = 'block';
+        }
+
+        function selectRegion(region) {
+            localStorage.setItem('user_region', region);
+            document.getElementById('region-modal').style.display = 'none';
+            
+            // Track in Backend
+            fetch("{% url 'phones:track_region' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ region: region })
+            });
+        }
+
         function updateCartUI() {
             const cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
             const countEl = document.getElementById('cart-count');
@@ -167,52 +246,7 @@
                 countEl.style.display = 'none';
             }
         }
-
-        function addToCart(id, title, price, image) {
-            let cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
-            if (!cart.find(item => item.id === id)) {
-                cart.push({ id, title, price, image });
-                localStorage.setItem('markab-cart', JSON.stringify(cart));
-                updateCartUI();
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Savatga qo\'shildi!',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'info',
-                    title: 'Bu mahsulot savatda bor!',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-        }
-
         updateCartUI();
-
-        // Show Django messages as SweetAlert
-        {% if messages %}
-            {% for message in messages %}
-                Swal.fire({
-                    title: "{% if message.tags == 'success' %}Ajoyib!{% else %}Xatolik!{% endif %}",
-                    text: "{{ message }}",
-                    icon: "{% if message.tags == 'success' %}success{% else %}error{% endif %}",
-                    confirmButtonColor: 'var(--primary)',
-                    confirmButtonText: 'Tushunarli',
-                    customClass: {
-                        popup: 'premium-card',
-                        title: 'wizard-title',
-                        confirmButton: 'btn-next'
-                    }
-                });
-            {% endfor %}
-        {% endif %}
     </script>
 </body>
 </html>

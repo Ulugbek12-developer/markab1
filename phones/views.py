@@ -130,6 +130,16 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         if self.request.user.role in ['head_admin', 'staff_cashier']:
             context['orders'] = Order.objects.all().order_by('-created_at')
             context['assessments'] = PriceAssessment.objects.all().order_by('-created_at')
+            
+            # Statistics for Head Admin
+            if self.request.user.role == 'head_admin':
+                from .models import SiteAnalytics
+                from django.utils import timezone
+                today_stats, _ = SiteAnalytics.objects.get_or_create(date=timezone.now().date())
+                context['stats'] = today_stats
+                context['total_users'] = User.objects.count()
+                context['total_listings'] = Listing.objects.count()
+                
         context['branches'] = Branch.objects.all()
         return context
 
@@ -378,6 +388,16 @@ class StorePanelView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         form.instance.seller = self.request.user
         form.instance.is_approved = True
+        
+        # Handle Aksiya fields
+        form.instance.is_sale = self.request.POST.get('is_sale') == 'on'
+        old_price = self.request.POST.get('old_price')
+        if old_price:
+            form.instance.old_price = old_price
+            
+        # Additional fields
+        form.instance.color = self.request.POST.get('color', '')
+        
         return super().form_valid(form)
 
 class AdminBranchCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -435,3 +455,34 @@ def nasiya_submit(request):
 
         return JsonResponse({"status": "ok"})
     return JsonResponse({"error": "POST only"}, status=405)
+
+class TrackRegionView(View):
+    def post(self, request):
+        import json
+        from .models import SiteAnalytics
+        from django.utils import timezone
+        try:
+            data = json.loads(request.body)
+            region = data.get('region')
+            if region:
+                stats, _ = SiteAnalytics.objects.get_or_create(date=timezone.now().date())
+                current_stats = stats.region_stats
+                current_stats[region] = current_stats.get(region, 0) + 1
+                stats.region_stats = current_stats
+                stats.save()
+                return JsonResponse({"status": "ok"})
+        except: pass
+        return JsonResponse({"status": "error"}, status=400)
+
+class AnalyticsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not request.path.startswith('/static/') and not request.path.startswith('/media/'):
+            from .models import SiteAnalytics
+            from django.utils import timezone
+            stats, _ = SiteAnalytics.objects.get_or_create(date=timezone.now().date())
+            stats.total_visits += 1
+            stats.save()
+        return self.get_response(request)

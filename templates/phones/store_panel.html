@@ -14,16 +14,6 @@
             <p style="color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; margin-top: 10px;">Vitrinaga telefon qo'shish</p>
         </div>
 
-        {% if messages %}
-            <div style="margin-bottom: 30px;">
-                {% for message in messages %}
-                <div style="background: #E6F4EA; color: #1E7E34; padding: 20px; border-radius: 16px; font-weight: 900; font-size: 14px;">
-                    ✅ {{ message }}
-                </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
         <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 30px;" id="storeForm">
             {% csrf_token %}
 
@@ -43,7 +33,7 @@
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
                 <!-- Title -->
-                <div>
+                <div style="grid-column: 1 / -1;">
                     <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Sarlavha <span style="color:var(--primary);">*</span></label>
                     <input type="text" name="title" required placeholder="iPhone 15 Pro" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
                 </div>
@@ -51,13 +41,32 @@
                 <!-- Price -->
                 <div>
                     <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Narxi ($) <span style="color:var(--primary);">*</span></label>
-                    <input type="number" name="price" required placeholder="850" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:900; color:var(--primary); outline:none;">
+                    <input type="number" name="price" id="price_input" required placeholder="850" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:900; color:var(--primary); outline:none;">
+                </div>
+
+                <!-- Aksiya Checkbox -->
+                <div style="display:flex; align-items:center; gap:10px; background:#FCE8E6; padding:15px; border-radius:16px;">
+                    <input type="checkbox" name="is_sale" id="is_sale_check" style="width:20px; height:20px; cursor:pointer;">
+                    <label for="is_sale_check" style="font-weight:900; font-size:14px; color:var(--primary); cursor:pointer;">AKSIYA QILISH 🔥</label>
+                </div>
+
+                <!-- Old Price (Visible only if is_sale is checked) -->
+                <div id="old_price_wrapper" style="display:none; grid-column: 1 / -1;">
+                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Asl narxi (Aksiyadan oldingi, $) <span style="color:var(--primary);">*</span></label>
+                    <input type="number" name="old_price" placeholder="1000" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--primary); background:#FFF5F5; font-weight:900; color:var(--text-muted); outline:none;">
+                    <p style="font-size:11px; font-weight:700; color:var(--primary); margin-top:5px;">⚠️ Bu narx ustiga chiziladi, "Narxi" qismiga esa yangi (arzon) narxni yozing.</p>
                 </div>
 
                 <!-- Model -->
                 <div>
-                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Model</label>
+                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Model (Masalan: 15 Pro Max)</label>
                     <input type="text" name="model_name" placeholder="15 Pro" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
+                </div>
+
+                <!-- Color -->
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Rangi</label>
+                    <input type="text" name="color" placeholder="Natural Titanium" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
                 </div>
 
                 <!-- Memory -->
@@ -78,23 +87,12 @@
                     <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Yomkest (%)</label>
                     <input type="number" name="battery_health" placeholder="98" min="1" max="100" style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
                 </div>
-
-                <!-- Condition -->
-                <div>
-                    <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Holati <span style="color:var(--primary);">*</span></label>
-                    <select name="condition" required style="width:100%; padding:15px; border-radius:16px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none;">
-                        <option value="new">Yangi (Upakovka)</option>
-                        <option value="ideal" selected>Ideal</option>
-                        <option value="good">Yaxshi</option>
-                        <option value="bad">Ta'mir talab</option>
-                    </select>
-                </div>
             </div>
 
             <!-- Description -->
             <div>
                 <label style="display:block; font-size:12px; font-weight:900; margin-bottom:8px; color:var(--text-muted); text-transform:uppercase;">Qo'shimcha ma'lumotlar</label>
-                <textarea name="description" rows="5" placeholder="Telefon rangi, qutisi bormi, almashtirilgan detallari bormi..." style="width:100%; padding:20px; border-radius:24px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none; resize:none;"></textarea>
+                <textarea name="description" rows="5" placeholder="Holati, aybi bormi, qutisi bormi..." style="width:100%; padding:20px; border-radius:24px; border:1px solid var(--border); background:#F9F9F9; font-weight:700; outline:none; resize:none;"></textarea>
             </div>
 
             <button type="submit" class="btn-primary" style="padding:20px; font-size:18px; width:100%; text-transform:uppercase; letter-spacing:1px;">
@@ -105,6 +103,7 @@
 </div>
 
 <script>
+    // Image Preview
     document.getElementById('imageInput').addEventListener('change', function(e) {
         if (e.target.files && e.target.files[0]) {
             var reader = new FileReader();
@@ -115,6 +114,19 @@
                 document.getElementById('imagePlaceholder').style.display = 'none';
             }
             reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
+    // Aksiya Toggle
+    document.getElementById('is_sale_check').addEventListener('change', function() {
+        const wrapper = document.getElementById('old_price_wrapper');
+        const oldPriceInput = wrapper.querySelector('input');
+        if (this.checked) {
+            wrapper.style.display = 'block';
+            oldPriceInput.required = true;
+        } else {
+            wrapper.style.display = 'none';
+            oldPriceInput.required = false;
         }
     });
 </script>
