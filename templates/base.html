@@ -45,6 +45,18 @@
 
             <div style="display: flex; align-items: center; gap: 12px;">
 
+                <!-- Mobile Logout/Login -->
+                <div class="mobile-only" style="align-items: center;">
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'users:logout' %}" method="POST" style="margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" style="background:none; border:none; color:#FF4D4D; font-weight:800; font-size:13px; cursor:pointer;">Chiqish</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" style="text-decoration:none; color:var(--primary); font-weight:800; font-size:13px;">Kirish</a>
+                    {% endif %}
+                </div>
+
                 <!-- Login/Logout — desktop only -->
                 <div class="hide-on-mobile nav-links" style="gap: 15px; align-items: center;">
                     {% if user.is_authenticated %}

@@ -3,62 +3,250 @@
 
 {% block title %}Mening Profilim | Markab{% endblock %}
 
+{% block extra_head %}
+<style>
+    .profile-hero {
+        background: linear-gradient(135deg, #B12241 0%, #7a1430 100%);
+        border-radius: 28px;
+        padding: 36px 24px 60px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: -40px;
+    }
+    .profile-hero::before {
+        content: '';
+        position: absolute;
+        top: -40px; right: -40px;
+        width: 180px; height: 180px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 50%;
+    }
+    .profile-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -30px; left: -30px;
+        width: 120px; height: 120px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 50%;
+    }
+    .profile-avatar {
+        width: 88px;
+        height: 88px;
+        background: rgba(255,255,255,0.18);
+        border: 3px solid rgba(255,255,255,0.35);
+        border-radius: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+        margin: 0 auto 14px;
+        backdrop-filter: blur(10px);
+    }
+    .profile-name {
+        font-size: 22px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 4px;
+        letter-spacing: -0.3px;
+    }
+    .profile-role {
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.65);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .profile-body {
+        background: #fff;
+        border-radius: 28px;
+        padding: 56px 20px 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 40px rgba(177,34,65,0.08);
+        border: 1px solid #F5F5F5;
+    }
+    .stat-card {
+        background: linear-gradient(135deg, #FFF5F7, #fff);
+        border-radius: 18px;
+        padding: 20px 10px;
+        text-align: center;
+        border: 1px solid rgba(177,34,65,0.1);
+        flex: 1;
+    }
+    .stat-num {
+        font-size: 34px;
+        font-weight: 900;
+        color: var(--primary);
+        line-height: 1;
+        display: block;
+    }
+    .stat-label {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-top: 6px;
+        display: block;
+    }
+    .menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 16px;
+        border-radius: 16px;
+        border: 1px solid #F0F0F0;
+        background: #FAFAFA;
+        text-decoration: none;
+        transition: all 0.2s;
+        margin-bottom: 10px;
+        cursor: pointer;
+        width: 100%;
+    }
+    .menu-item:hover {
+        background: #FFF5F7;
+        border-color: rgba(177,34,65,0.2);
+        transform: translateX(3px);
+    }
+    .menu-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin-right: 14px;
+        flex-shrink: 0;
+    }
+    .menu-label {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+    .menu-chevron {
+        color: #CCC;
+        flex-shrink: 0;
+    }
+    .logout-item {
+        background: linear-gradient(135deg, #FFF5F7, #fff);
+        border-color: rgba(177,34,65,0.15);
+    }
+    .logout-item:hover {
+        background: #FFF0F3;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 py-16">
-    <!-- Profile Header -->
-    <div class="text-center mb-16">
-        <div class="relative inline-block mb-6">
-            <div class="absolute -inset-4 bg-primary/10 rounded-full blur-2xl opacity-50"></div>
-            <div class="relative w-32 h-32 bg-white border-8 border-red-50 rounded-[2.5rem] flex items-center justify-center text-5xl shadow-2xl shadow-red-100">
-                👤
-            </div>
-        </div>
-        <h2 class="text-3xl font-black text-slate-900 tracking-tight mb-2">MENING PROFILIM</h2>
-        <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Markab Electronics foydalanuvchisi</p>
-    </div>
+<div class="animate" style="max-width: 460px; margin: 0 auto;">
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-2 gap-6 mb-12">
-        <div class="bg-white rounded-[2rem] p-10 text-center border border-red-50 shadow-xl shadow-red-50 hover:shadow-red-100 transition-all group">
-            <h1 class="text-5xl font-black text-primary mb-2 group-hover:scale-110 transition-transform">{{ listings_count|default:0 }}</h1>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">E'lonlarim</p>
+    <!-- Hero Banner -->
+    <div class="profile-hero">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-name">
+            {% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}
         </div>
-        <div class="bg-white rounded-[2rem] p-10 text-center border border-red-50 shadow-xl shadow-red-50 hover:shadow-red-100 transition-all group">
-            <h1 class="text-5xl font-black text-primary mb-2 group-hover:scale-110 transition-transform">{{ orders_count|default:0 }}</h1>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Buyurtmalarim</p>
+        <div class="profile-role">
+            {% if user.is_staff %}🔐 Admin &nbsp;·&nbsp; {% endif %}Markab foydalanuvchisi
         </div>
     </div>
 
-    <!-- Menu Actions -->
-    <div class="space-y-4">
-        <a href="#" class="flex items-center justify-between bg-white rounded-3xl p-6 border border-slate-50 hover:border-red-100 transition-all group shadow-sm">
-            <div class="flex items-center gap-5">
-                <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center text-xl group-hover:bg-red-50 group-hover:text-primary transition-all">⚙️</div>
-                <span class="font-black text-slate-700 group-hover:text-slate-900">Sozlamalar</span>
+    <!-- Stats Cards (overlapping hero) -->
+    <div style="padding: 0 16px; position:relative; z-index:2; margin-bottom:16px;">
+        <div style="display:flex; gap:12px;">
+            <div class="stat-card">
+                <span class="stat-num">{{ listings_count|default:0 }}</span>
+                <span class="stat-label">E'lonlarim</span>
             </div>
-            <svg class="w-5 h-5 text-slate-300 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
-        </a>
-        <a href="#" class="flex items-center justify-between bg-white rounded-3xl p-6 border border-slate-50 hover:border-red-100 transition-all group shadow-sm">
-            <div class="flex items-center gap-5">
-                <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center text-xl group-hover:bg-red-50 group-hover:text-primary transition-all">❓</div>
-                <span class="font-black text-slate-700 group-hover:text-slate-900">Yordam markazi</span>
+            <div class="stat-card">
+                <span class="stat-num">{{ orders_count|default:0 }}</span>
+                <span class="stat-label">Buyurtmalar</span>
             </div>
-            <svg class="w-5 h-5 text-slate-300 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
-        </a>
-        <a href="#" class="flex items-center justify-between bg-red-50/50 rounded-3xl p-6 border border-red-100/50 hover:bg-red-50 transition-all group shadow-sm">
-            <div class="flex items-center gap-5">
-                <div class="w-12 h-12 rounded-2xl bg-white text-primary flex items-center justify-center text-xl shadow-sm">🚪</div>
-                <span class="font-black text-primary">Tizimdan chiqish</span>
+            <div class="stat-card" style="background:linear-gradient(135deg,#F0F8FF,#fff); border-color:rgba(0,100,200,0.1);">
+                <span class="stat-num" style="color:#1565C0;">⭐</span>
+                <span class="stat-label">Premium</span>
             </div>
-            <svg class="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
-        </a>
+        </div>
     </div>
 
-    <div class="text-center mt-16">
-        <div class="inline-block px-6 py-2 rounded-full bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] shadow-inner">
-            Markab Premium v2.0
+    <!-- Menu Section -->
+    <div style="padding: 0 16px; margin-bottom: 80px;">
+
+        <!-- Section Title -->
+        <p style="font-size:11px; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; padding-left:4px;">
+            Menyu
+        </p>
+
+        <!-- E'lonlarim -->
+        <a href="{% url 'phones:home' %}" class="menu-item">
+            <div style="display:flex; align-items:center;">
+                <div class="menu-icon" style="background:#FFF5F7;">📱</div>
+                <span class="menu-label">E'lonlarim</span>
+            </div>
+            <svg class="menu-chevron" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <!-- Saralanganlar -->
+        <a href="{% url 'phones:favorites' %}" class="menu-item">
+            <div style="display:flex; align-items:center;">
+                <div class="menu-icon" style="background:#FFF0F5;">❤️</div>
+                <span class="menu-label">Saralanganlar</span>
+            </div>
+            <svg class="menu-chevron" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <!-- Savatcha -->
+        <a href="{% url 'phones:cart' %}" class="menu-item">
+            <div style="display:flex; align-items:center;">
+                <div class="menu-icon" style="background:#F0FFF4;">🛒</div>
+                <span class="menu-label">Savatcha</span>
+            </div>
+            <svg class="menu-chevron" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <!-- Narxlash -->
+        <a href="{% url 'phones:price' %}" class="menu-item">
+            <div style="display:flex; align-items:center;">
+                <div class="menu-icon" style="background:#FFFBF0;">💰</div>
+                <span class="menu-label">Narxlash</span>
+            </div>
+            <svg class="menu-chevron" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        {% if user.is_staff %}
+        <!-- Admin Panel -->
+        <a href="{% url 'phones:admin_dashboard' %}" class="menu-item" style="background:linear-gradient(135deg,#F5F5F5,#fff); border-color:#E0E0E0;">
+            <div style="display:flex; align-items:center;">
+                <div class="menu-icon" style="background:#1A1A1A; color:white; font-size:16px;">⚡</div>
+                <span class="menu-label">Do'kon Paneli</span>
+            </div>
+            <svg class="menu-chevron" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+        {% endif %}
+
+        <!-- Divider -->
+        <div style="border-top:1px solid #F0F0F0; margin:14px 0;"></div>
+
+        <!-- Logout -->
+        <form action="{% url 'users:logout' %}" method="POST" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="menu-item logout-item">
+                <div style="display:flex; align-items:center;">
+                    <div class="menu-icon" style="background:rgba(177,34,65,0.1);">🚪</div>
+                    <span class="menu-label" style="color:var(--primary);">Tizimdan chiqish</span>
+                </div>
+                <svg width="18" height="18" fill="none" stroke="var(--primary)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </form>
+
+        <!-- Version -->
+        <div style="text-align:center; margin-top:20px;">
+            <span style="font-size:10px; font-weight:800; color:#CCC; text-transform:uppercase; letter-spacing:2px;">
+                Markab Premium v2.0
+            </span>
         </div>
+
     </div>
 </div>
 {% endblock %}
-
