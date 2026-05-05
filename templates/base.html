@@ -136,13 +136,25 @@
                 catalog: "Katalog", search: "Telefonlarni qidirish...", about: "Haqida",
                 cart: "Savat", profile: "Profil", theme_dark: "Tun", theme_light: "Kun",
                 about_title: "Markab Haqida", about_close: "TUSHUNARLI",
-                about_text: "Markab Electronics — O'zbekiston bozorida 5 yildan buyon faoliyat yurituvchi premium iPhone do'koni. Biz faqat original va ishonchli texnikalarni taqdim etamiz."
+                about_text: "Markab Electronics — O'zbekiston bozorida 5 yildan buyon faoliyat yurituvchi premium iPhone do'koni. Biz faqat original va ishonchli texnikalarni taqdim etamiz.",
+                sell_phone: "Telefon sotish", sell_desc: "Tezda baholash va naqd to'lov", start: "Boshlash",
+                free_price: "Bepul baholash", price_desc: "2 daqiqada narxni biling", pricing: "Baholash",
+                sell: "Sotish", nasiya: "Nasiya", promos: "Aksiya",
+                promos_filter: "🔥 AKSIYALAR", new_ads: "Yangi e'lonlar",
+                all_products: "Barcha mahsulotlar", promo_products: "Aksiya Mahsulotlari",
+                empty_products: "Hozircha mahsulot topilmadi"
             },
             ru: {
                 catalog: "Каталог", search: "Поиск телефонов...", about: "О нас",
                 cart: "Корзина", profile: "Профиль", theme_dark: "Ночь", theme_light: "День",
                 about_title: "О Markab", about_close: "ПОНЯТНО",
-                about_text: "Markab Electronics — премиальный магазин iPhone, работающий на рынке Узбекистана более 5 лет. Мы предлагаем только оригинальную и надежную технику."
+                about_text: "Markab Electronics — премиальный магазин iPhone, работающий на рынке Узбекистана более 5 лет. Мы предлагаем только оригинальную и надежную технику.",
+                sell_phone: "Продать телефон", sell_desc: "Быстрая оценка и наличные", start: "Начать",
+                free_price: "Бесплатная оценка", price_desc: "Узнайте цену за 2 минуты", pricing: "Оценить",
+                sell: "Продать", nasiya: "Рассрочка", promos: "Акции",
+                promos_filter: "🔥 АКЦИИ", new_ads: "Новые объявления",
+                all_products: "Все товары", promo_products: "Акционные товары",
+                empty_products: "Пока нет товаров"
             }
         };
 
@@ -152,17 +164,27 @@
             const t = translations[lang];
 
             document.documentElement.setAttribute('data-theme', theme);
-            document.getElementById('nav-catalog').innerText = t.catalog;
-            document.getElementById('search-placeholder').placeholder = t.search;
-            document.getElementById('about-btn-label').innerText = t.about;
-            document.getElementById('cart-label').innerText = t.cart;
-            document.getElementById('profile-label').innerText = t.profile;
-            document.getElementById('lang-label').innerText = lang.toUpperCase();
-            document.getElementById('lang-flag').innerText = lang === 'uz' ? '🇺🇿' : '🇷🇺';
-            document.getElementById('theme-label').innerText = theme === 'dark' ? t.theme_dark : t.theme_light;
-            document.getElementById('about-title').innerText = t.about_title;
-            document.getElementById('about-text').innerText = t.about_text;
-            document.getElementById('about-close').innerText = t.about_close;
+            
+            // Header Translations
+            if(document.getElementById('nav-catalog')) document.getElementById('nav-catalog').innerText = t.catalog;
+            if(document.getElementById('search-placeholder')) document.getElementById('search-placeholder').placeholder = t.search;
+            if(document.getElementById('about-btn-label')) document.getElementById('about-btn-label').innerText = t.about;
+            if(document.getElementById('cart-label')) document.getElementById('cart-label').innerText = t.cart;
+            if(document.getElementById('profile-label')) document.getElementById('profile-label').innerText = t.profile;
+            if(document.getElementById('lang-label')) document.getElementById('lang-label').innerText = lang.toUpperCase();
+            if(document.getElementById('lang-flag')) document.getElementById('lang-flag').innerText = lang === 'uz' ? '🇺🇿' : '🇷🇺';
+            if(document.getElementById('theme-label')) document.getElementById('theme-label').innerText = theme === 'dark' ? t.theme_dark : t.theme_light;
+            if(document.getElementById('about-title')) document.getElementById('about-title').innerText = t.about_title;
+            if(document.getElementById('about-text')) document.getElementById('about-text').innerText = t.about_text;
+            if(document.getElementById('about-close')) document.getElementById('about-close').innerText = t.about_close;
+
+            // Generic elements translation
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (t[key]) {
+                    el.innerText = t[key];
+                }
+            });
         }
 
         function toggleLang() {

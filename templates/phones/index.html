@@ -34,18 +34,18 @@
                 <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                 </div>
-                <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 5px;">Telefon sotish</h3>
-                <p style="font-size: 13px; opacity: 0.9; margin-bottom: 15px;">Tezda baholash va naqd to'lov</p>
-                <div style="font-weight: 900; font-size: 14px;">Boshlash &rarr;</div>
+                <h3 data-lang-key="sell_phone" style="font-size: 20px; font-weight: 900; margin-bottom: 5px;">Telefon sotish</h3>
+                <p data-lang-key="sell_desc" style="font-size: 13px; opacity: 0.9; margin-bottom: 15px;">Tezda baholash va naqd to'lov</p>
+                <div style="font-weight: 900; font-size: 14px;"><span data-lang-key="start">Boshlash</span> &rarr;</div>
             </a>
 
             <a href="{% url 'phones:price' %}" class="premium-card" style="flex:1; padding: 25px; text-decoration: none; display: flex; flex-direction: column; justify-content: center;">
                 <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(177, 34, 65, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                 </div>
-                <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 5px; color: var(--text-main);">Bepul baholash</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">2 daqiqada narxni biling</p>
-                <div style="font-weight: 900; font-size: 14px; color: var(--primary);">Baholash &rarr;</div>
+                <h3 data-lang-key="free_price" style="font-size: 20px; font-weight: 900; margin-bottom: 5px; color: var(--text-main);">Bepul baholash</h3>
+                <p data-lang-key="price_desc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">2 daqiqada narxni biling</p>
+                <div style="font-weight: 900; font-size: 14px; color: var(--primary);"><span data-lang-key="pricing">Baholash</span> &rarr;</div>
             </a>
         </div>
     </div>
@@ -56,7 +56,7 @@
             <div style="width: 50px; height: 50px; border-radius: 16px; background: #F9F9F9; display: flex; align-items: center; justify-content: center; color: var(--primary);">
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
             </div>
-            <div style="font-weight: 900; font-size: 14px;">Sotish</div>
+            <div data-lang-key="sell" style="font-weight: 900; font-size: 14px;">Sotish</div>
         </a>
         <a href="?model=iPhone" class="premium-card" style="text-align: center; padding: 20px; text-decoration: none; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
             <div style="width: 50px; height: 50px; border-radius: 16px; background: #F9F9F9; display: flex; align-items: center; justify-content: center;">
@@ -68,24 +68,24 @@
             <div style="width: 50px; height: 50px; border-radius: 16px; background: #F9F9F9; display: flex; align-items: center; justify-content: center; color: var(--primary);">
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
             </div>
-            <div style="font-weight: 900; font-size: 14px;">Nasiya</div>
+            <div data-lang-key="nasiya" style="font-weight: 900; font-size: 14px;">Nasiya</div>
         </a>
         <a href="?filter=sale" class="premium-card" style="text-align: center; padding: 20px; text-decoration: none; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
             <div style="width: 50px; height: 50px; border-radius: 16px; background: #FCE8E6; display: flex; align-items: center; justify-content: center; color: var(--primary);">
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
             </div>
-            <div style="font-weight: 900; font-size: 14px;">Aksiya</div>
+            <div data-lang-key="promos" style="font-weight: 900; font-size: 14px;">Aksiya</div>
         </a>
     </div>
 
     <!-- Toggles -->
     <div style="display: flex; gap: 15px; margin-bottom: 30px;">
-        <a href="?filter=sale" class="btn-secondary" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'sale' %}background: var(--primary); color: white;{% endif %}">🔥 AKSIYALAR</a>
-        <a href="?filter=week" class="btn-secondary" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'week' %}background: var(--primary); color: white;{% endif %}">Yangi e'lonlar</a>
+        <a href="?filter=sale" data-lang-key="promos_filter" class="btn-secondary" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'sale' %}background: var(--primary); color: white;{% endif %}">🔥 AKSIYALAR</a>
+        <a href="?filter=week" data-lang-key="new_ads" class="btn-secondary" style="font-weight: 900; padding: 12px 24px; font-size: 14px; border-radius: 16px; {% if request.GET.filter == 'week' %}background: var(--primary); color: white;{% endif %}">Yangi e'lonlar</a>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-        <h2 style="font-size:24px; font-weight:900;">{% if request.GET.filter == 'sale' %}Aksiya Mahsulotlari{% else %}Barcha mahsulotlar{% endif %}</h2>
+        <h2 style="font-size:24px; font-weight:900;">{% if request.GET.filter == 'sale' %}<span data-lang-key="promo_products">Aksiya Mahsulotlari</span>{% else %}<span data-lang-key="all_products">Barcha mahsulotlar</span>{% endif %}</h2>
     </div>
 
     <!-- Products Grid -->
@@ -141,7 +141,7 @@
             </div>
         {% empty %}
             <div style="grid-column: 1/-1; text-align:center; padding: 100px 20px; background: #fff; border-radius: 30px; border: 2px dashed #EEE;">
-                <h3 style="color:var(--text-muted); font-weight: 800;">Hozircha mahsulot topilmadi</h3>
+                <h3 data-lang-key="empty_products" style="color:var(--text-muted); font-weight: 800;">Hozircha mahsulot topilmadi</h3>
             </div>
         {% endfor %}
     </div>
