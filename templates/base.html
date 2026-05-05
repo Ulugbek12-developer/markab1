@@ -115,10 +115,15 @@
         .btn-phone { background: #22C55E; }
         .btn-msg { background: var(--primary); }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .nav-wrapper { gap: 10px; }
+            .logo-area img { height: 24px; }
+            .search-area { max-width: none; }
+            .search-input { padding: 9px 12px 9px 35px; font-size: 13px; border-radius: 12px; }
+            .search-icon { left: 10px; }
+            .header-btn { gap: 0; }
             .header-btn span { display: none; }
-            .header-actions { gap: 8px; }
-            .search-area { display: none; } /* On mobile, use catalog search */
+            .header-actions { gap: 10px; }
         }
     </style>
     {% block extra_head %}{% endblock %}
