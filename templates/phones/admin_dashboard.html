@@ -5,19 +5,31 @@
 <div class="animate">
 
     <!-- Header -->
-    <div style="margin-bottom:30px;">
-        <h1 style="font-size:26px; font-weight:900; color:var(--text-main);">🔐 Admin Panel</h1>
-        <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Do'kon boshqaruvi</p>
+    <div style="margin-bottom:30px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="font-size:26px; font-weight:900; color:var(--text-main);">🔐 Admin Panel</h1>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Do'kon boshqaruvi</p>
+        </div>
+        {% if user.role == 'head_admin' %}
+        <div style="background: rgba(177,34,65,0.1); color: var(--primary); padding: 8px 15px; border-radius: 10px; font-weight: 900; font-size: 12px; display: flex; align-items: center; gap: 8px;">
+            👑 DIREKTOR REJIMIDA
+        </div>
+        {% endif %}
     </div>
 
     <!-- Action Buttons -->
     <div style="display:flex; gap:10px; margin-bottom:30px; flex-wrap:wrap;">
-        <a href="{% url 'phones:admin_branch_add' %}" class="btn-secondary" style="font-size:13px; padding:10px 16px; border-radius:12px; font-weight:800;">
+        <a href="{% url 'phones:admin_branch_add' %}" class="btn-secondary" style="font-size:13px; padding:10px 16px; border-radius:12px; font-weight:800; border: 1px solid var(--border);">
             🏪 Filial Qo'shish
         </a>
         <a href="{% url 'phones:admin_add' %}" class="btn-primary" style="font-size:13px; padding:10px 16px; border-radius:12px;">
             ➕ Mahsulot Qo'shish
         </a>
+        {% if user.role == 'head_admin' %}
+        <a href="{% url 'users:head_dashboard' %}" class="btn-secondary" style="font-size:13px; padding:10px 16px; border-radius:12px; font-weight:800; background: var(--text-main); color: #fff; border: none;">
+            👥 Xodimlarga Rol Berish
+        </a>
+        {% endif %}
     </div>
 
     <!-- Products Section -->
