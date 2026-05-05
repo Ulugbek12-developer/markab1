@@ -149,17 +149,15 @@
                 
                 <!-- Right: Actions -->
                 <div class="header-actions">
-                    <button onclick="toggleLang()" class="header-btn">
-                        <span id="lang-flag" style="font-size: 18px;">🇺🇿</span>
-                        <span id="lang-label">UZ</span>
+                    <button onclick="toggleLang()" class="header-btn" style="min-width: 45px; border: 1px solid var(--border); border-radius: 10px; padding: 5px; background: var(--input-bg);">
+                        <span id="lang-flag" style="font-size: 16px;">🇺🇿</span>
+                        <span id="lang-label" style="font-size: 11px; font-weight: 700;">UZ</span>
                     </button>
                     <button onclick="toggleTheme()" class="header-btn">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                        <span id="theme-label">Tun</span>
                     </button>
                     <button onclick="document.getElementById('about-modal').style.display='flex'" class="header-btn">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span id="about-btn-label">Haqida</span>
                     </button>
                 </div>
             </div>
