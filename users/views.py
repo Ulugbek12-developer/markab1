@@ -109,11 +109,18 @@ class SellPhoneView(View):
         
         return render(request, 'users/sell_success.html')
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        # Mock data from session or simple query
-        my_listings_count = len(request.session.get('my_listings', []))
+        # Real user data
+        user_listings = Listing.objects.filter(seller=request.user).order_by('-created_at')
+        favorite_listings = request.user.favorite_listings.all().order_by('-created_at')
+        user_orders = Order.objects.filter(customer_phone=request.user.username).order_by('-created_at') # Assuming username is phone or linked
+
         return render(request, 'users/profile.html', {
-            'listings_count': my_listings_count,
-            'orders_count': 0 # Mock
+            'listings': user_listings,
+            'favorites': favorite_listings,
+            'orders': user_orders,
+            'listings_count': user_listings.count(),
+            'favorites_count': favorite_listings.count(),
+            'orders_count': user_orders.count(),
         })
