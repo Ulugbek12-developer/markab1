@@ -38,6 +38,18 @@ class HomeView(ListView):
                 Q(description__icontains=search) |
                 Q(model_name__icontains=search)
             )
+
+        model_filter = self.request.GET.get('model')
+        if model_filter:
+            queryset = queryset.filter(model_name__icontains=model_filter)
+        
+        custom_filter = self.request.GET.get('filter')
+        if custom_filter == 'sale':
+            queryset = queryset.filter(is_sale=True)
+        elif custom_filter == 'week':
+            week_ago = timezone.now() - timedelta(days=7)
+            queryset = queryset.filter(created_at__gte=week_ago)
+
         return queryset
 
     def get_context_data(self, **kwargs):

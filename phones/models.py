@@ -53,9 +53,10 @@ class Listing(models.Model):
     is_approved = models.BooleanField(default=True)
     status = models.CharField(max_length=20, default='active') # active, sold, pending
     
-    # Booking system
+    # Booking & Sale system
     is_booked = models.BooleanField(default=False)
     booked_until = models.DateTimeField(null=True, blank=True)
+    is_sale = models.BooleanField(default=False, help_text="Aksiya/Chegirma")
     
     created_at = models.DateTimeField(auto_now_add=True)
     
