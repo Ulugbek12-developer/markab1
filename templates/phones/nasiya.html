@@ -5,207 +5,156 @@
 
 {% block content %}
 <style>
-    .nasiya-container { max-width: 950px; margin: 0 auto; display: grid; grid-template-columns: 280px 1fr; gap: 20px; padding: 10px; }
-    .nasiya-sidebar { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid var(--border); align-self: start; position: sticky; top: 20px; }
-    .nasiya-main { background: var(--card-bg); border-radius: 24px; padding: 25px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+    .nasiya-container { max-width: 900px; margin: 0 auto; padding: 10px; }
+    .nasiya-main { background: var(--card-bg); border-radius: 24px; padding: 25px; border: 1px solid var(--border); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
     
-    /* Progress steps */
-    .step-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; font-weight: 600; font-size: 13px; color: var(--text-muted); }
-    .step-item.active { color: var(--primary); }
-    .step-item.done { color: #22C55E; }
-    .step-num { width: 28px; height: 28px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; background: var(--input-bg); color: var(--text-muted); }
-    .step-item.active .step-num { background: var(--primary); color: white; }
-    .step-item.done .step-num { background: #22C55E; color: white; }
+    /* Progress */
+    .nasiya-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .nasiya-counter { font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 4px 12px; border-radius: 20px; font-size: 13px; min-width: 45px; text-align: center; }
+    .nasiya-progress { height: 5px; background: var(--border); border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
+    .nasiya-progress-bar { height: 100%; background: var(--primary); transition: width 0.4s ease; width: 16.6%; }
 
     /* Step content */
-    .nasiya-step { display: none; animation: fadeIn 0.4s ease-out; }
+    .nasiya-step { display: none; animation: fadeInRight 0.4s ease; }
     .nasiya-step.active { display: block; }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(15px); } to { opacity: 1; transform: translateX(0); } }
+
+    .step-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+    .step-subtitle { color: var(--text-muted); font-weight: 500; margin-bottom: 20px; font-size: 13px; }
 
     /* Options grid */
-    .nasiya-option-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-    .nasiya-option { padding: 15px; border: 1.5px solid var(--border); border-radius: 16px; cursor: pointer; font-weight: 700; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; transition: 0.2s; background: var(--input-bg); }
+    .nasiya-option-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .nasiya-option { padding: 18px 10px; border: 1.5px solid var(--border); border-radius: 16px; cursor: pointer; font-weight: 700; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; transition: 0.2s; background: var(--input-bg); }
     .nasiya-option.selected { border-color: var(--primary); background: var(--primary-soft); }
-    .nasiya-option .emoji { font-size: 20px; }
+    .nasiya-option .emoji { font-size: 24px; }
     .nasiya-option .label { font-size: 13px; color: var(--text-main); }
 
     /* Inputs */
-    .nasiya-input { width: 100%; padding: 15px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 15px; font-weight: 600; outline: none; background: var(--input-bg); color: var(--text-main); transition: 0.2s; }
+    .nasiya-input { width: 100%; padding: 14px 18px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 15px; font-weight: 600; outline: none; background: var(--input-bg); color: var(--text-main); transition: 0.2s; }
     .nasiya-input:focus { border-color: var(--primary); background: var(--bg); }
 
     /* Buttons */
-    .nasiya-btns { display: flex; gap: 10px; margin-top: 30px; }
-    .btn-back { padding: 14px 20px; border-radius: 14px; font-weight: 700; border: none; background: var(--input-bg); color: var(--text-muted); cursor: pointer; font-size: 14px; }
-    .btn-next { flex: 1; padding: 14px 20px; border-radius: 14px; font-weight: 700; border: none; background: var(--primary); color: white; cursor: pointer; font-size: 15px; }
+    .nasiya-btns { display: flex; gap: 10px; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .btn-back { background: transparent; color: var(--text-muted); border: none; font-weight: 700; font-size: 14px; cursor: pointer; padding: 12px; visibility: hidden; }
+    .btn-next { flex: 1; padding: 14px; border-radius: 14px; font-weight: 700; border: none; background: var(--primary); color: white; cursor: pointer; font-size: 15px; }
+    .btn-next:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
 
-    @media (max-width: 768px) {
-        .nasiya-container { grid-template-columns: 1fr; }
-        .nasiya-sidebar { display: none; }
+    @media (max-width: 480px) {
         .nasiya-main { padding: 20px; }
-        .nasiya-option-grid { grid-template-columns: repeat(2, 1fr); }
     }
 </style>
 
-<div class="animate">
-    <div class="nasiya-container">
-        <!-- Sidebar -->
-        <div class="nasiya-sidebar">
-            <h3 style="font-weight: 700; font-size: 18px; margin-bottom: 5px; color: var(--text-main);">Nasiyaga ariza</h3>
-            <p style="font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 20px;">
-                1 daqiqada to'ldiring, biz siz bilan bog'lanamiz.
-            </p>
+<div class="nasiya-container animate">
+    <div class="nasiya-main">
+        <div class="nasiya-header">
+            <button class="btn-back" id="btnBack" onclick="prevStep()">← Orqaga</button>
+            <div class="nasiya-counter"><span id="currentStepText">1</span> / 6</div>
+        </div>
+        <div class="nasiya-progress"><div class="nasiya-progress-bar" id="progressBar"></div></div>
 
-            <div id="sidebar-steps">
-                <div class="step-item active" id="side-1"><span class="step-num">1</span> Tug'ilgan sana</div>
-                <div class="step-item" id="side-2"><span class="step-num">2</span> Bank kartasi</div>
-                <div class="step-item" id="side-3"><span class="step-num">3</span> Telefon brendi</div>
-                <div class="step-item" id="side-4"><span class="step-num">4</span> Oylik to'lov</div>
-                <div class="step-item" id="side-5"><span class="step-num">5</span> Vaqt</div>
-                <div class="step-item" id="side-6"><span class="step-num">6</span> Aloqa</div>
+        <!-- Step 1: Birthday -->
+        <div class="nasiya-step active" id="step-1">
+            <h2 class="step-title" data-lang-key="birthday_title">Tug'ilgan sanangiz?</h2>
+            <p class="step-subtitle" data-lang-key="birthday_sub">21-60 yosh oralig'ida bo'lishingiz kerak.</p>
+            <input type="date" id="birthday" class="nasiya-input" onchange="calcAge()">
+        </div>
+
+        <!-- Step 2: Bank Card -->
+        <div class="nasiya-step" id="step-2">
+            <h2 class="step-title" data-lang-key="bank_card">Bank kartangiz bormi?</h2>
+            <div class="nasiya-option-grid">
+                <div class="nasiya-option" onclick="selectOption(this, 'bank', 'Ha, bor')">
+                    <span class="emoji">💳</span>
+                    <span class="label">Ha, bor</span>
+                </div>
+                <div class="nasiya-option" onclick="selectOption(this, 'bank', 'Yoq')">
+                    <span class="emoji">🚫</span>
+                    <span class="label">Yo'q</span>
+                </div>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="nasiya-main">
-            <!-- Step 1: Birthday -->
-            <div class="nasiya-step active" id="step-1">
-                <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text-main);">Tug'ilgan sanangiz?</h2>
-                <p style="color: var(--text-muted); font-size: 13px; font-weight: 500; margin-bottom: 20px;">Xizmatdan foydalanish uchun 21-60 yosh oralig'ida bo'lishingiz kerak.</p>
-                <input type="date" id="birthday" class="nasiya-input" onchange="calcAge()">
+        <!-- Step 3: Phone Brand -->
+        <div class="nasiya-step" id="step-3">
+            <h2 class="step-title" data-lang-key="brand_choice">Qaysi brendni tanlaysiz?</h2>
+            <div class="nasiya-option-grid">
+                <div class="nasiya-option" onclick="selectOption(this, 'brand', 'iPhone')"><span class="emoji">🍎</span><span class="label">iPhone</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'brand', 'Samsung')"><span class="emoji">🌌</span><span class="label">Samsung</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'brand', 'Xiaomi')"><span class="emoji">🟠</span><span class="label">Xiaomi</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'brand', 'Boshqa')"><span class="emoji">⚡</span><span class="label">Boshqa</span></div>
             </div>
+        </div>
 
-            <!-- Step 2: Bank Card -->
-            <div class="nasiya-step" id="step-2">
-                <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text-main);">Bank kartangiz bormi?</h2>
-                <p style="color: var(--text-muted); font-size: 13px; font-weight: 500; margin-bottom: 20px;">Nasiya rasmiylashtirish uchun bank kartasi talab etiladi.</p>
-                <div class="nasiya-option-grid">
-                    <div class="nasiya-option" onclick="selectOption(this, 'bank', 'Ha, bor')">
-                        <span class="emoji">💳</span>
-                        <span class="label">Ha, bor</span>
-                    </div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'bank', 'Yoq')">
-                        <span class="emoji">🚫</span>
-                        <span class="label">Yo'q</span>
-                    </div>
-                </div>
+        <!-- Step 4: Monthly Payment -->
+        <div class="nasiya-step" id="step-4">
+            <h2 class="step-title" data-lang-key="monthly_pay">Oylik to'lov qancha bo'lsin?</h2>
+            <div class="nasiya-option-grid">
+                <div class="nasiya-option" onclick="selectOption(this, 'payment', '300k')"><span class="emoji">💰</span><span class="label">300k gacha</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'payment', '300-600k')"><span class="emoji">💵</span><span class="label">300-600k</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'payment', '600-1m')"><span class="emoji">💎</span><span class="label">600-1m</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'payment', '1m+')"><span class="emoji">🚀</span><span class="label">1m+</span></div>
             </div>
+        </div>
 
-            <!-- Step 3: Phone Brand -->
-            <div class="nasiya-step" id="step-3">
-                <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text-main);">Qaysi brendni tanlaysiz?</h2>
-                <p style="color: var(--text-muted); font-size: 13px; font-weight: 500; margin-bottom: 20px;">Sizga mos variantlarni tayyorlaymiz.</p>
-                <div class="nasiya-option-grid">
-                    <div class="nasiya-option" onclick="selectOption(this, 'brand', 'iPhone')">
-                        <span class="emoji">🍎</span>
-                        <span class="label">iPhone</span>
-                    </div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'brand', 'Samsung')">
-                        <span class="emoji">🌌</span>
-                        <span class="label">Samsung</span>
-                    </div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'brand', 'Xiaomi')">
-                        <span class="emoji">🟠</span>
-                        <span class="label">Xiaomi</span>
-                    </div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'brand', 'Boshqa')">
-                        <span class="emoji">⚡</span>
-                        <span class="label">Boshqa</span>
-                    </div>
-                </div>
+        <!-- Step 5: When -->
+        <div class="nasiya-step" id="step-5">
+            <h2 class="step-title" data-lang-key="when_buy">Qachon olmoqchisiz?</h2>
+            <div class="nasiya-option-grid">
+                <div class="nasiya-option" onclick="selectOption(this, 'when', 'Tezda')"><span class="emoji">🔥</span><span class="label">Tezda</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'when', 'Hafta')"><span class="emoji">📅</span><span class="label">Shu hafta</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'when', 'Oy')"><span class="emoji">⏳</span><span class="label">Shu oy</span></div>
+                <div class="nasiya-option" onclick="selectOption(this, 'when', 'Oylayman')"><span class="emoji">🤔</span><span class="label">O'ylayman</span></div>
             </div>
+        </div>
 
-            <!-- Step 4: Monthly Payment -->
-            <div class="nasiya-step" id="step-4">
-                <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text-main);">Oylik to'lov?</h2>
-                <div class="nasiya-option-grid">
-                    <div class="nasiya-option" onclick="selectOption(this, 'payment', '300 000 gacha')"><span class="emoji">💰</span><span class="label">300 mingacha</span></div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'payment', '300-600 ming')"><span class="emoji">💵</span><span class="label">300-600 ming</span></div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'payment', '600-1 mln')"><span class="emoji">💎</span><span class="label">600-1 mln</span></div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'payment', '1 mln+')"><span class="emoji">🚀</span><span class="label">1 mln+</span></div>
-                </div>
+        <!-- Step 6: Contact -->
+        <div class="nasiya-step" id="step-6">
+            <h2 class="step-title" data-lang-key="contact_info">Bog'lanish ma'lumotlari</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase;">Ism Familiya</label>
+                <input type="text" id="contact-name" class="nasiya-input" placeholder="Ismingiz">
             </div>
+            <div>
+                <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase;">Telefon raqam</label>
+                <input type="tel" id="contact-phone" class="nasiya-input" placeholder="+998">
+            </div>
+        </div>
 
-            <!-- Step 5: When -->
-            <div class="nasiya-step" id="step-5">
-                <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text-main);">Qachon olmoqchisiz?</h2>
-                <div class="nasiya-option-grid">
-                    <div class="nasiya-option" onclick="selectOption(this, 'when', 'Tezda')"><span class="emoji">🔥</span><span class="label">Tezda</span></div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'when', 'Shu hafta')"><span class="emoji">📅</span><span class="label">Shu hafta</span></div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'when', 'Shu oy')"><span class="emoji">⏳</span><span class="label">Shu oy</span></div>
-                    <div class="nasiya-option" onclick="selectOption(this, 'when', 'Oylayman')"><span class="emoji">🤔</span><span class="label">O'ylayman</span></div>
-                </div>
+        <!-- Success -->
+        <div class="nasiya-step" id="step-success">
+            <div style="text-align: center; padding: 20px 0;">
+                <div style="width: 70px; height: 70px; background: #22C55E; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 20px;">✓</div>
+                <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-main);">Ariza yuborildi!</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Operator tez orada bog'lanadi.</p>
+                <a href="{% url 'phones:home' %}" class="btn-next" style="display: block; text-decoration: none; text-align: center;">OK</a>
             </div>
+        </div>
 
-            <!-- Step 6: Contact -->
-            <div class="nasiya-step" id="step-6">
-                <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 20px; color: var(--text-main);">Bog'lanish uchun</h2>
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase;">Ism Familiya</label>
-                    <input type="text" id="contact-name" class="nasiya-input" placeholder="Ismingiz">
-                </div>
-                <div>
-                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase;">Telefon raqam</label>
-                    <input type="tel" id="contact-phone" class="nasiya-input" placeholder="+998">
-                </div>
-            </div>
-
-            <!-- Success -->
-            <div class="nasiya-step" id="step-success">
-                <div style="text-align: center; padding: 20px 0;">
-                    <div style="width: 70px; height: 70px; background: #22C55E; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 20px;">✓</div>
-                    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-main);">Ariza yuborildi!</h2>
-                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Operator tez orada bog'lanadi.</p>
-                    <a href="{% url 'phones:home' %}" class="btn-next" style="display: block; text-decoration: none;">Bosh sahifa</a>
-                </div>
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="nasiya-btns" id="nav-btns">
-                <button class="btn-back" id="btn-back" onclick="prevStep()" style="display:none;">Orqaga</button>
-                <button class="btn-next" onclick="nextStep()" id="btn-next">Davom etish</button>
-            </div>
+        <div class="nasiya-btns" id="nav-btns">
+            <button class="btn-next" onclick="nextStep()" id="btn-next" disabled>Davom etish</button>
         </div>
     </div>
 </div>
 
 <script>
 let currentStep = 1;
-const totalSteps = 6;
+const TOTAL_STEPS = 6;
 const data = {};
 
 function calcAge() {
-    const bd = document.getElementById('birthday').value;
-    if (!bd) return;
-    data.birthday = bd;
+    data.birthday = document.getElementById('birthday').value;
+    checkStepValidity();
 }
 
 function selectOption(el, key, value) {
     el.parentElement.querySelectorAll('.nasiya-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     data[key] = value;
-    setTimeout(() => { if (currentStep < 6) nextStep(); }, 300);
-}
-
-function updateSidebar() {
-    for (let i = 1; i <= totalSteps; i++) {
-        const side = document.getElementById('side-' + i);
-        if(!side) continue;
-        side.className = 'step-item';
-        if (i < currentStep) side.classList.add('done');
-        else if (i === currentStep) side.classList.add('active');
-    }
-}
-
-function showStep(n) {
-    document.querySelectorAll('.nasiya-step').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById(n === 'success' ? 'step-success' : 'step-' + n);
-    if(target) target.classList.add('active');
-    document.getElementById('btn-back').style.display = (n > 1 && n <= totalSteps) ? 'block' : 'none';
-    if (n === 'success') document.getElementById('nav-btns').style.display = 'none';
-    updateSidebar();
+    checkStepValidity();
+    setTimeout(() => { if (currentStep < TOTAL_STEPS) nextStep(); }, 300);
 }
 
 function nextStep() {
-    if (currentStep === 1 && !data.birthday) { return; }
     if (currentStep === 6) {
         data.name = document.getElementById('contact-name').value;
         data.phone = document.getElementById('contact-phone').value;
@@ -221,6 +170,47 @@ function nextStep() {
     showStep(currentStep);
 }
 
-function prevStep() { if (currentStep > 1) { currentStep--; showStep(currentStep); } }
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+}
+
+function showStep(n) {
+    document.querySelectorAll('.nasiya-step').forEach(s => s.classList.remove('active'));
+    if (n === 'success') {
+        document.getElementById('step-success').classList.add('active');
+        document.getElementById('nav-btns').style.display = 'none';
+        document.querySelector('.nasiya-header').style.display = 'none';
+        document.querySelector('.nasiya-progress').style.display = 'none';
+        return;
+    }
+    document.getElementById('step-' + n).classList.add('active');
+    updateUI();
+}
+
+function checkStepValidity() {
+    let valid = false;
+    if (currentStep === 1) valid = !!data.birthday;
+    if (currentStep === 2) valid = !!data.bank;
+    if (currentStep === 3) valid = !!data.brand;
+    if (currentStep === 4) valid = !!data.payment;
+    if (currentStep === 5) valid = !!data.when;
+    if (currentStep === 6) valid = true; // Handled by input event if needed
+    document.getElementById('btn-next').disabled = !valid;
+}
+
+function updateUI() {
+    document.getElementById('currentStepText').innerText = currentStep;
+    document.getElementById('progressBar').style.width = `${(currentStep / TOTAL_STEPS) * 100}%`;
+    document.getElementById('btnBack').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+    checkStepValidity();
+}
+
+document.getElementById('contact-name').addEventListener('input', checkStepValidity);
+document.getElementById('contact-phone').addEventListener('input', checkStepValidity);
+
+updateUI();
 </script>
 {% endblock %}

@@ -8,34 +8,37 @@
     .profile-header {
         background: var(--primary);
         color: white;
-        padding: 40px 20px 60px;
-        border-radius: 30px;
+        padding: 30px 15px 50px;
+        border-radius: 24px;
         text-align: center;
-        margin-bottom: -30px;
+        margin-bottom: -25px;
         position: relative;
     }
     .profile-tabs {
         display: flex;
-        gap: 10px;
-        background: #fff;
-        padding: 10px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        margin: 0 15px 30px;
+        gap: 8px;
+        background: var(--card-bg);
+        padding: 6px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+        margin: 0 10px 25px;
         position: relative;
         z-index: 2;
+        border: 1px solid var(--border);
     }
     .tab-btn {
         flex: 1;
-        padding: 12px;
-        border-radius: 15px;
+        padding: 10px 5px;
+        border-radius: 12px;
         border: none;
         background: none;
-        font-weight: 900;
-        font-size: 13px;
+        font-weight: 700;
+        font-size: 11px;
         color: var(--text-muted);
         cursor: pointer;
-        transition: 0.3s;
+        transition: 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     .tab-btn.active {
         background: var(--primary);
@@ -43,7 +46,7 @@
     }
     .tab-content {
         display: none;
-        padding: 0 15px;
+        padding: 0 10px;
         animation: fadeIn 0.4s ease;
     }
     .tab-content.active {
@@ -54,53 +57,59 @@
         to { opacity: 1; transform: translateY(0); }
     }
     .profile-card {
-        background: white;
-        border-radius: 20px;
-        padding: 15px;
-        margin-bottom: 15px;
+        background: var(--card-bg);
+        border-radius: 18px;
+        padding: 12px;
+        margin-bottom: 12px;
         border: 1px solid var(--border);
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
     }
+
+    /* Status Badges */
+    .status-badge { font-size: 9px; padding: 3px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
+    .status-approved { background: rgba(34,197,94,0.1); color: #22C55E; }
+    .status-pending { background: rgba(245,158,11,0.1); color: #F59E0B; }
+    .status-process { background: var(--input-bg); color: var(--text-muted); }
 </style>
 
 <div class="animate">
     <div class="profile-header">
-        <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 15px;">👤</div>
-        <h1 style="font-size: 24px; font-weight: 900; margin-bottom: 5px;">{{ user.username }}</h1>
-        <p style="font-size: 13px; font-weight: 700; opacity: 0.8;">{{ user.get_role_display }}</p>
+        <div style="width: 70px; height: 70px; background: rgba(255,255,255,0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px;">👤</div>
+        <h1 style="font-size: 22px; font-weight: 700; margin-bottom: 4px;">{{ user.username }}</h1>
+        <p style="font-size: 12px; font-weight: 500; opacity: 0.8;">{{ user.get_role_display }}</p>
     </div>
 
     <div class="profile-tabs">
-        <button class="tab-btn active" onclick="switchTab('my-listings', this)">E'lonlarim ({{ listings_count }})</button>
-        <button class="tab-btn" onclick="switchTab('my-favorites', this)">Saralanganlar ({{ favorites_count }})</button>
-        <button class="tab-btn" onclick="switchTab('my-orders', this)">Buyurtmalar ({{ orders_count }})</button>
+        <button class="tab-btn active" onclick="switchTab('my-listings', this)" data-lang-key="my_listings">E'lonlarim</button>
+        <button class="tab-btn" onclick="switchTab('my-favorites', this)" data-lang-key="favorites">Saralanganlar</button>
+        <button class="tab-btn" onclick="switchTab('my-orders', this)" data-lang-key="orders">Buyurtmalar</button>
     </div>
 
     <!-- My Listings -->
     <div id="my-listings" class="tab-content active">
         {% for phone in listings %}
         <div class="profile-card">
-            <div style="width: 60px; height: 60px; background: #F5F5F5; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+            <div style="width: 55px; height: 55px; background: var(--input-bg); border-radius: 10px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                 {% if phone.image %}<img src="{{ phone.image.url }}" style="width:100%; height:100%; object-fit:cover;">{% else %}📱{% endif %}
             </div>
             <div style="flex: 1;">
-                <h3 style="font-size: 15px; font-weight: 900;">{{ phone.title }}</h3>
-                <p style="font-size: 13px; color: var(--primary); font-weight: 900;">{{ phone.price }} $</p>
-                <div style="margin-top: 5px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-main);">{{ phone.title }}</h3>
+                <p style="font-size: 13px; color: var(--primary); font-weight: 700;">{{ phone.price|floatformat:0 }} $</p>
+                <div style="margin-top: 4px;">
                     {% if phone.is_approved %}
-                        <span style="font-size: 10px; background: #E6F4EA; color: #1E7E34; padding: 2px 8px; border-radius: 5px; font-weight: 800;">TASDIQLANGAN</span>
+                        <span class="status-badge status-approved">TASDIQLANGAN</span>
                     {% else %}
-                        <span style="font-size: 10px; background: #FFF4E5; color: #B7791F; padding: 2px 8px; border-radius: 5px; font-weight: 800;">KUTILMOQDA</span>
+                        <span class="status-badge status-pending">KUTILMOQDA</span>
                     {% endif %}
                 </div>
             </div>
         </div>
         {% empty %}
-        <div style="text-align: center; padding: 60px 0; color: #999;">
-            <p style="font-weight: 800;">Sizda hali e'lonlar yo'q</p>
-            <a href="{% url 'phones:sell' %}" style="color: var(--primary); font-weight: 900; text-decoration: none; font-size: 14px; display: block; margin-top: 10px;">E'lon berish →</a>
+        <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+            <p style="font-weight: 600; font-size: 14px;">E'lonlar yo'q</p>
+            <a href="{% url 'phones:sell' %}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 13px; display: block; margin-top: 8px;" data-lang-key="sell">E'lon berish →</a>
         </div>
         {% endfor %}
     </div>
@@ -109,18 +118,18 @@
     <div id="my-favorites" class="tab-content">
         {% for fav in favorites %}
         <div class="profile-card">
-            <div style="width: 60px; height: 60px; background: #F5F5F5; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+            <div style="width: 55px; height: 55px; background: var(--input-bg); border-radius: 10px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                 {% if fav.image %}<img src="{{ fav.image.url }}" style="width:100%; height:100%; object-fit:cover;">{% else %}📱{% endif %}
             </div>
             <div style="flex: 1;">
-                <h3 style="font-size: 15px; font-weight: 900;">{{ fav.title }}</h3>
-                <p style="font-size: 13px; color: var(--primary); font-weight: 900;">{{ fav.price }} $</p>
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-main);">{{ fav.title }}</h3>
+                <p style="font-size: 13px; color: var(--primary); font-weight: 700;">{{ fav.price|floatformat:0 }} $</p>
             </div>
-            <a href="{% url 'phones:detail' fav.id %}" style="background: var(--primary); color: white; padding: 8px 12px; border-radius: 10px; text-decoration: none; font-size: 12px; font-weight: 900;">KO'RISH</a>
+            <a href="{% url 'phones:detail' fav.id %}" style="background: var(--primary); color: white; padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: 700;">KO'RISH</a>
         </div>
         {% empty %}
-        <div style="text-align: center; padding: 60px 0; color: #999;">
-            <p style="font-weight: 800;">Saralangan mahsulotlar yo'q</p>
+        <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+            <p style="font-weight: 600; font-size: 14px;">Saralanganlar yo'q</p>
         </div>
         {% endfor %}
     </div>
@@ -130,22 +139,22 @@
         {% for order in orders %}
         <div class="profile-card">
             <div style="flex: 1;">
-                <h3 style="font-size: 15px; font-weight: 900;">#{{ order.id }} - {{ order.listing.title }}</h3>
-                <p style="font-size: 13px; color: var(--text-muted); font-weight: 700;">{{ order.created_at|date:"d.m.Y" }} | {{ order.listing.price }} $</p>
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-main);">#{{ order.id }} - {{ order.listing.title }}</h3>
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 500;">{{ order.created_at|date:"d.m.Y" }} | {{ order.listing.price|floatformat:0 }} $</p>
             </div>
-            <div style="font-size: 11px; background: #F0F0F0; padding: 5px 10px; border-radius: 8px; font-weight: 800;">JARAYONDA</div>
+            <div class="status-badge status-process">JARAYONDA</div>
         </div>
         {% empty %}
-        <div style="text-align: center; padding: 60px 0; color: #999;">
-            <p style="font-weight: 800;">Hali xaridlar qilinmagan</p>
+        <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+            <p style="font-weight: 600; font-size: 14px;">Buyurtmalar yo'q</p>
         </div>
         {% endfor %}
     </div>
 
-    <div style="padding: 20px 15px 100px;">
+    <div style="padding: 20px 10px 100px;">
         <form action="{% url 'users:logout' %}" method="POST">
             {% csrf_token %}
-            <button type="submit" style="width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border); background: #FCE8E6; color: var(--primary); font-weight: 900; cursor: pointer;">TIZIMDAN CHIQISH 🚪</button>
+            <button type="submit" style="width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid var(--border); background: var(--primary-soft); color: var(--primary); font-weight: 700; font-size: 14px; cursor: pointer;" data-lang-key="logout">TIZIMDAN CHIQISH 🚪</button>
         </form>
     </div>
 </div>

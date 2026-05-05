@@ -3,13 +3,14 @@
 
 {% block content %}
 <style>
-    /* Mobiks Style Adaptations */
+    /* Home Specific Styles */
     .hero-banner {
         width: 100%;
-        height: 180px;
+        height: 160px;
         background: url('{% static "images/banner.png" %}') center/cover no-repeat;
         border-radius: 20px;
         margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
     
     .quick-menu {
@@ -22,175 +23,135 @@
         background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 18px;
-        padding: 12px 5px;
+        padding: 15px 5px;
         text-align: center;
         text-decoration: none;
         color: var(--text-main);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         transition: 0.2s;
     }
-    .action-icon-svg {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
+    .quick-item:hover { transform: translateY(-3px); border-color: var(--primary); }
+    
+    .action-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    .quick-label { font-size: 11px; font-weight: 600; color: var(--text-main); }
+    .quick-label { font-size: 11px; font-weight: 700; color: var(--text-main); }
 
-    .trust-badges {
+    .trust-scroll {
         display: flex;
-        gap: 8px;
+        gap: 10px;
         overflow-x: auto;
-        padding-bottom: 12px;
-        margin-bottom: 20px;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
         scrollbar-width: none;
     }
-    .trust-badge {
+    .trust-scroll::-webkit-scrollbar { display: none; }
+    .trust-card {
         flex: 0 0 auto;
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        padding: 6px 12px;
-        border-radius: 10px;
+        background: var(--input-bg);
+        padding: 8px 15px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        font-weight: 500;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 600;
         color: var(--text-main);
+        border: 1px solid var(--border);
     }
 
-    .tabs-container {
+    .section-nav {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 15px;
     }
-    .tabs {
+    .filter-tabs {
         display: flex;
         gap: 8px;
         background: var(--input-bg);
         padding: 4px;
         border-radius: 12px;
     }
-    .tab {
-        padding: 8px 15px;
+    .f-tab {
+        padding: 8px 16px;
         border-radius: 10px;
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         cursor: pointer;
         transition: 0.2s;
         text-decoration: none;
         color: var(--text-muted);
     }
-    .tab.active {
+    .f-tab.active {
         background: var(--card-bg);
         color: var(--primary);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
-
-    /* Product Grid Styling - Compact */
-    .grid-products {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 40px;
-    }
-    .compact-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        overflow: hidden;
-        transition: 0.2s;
-    }
-    .compact-img-area {
-        position: relative;
-        aspect-ratio: 1/1;
-        background: var(--input-bg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .compact-img-area img { width: 100%; height: 100%; object-fit: cover; }
-    
-    .compact-info { padding: 10px; }
-    .compact-price { display: block; font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 2px; }
-    .compact-title { 
-        font-size: 13px; 
-        font-weight: 500; 
-        color: var(--text-main); 
-        margin-bottom: 6px; 
-        display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; 
-    }
-    .compact-meta { display: flex; gap: 6px; font-size: 10px; font-weight: 500; color: var(--text-muted); }
-    .compact-meta span { background: var(--input-bg); padding: 2px 5px; border-radius: 5px; }
 
     @media (min-width: 993px) {
-        .hero-banner { height: 300px; }
-        .grid-products { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .compact-price { font-size: 20px; }
-        .compact-title { font-size: 15px; }
+        .hero-banner { height: 320px; border-radius: 30px; }
+        .quick-menu { gap: 20px; }
+        .quick-item { padding: 25px 10px; }
+        .action-icon { width: 55px; height: 55px; }
     }
 </style>
 
 <div class="animate">
-    <!-- Header Search Area -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;" class="hide-on-desktop">
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <img src="{% static 'images/logo_.png' %}" style="height: 20px;">
-            <span style="font-weight: 600; font-size: 16px; color: var(--text-main);">Markab</span>
-        </div>
-        <div style="color: var(--primary); font-weight: 600; font-size: 12px;">📍 Toshkent</div>
-    </div>
-    
     <!-- Banner -->
     <div class="hero-banner"></div>
 
     <!-- Quick Menu -->
     <div class="quick-menu">
         <a href="{% url 'phones:sell' %}" class="quick-item">
-            <div class="action-icon-svg" style="background: rgba(34,197,94,0.1); color: #22C55E;">
-                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+            <div class="action-icon" style="background: rgba(34,197,94,0.1); color: #22C55E;">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
             </div>
             <div class="quick-label" data-lang-key="sell">Sotish</div>
         </a>
         <a href="?brand=iPhone" class="quick-item">
-            <div class="action-icon-svg" style="background: var(--input-bg); color: var(--text-main);">
+            <div class="action-icon" style="background: var(--input-bg); color: var(--text-main);">
                 <svg width="22" height="22" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.1-44.6-35.9-2.8-74.3 22.7-93.1 22.7-18.9 0-51.1-22.1-81.5-21.5-50.6 .6-95.9 29.5-121.8 75.3-53 93.9-15.1 233.1 36.3 307.7 24.8 36.2 53.6 77.2 92.6 75.9 37.5-1.3 52.3-24.1 97.5-24.1 45.1 0 58.7 24.1 98.4 23.3 39.8-.8 64.9-38.3 89.2-74.3 28.5-42.3 40.3-83.3 41.2-85.5-1-1-76.3-29.3-76.3-114.1zM245.9 83.1c20.3-24.7 34.2-59.2 30.5-93.1-29.1 1.2-64.9 19.5-86.1 44.1-18.1 20.8-34.1 56.4-29.7 89.7 32.5 2.5 65.5-16 85.3-40.7z"/></svg>
             </div>
             <div class="quick-label">iPhone</div>
         </a>
         <a href="{% url 'phones:nasiya' %}" class="quick-item">
-            <div class="action-icon-svg" style="background: var(--primary-soft); color: var(--primary);">
-                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+            <div class="action-icon" style="background: var(--primary-soft); color: var(--primary);">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
             </div>
             <div class="quick-label" data-lang-key="nasiya">Nasiya</div>
         </a>
         <a href="{% url 'phones:price' %}" class="quick-item">
-            <div class="action-icon-svg" style="background: rgba(245,158,11,0.1); color: #F59E0B;">
-                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            <div class="action-icon" style="background: rgba(245,158,11,0.1); color: #F59E0B;">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
             </div>
             <div class="quick-label" data-lang-key="pricing">Baholash</div>
         </a>
     </div>
 
     <!-- Trust Badges -->
-    <div class="trust-badges">
-        <div class="trust-badge">🛡️ 30 kun kafolat</div>
-        <div class="trust-badge">📦 Nasiya mavjud</div>
-        <div class="trust-badge">✅ 100% tekshirilgan</div>
+    <div class="trust-scroll">
+        <div class="trust-card">🛡️ 30 kun kafolat</div>
+        <div class="trust-card">📦 Nasiya mavjud</div>
+        <div class="trust-card">✅ 100% original</div>
+        <div class="trust-card">🚚 Bepul yetkazish</div>
     </div>
 
     <!-- Tabs -->
-    <div class="tabs-container">
-        <div class="tabs">
-            <a href="?filter=sale" class="tab {% if request.GET.filter == 'sale' %}active{% endif %}" data-lang-key="promos">Aksiya</a>
-            <a href="?filter=week" class="tab {% if not request.GET.filter or request.GET.filter == 'week' %}active{% endif %}" data-lang-key="new_ads">Yangi</a>
+    <div class="section-nav">
+        <div class="filter-tabs">
+            <a href="?filter=week" class="f-tab {% if not request.GET.filter or request.GET.filter == 'week' %}active{% endif %}" data-lang-key="new_ads">Yangi</a>
+            <a href="?filter=sale" class="f-tab {% if request.GET.filter == 'sale' %}active{% endif %}" data-lang-key="promos">Aksiya</a>
         </div>
-        <a href="{% url 'phones:catalog' %}" style="color: var(--primary); font-weight: 600; font-size: 12px; text-decoration: none;" data-lang-key="catalog">Hammasi &rarr;</a>
+        <a href="{% url 'phones:catalog' %}" style="color: var(--primary); font-weight: 700; font-size: 13px; text-decoration: none;" data-lang-key="catalog">Hammasi &rarr;</a>
     </div>
 
     <!-- Products Grid -->
@@ -200,6 +161,7 @@
                 <a href="{% url 'phones:detail' listing.id %}" style="text-decoration:none; color:inherit;">
                     <div class="compact-img-area">
                         {% if listing.image %}<img src="{{ listing.image.url }}" alt="{{ listing.title }}">{% endif %}
+                        {% if listing.is_sale %}<div class="compact-badge" style="background:var(--primary);">AKSIYA</div>{% endif %}
                     </div>
                     <div class="compact-info">
                         <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
@@ -210,6 +172,11 @@
                         </div>
                     </div>
                 </a>
+            </div>
+        {% empty %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px 0;">
+                <p style="font-size: 40px;">📦</p>
+                <h3 style="font-weight: 700; margin-top: 10px; color: var(--text-muted);">E'lonlar topilmadi</h3>
             </div>
         {% endfor %}
     </div>

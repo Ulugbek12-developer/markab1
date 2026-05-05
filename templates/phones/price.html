@@ -9,7 +9,7 @@
 <style>
     .wizard-container { max-width: 800px; margin: 0 auto; }
     .wizard-header { margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
-    .wizard-step-counter { font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 4px 12px; border-radius: 20px; font-size: 13px; }
+    .wizard-step-counter { font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 4px 12px; border-radius: 20px; font-size: 13px; min-width: 45px; text-align: center; }
     .wizard-progress { height: 5px; background: var(--border); border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
     .wizard-progress-bar { height: 100%; background: var(--primary); transition: width 0.4s ease; }
     
@@ -20,7 +20,7 @@
     .wizard-subtitle { color: var(--text-muted); font-weight: 500; margin-bottom: 20px; font-size: 13px; }
 
     /* Grid Options */
-    .option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+    .option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; max-height: 400px; overflow-y: auto; padding-bottom: 10px; }
     .option-card {
         background: var(--input-bg); border: 1.5px solid transparent; border-radius: 14px; padding: 15px 10px;
         text-align: center; cursor: pointer; transition: 0.2s; font-weight: 600; color: var(--text-main); font-size: 13px;
@@ -30,7 +30,7 @@
     /* Multi Select Card */
     .multi-card {
         display: flex; align-items: center; gap: 10px; background: var(--input-bg); padding: 15px; border-radius: 14px;
-        cursor: pointer; border: 1.5px solid transparent; font-weight: 600; font-size: 13px;
+        cursor: pointer; border: 1.5px solid transparent; font-weight: 600; font-size: 13px; color: var(--text-main);
     }
     .multi-card.selected { border-color: var(--primary); background: var(--primary-soft); }
     .multi-card.ok-selected { border-color: #22C55E; background: rgba(34,197,94,0.1); color: #22C55E; }
@@ -48,7 +48,7 @@
     .result-box { display: none; text-align: center; padding: 30px; background: var(--card-bg); border-radius: 24px; border: 2px solid var(--primary); margin-top: 15px;}
 </style>
 
-<div class="wizard-container">
+<div class="wizard-container animate">
     {% if result %}
     <!-- RESULT SCREEN -->
     <div class="result-box" style="display:block;">
@@ -63,7 +63,7 @@
     </div>
     {% else %}
     <!-- WIZARD -->
-    <div class="premium-card" style="padding: 20px;">
+    <div class="premium-card" style="padding: 20px; background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border);">
         <div class="wizard-header">
             <button class="btn-back" id="btnBack">← Orqaga</button>
             <div class="wizard-step-counter"><span id="currentStepText">1</span> / 7</div>
@@ -88,7 +88,7 @@
                 <div class="option-grid" id="modelGrid"></div>
             </div>
 
-            <!-- STEP 2: Color, Memory & Region -->
+            <!-- STEP 2: Specs -->
             <div class="wizard-step" id="step2">
                 <h2 class="wizard-title">Xususiyatlar</h2>
                 <div id="memoryGrid" class="option-grid" style="margin-bottom: 20px;">
@@ -96,6 +96,7 @@
                     <div class="option-card" data-val="128GB">128 GB</div>
                     <div class="option-card" data-val="256GB">256 GB</div>
                     <div class="option-card" data-val="512GB">512 GB</div>
+                    <div class="option-card" data-val="1TB">1 TB</div>
                 </div>
                 <p class="wizard-subtitle">Region</p>
                 <div class="option-grid" id="regionGrid">
@@ -118,10 +119,16 @@
             <!-- STEP 4: Exterior -->
             <div class="wizard-step" id="step4">
                 <h2 class="wizard-title">Holati</h2>
-                <div class="option-grid" id="screenGrid" style="margin-bottom: 20px;">
-                    <div class="option-card" data-val="Ideal">✨ Ideal</div>
-                    <div class="option-card" data-val="Mayda tirnalishlar">~ Tirnalgan</div>
-                    <div class="option-card" data-val="Yoriqlar">💔 Yoriq</div>
+                <p class="wizard-subtitle">Ekran va Korpus</p>
+                <div class="option-grid" id="screenGrid" style="margin-bottom: 15px;">
+                    <div class="option-card" data-val="Ideal">✨ Ekran Ideal</div>
+                    <div class="option-card" data-val="Mayda tirnalishlar">~ Ekran tirnalgan</div>
+                    <div class="option-card" data-val="Yoriqlar">💔 Ekran yoriq</div>
+                </div>
+                <div class="option-grid" id="bodyGrid">
+                    <div class="option-card" data-val="Ideal">✨ Korpus Ideal</div>
+                    <div class="option-card" data-val="Mayda tirnalishlar">~ Korpus tirnalgan</div>
+                    <div class="option-card" data-val="Shikastlangan">💔 Korpus shikastlangan</div>
                 </div>
             </div>
 
@@ -146,13 +153,14 @@
 
             <!-- STEP 7: Final -->
             <div class="wizard-step" id="step7">
-                <h2 class="wizard-title">Tayyor!</h2>
+                <h2 class="wizard-title">Hisoblashga tayyor!</h2>
+                <p class="wizard-subtitle">Natijani ko'rish uchun pastdagi tugmani bosing.</p>
                 <div style="text-align:center; padding:30px;"><div style="font-size:60px;">🧮</div></div>
             </div>
 
             <div class="wizard-controls">
                 <button type="button" class="btn-next" id="btnNext" disabled>Davom etish</button>
-                <button type="submit" class="btn-next" id="btnSubmit" style="display:none;">Hisoblash 🚀</button>
+                <button type="submit" class="btn-next" id="btnSubmit" style="display:none;">Natijani ko'rish 🚀</button>
             </div>
         </form>
     </div>
@@ -161,13 +169,20 @@
 
 <script>
 {% if not result %}
-const MODELS = ["iPhone 13", "iPhone 13 Pro", "iPhone 14 Pro", "iPhone 15 Pro", "iPhone 16 Pro"];
+const MODELS = [
+    "iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max",
+    "iPhone 12", "iPhone 12 Pro", "iPhone 12 Pro Max",
+    "iPhone 13", "iPhone 13 Pro", "iPhone 13 Pro Max",
+    "iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max",
+    "iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max",
+    "iPhone 16", "iPhone 16 Pro", "iPhone 16 Pro Max", "iPhone 17 Pro Max"
+];
 let currentStep = 1;
 const TOTAL_STEPS = 7;
-const state = { model: '', memory: '', region: '', battery: '', screen: '', box: '' };
+const state = { model: '', memory: '', region: '', battery: '', screen: '', body: '', box: '', parts: [], defects: [] };
 
 const modelGrid = document.getElementById('modelGrid');
-MODELS.forEach(m => {
+MODELS.reverse().forEach(m => {
     const div = document.createElement('div');
     div.className = 'option-card';
     div.innerText = m;
@@ -196,6 +211,7 @@ function setupSingleSelect(gridId, stateKey, inpId) {
 setupSingleSelect('memoryGrid', 'memory', 'inp_memory');
 setupSingleSelect('regionGrid', 'region', 'inp_region');
 setupSingleSelect('screenGrid', 'screen', 'inp_screen');
+setupSingleSelect('bodyGrid', 'body', 'inp_body');
 setupSingleSelect('boxGrid', 'box', 'inp_box');
 
 document.getElementById('batteryInput').addEventListener('input', (e) => {
@@ -203,6 +219,30 @@ document.getElementById('batteryInput').addEventListener('input', (e) => {
     document.getElementById('inp_battery').value = e.target.value;
     checkStepValidity();
 });
+
+function setupMultiSelect(gridId, noBtnId, stateKey, inpId) {
+    const grid = document.getElementById(gridId);
+    const noBtn = document.getElementById(noBtnId);
+    grid.querySelectorAll('.multi-card').forEach(card => {
+        card.onclick = () => {
+            noBtn.classList.remove('ok-selected');
+            card.classList.toggle('selected');
+            updateMultiState();
+        };
+    });
+    noBtn.onclick = () => {
+        grid.querySelectorAll('.multi-card').forEach(n => n.classList.remove('selected'));
+        noBtn.classList.add('ok-selected');
+        updateMultiState();
+    };
+    function updateMultiState() {
+        const selected = Array.from(grid.querySelectorAll('.multi-card.selected')).map(n => n.dataset.val);
+        state[stateKey] = selected.length ? selected : ["None"];
+        document.getElementById(inpId).value = state[stateKey].join(',');
+        checkStepValidity();
+    }
+}
+setupMultiSelect('partsGrid', 'noPartsBtn', 'parts', 'inp_parts');
 
 const btnNext = document.getElementById('btnNext');
 const btnBack = document.getElementById('btnBack');
@@ -212,8 +252,8 @@ function checkStepValidity() {
     let valid = false;
     if (currentStep === 1) valid = !!state.model;
     if (currentStep === 2) valid = !!state.memory && !!state.region;
-    if (currentStep === 3) valid = state.battery > 0;
-    if (currentStep === 4) valid = !!state.screen;
+    if (currentStep === 3) valid = state.battery > 0 && state.battery <= 100;
+    if (currentStep === 4) valid = !!state.screen && !!state.body;
     if (currentStep === 5) valid = true;
     if (currentStep === 6) valid = !!state.box;
     if (currentStep === 7) valid = true;
