@@ -5,22 +5,22 @@
 
 {% block content %}
 <style>
-    /* Premium Filter Sidebar Styles */
+    /* Advanced Filter Sidebar Styles */
     .catalog-container {
         display: grid;
-        grid-template-columns: 300px 1fr;
+        grid-template-columns: 320px 1fr;
         gap: 40px;
-        max-width: 1200px;
+        max-width: 1300px;
         margin: 0 auto;
         padding: 20px 15px;
     }
 
     .filter-sidebar {
         background: #fff;
-        border-radius: 28px;
-        padding: 30px;
+        border-radius: 30px;
+        padding: 35px;
         border: 1px solid var(--border);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.03);
         height: fit-content;
         position: sticky;
         top: 100px;
@@ -37,39 +37,40 @@
         color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 1.5px;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
 
     .custom-select, .price-field {
         width: 100%;
-        padding: 14px 18px;
-        border-radius: 14px;
-        border: 2px solid #F2F2F2;
+        padding: 15px 18px;
+        border-radius: 16px;
+        border: 2px solid #F5F5F5;
         background: #F9F9F9;
         font-weight: 800;
         font-size: 14px;
         color: var(--text-main);
         outline: none;
-        transition: 0.2s;
+        transition: 0.3s;
         appearance: none;
     }
 
     .custom-select:focus, .price-field:focus {
         border-color: var(--primary);
         background: #fff;
+        box-shadow: 0 0 0 4px rgba(177,34,65,0.05);
     }
 
-    /* Custom arrow for select */
     .select-wrapper {
         position: relative;
     }
     .select-wrapper::after {
-        content: '▼';
+        content: '↓';
         position: absolute;
-        right: 15px;
+        right: 18px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 10px;
+        font-size: 14px;
+        font-weight: 900;
         color: #BBB;
         pointer-events: none;
     }
@@ -77,12 +78,12 @@
     .price-range {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 12px;
     }
 
     .btn-apply {
         width: 100%;
-        background: var(--primary);
+        background: var(--text-main);
         color: #fff;
         border: none;
         padding: 18px;
@@ -91,63 +92,41 @@
         font-size: 15px;
         cursor: pointer;
         transition: all 0.3s;
-        box-shadow: 0 10px 25px rgba(177,34,65,0.25);
-        margin-top: 10px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        margin-top: 15px;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
     .btn-apply:hover {
+        background: var(--primary);
         transform: translateY(-2px);
-        box-shadow: 0 15px 30px rgba(177,34,65,0.35);
+        box-shadow: 0 12px 25px rgba(177,34,65,0.25);
     }
 
-    .brand-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        max-height: 250px;
-        overflow-y: auto;
-        padding-right: 5px;
-    }
-    .brand-list::-webkit-scrollbar { width: 4px; }
-    .brand-list::-webkit-scrollbar-thumb { background: #EEE; border-radius: 10px; }
-
-    .brand-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 16px;
-        border-radius: 12px;
-        text-decoration: none;
+    .reset-link {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        font-size: 12px;
         font-weight: 800;
-        font-size: 14px;
+        color: #BBB;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         transition: 0.2s;
     }
-    .brand-item.active {
-        background: var(--primary);
-        color: #fff;
-    }
-    .brand-item.inactive {
-        background: #F8F8F8;
-        color: var(--text-main);
-    }
-    .brand-item.inactive:hover {
-        background: #F0F0F0;
-        color: var(--primary);
-    }
+    .reset-link:hover { color: var(--primary); }
 
+    /* Mobile handling */
     @media (max-width: 992px) {
         .catalog-container { grid-template-columns: 1fr; }
         .filter-sidebar { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             z-index: 2000; border-radius: 0; display: none; padding-top: 80px;
+            overflow-y: auto;
         }
         .filter-sidebar.open { display: block; }
-        .mobile-filter-header {
-            display: flex; justify-content: space-between; align-items: center;
-            position: absolute; top: 20px; left: 20px; right: 20px;
-        }
     }
 </style>
 
@@ -156,40 +135,42 @@
         
         <!-- Sidebar -->
         <aside id="catalog-sidebar" class="filter-sidebar">
-            <div class="mobile-filter-header mobile-only">
-                <h2 style="font-weight:900; margin:0;">Filtrlar</h2>
-                <button onclick="toggleFilters(false)" style="background:#F0F0F0; border:none; width:40px; height:40px; border-radius:50%; font-weight:900; cursor:pointer;">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="font-size: 24px; font-weight: 900; color: var(--text-main); margin: 0;">Filtrlar</h2>
+                <button onclick="toggleFilters(false)" class="mobile-only" style="background:#F5F5F5; border:none; width:40px; height:40px; border-radius:50%; font-weight:900;">✕</button>
             </div>
 
             <form method="GET" action="{% url 'phones:filter' %}">
                 
-                <!-- Branding -->
-                <div style="margin-bottom: 30px;">
-                    <h2 style="font-size: 24px; font-weight: 900; color: var(--text-main); margin-bottom: 5px;">Filtrlar</h2>
-                    <div style="width: 40px; height: 4px; background: var(--primary); border-radius: 10px;"></div>
-                </div>
-
-                <!-- Brand Section -->
+                <!-- Model Filter (Instead of Brand) -->
                 <div class="filter-group">
-                    <label class="filter-title">Brend</label>
-                    <div class="brand-list">
-                        <a href="{% url 'phones:filter' %}" class="brand-item {% if not request.GET.model %}active{% else %}inactive{% endif %}">
-                            <span>Barchasi</span>
-                            {% if not request.GET.model %}✓{% endif %}
-                        </a>
-                        {% for val, label in filter_choices.models %}
-                        <a href="{% url 'phones:filter' %}?model={{ val }}{% if request.GET.memory %}&memory={{ request.GET.memory }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" 
-                           class="brand-item {% if request.GET.model == val %}active{% else %}inactive{% endif %}">
-                            <span>{{ label }}</span>
-                            {% if request.GET.model == val %}✓{% endif %}
-                        </a>
-                        {% endfor %}
+                    <label class="filter-title">Modelni tanlang</label>
+                    <div class="select-wrapper">
+                        <select name="model" class="custom-select">
+                            <option value="">Barcha modellar</option>
+                            {% for m in available_models %}
+                            <option value="{{ m }}" {% if request.GET.model == m %}selected{% endif %}>{{ m }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 
-                <!-- Memory -->
+                <!-- Color Filter -->
                 <div class="filter-group">
-                    <label class="filter-title">Xotira</label>
+                    <label class="filter-title">Rang</label>
+                    <div class="select-wrapper">
+                        <select name="color" class="custom-select">
+                            <option value="">Barcha ranglar</option>
+                            {% for c in available_colors %}
+                            <option value="{{ c }}" {% if request.GET.color == c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Memory (Yomkost) -->
+                <div class="filter-group">
+                    <label class="filter-title">Xotira (GB)</label>
                     <div class="select-wrapper">
                         <select name="memory" class="custom-select">
                             <option value="">Barchasi</option>
@@ -204,7 +185,7 @@
 
                 <!-- Price Range -->
                 <div class="filter-group">
-                    <label class="filter-title">Narx oralig'i ($)</label>
+                    <label class="filter-title">Narx ($)</label>
                     <div class="price-range">
                         <input type="number" name="min_price" placeholder="Dan" value="{{ request.GET.min_price }}" class="price-field">
                         <input type="number" name="max_price" placeholder="Gacha" value="{{ request.GET.max_price }}" class="price-field">
@@ -223,12 +204,10 @@
                     </div>
                 </div>
 
-                {% if request.GET.model %}<input type="hidden" name="model" value="{{ request.GET.model }}">{% endif %}
-
                 <button type="submit" class="btn-apply">Qo'llash</button>
                 
-                {% if request.GET.model or request.GET.memory or request.GET.sort or request.GET.min_price or request.GET.max_price %}
-                <a href="{% url 'phones:filter' %}" style="display: block; text-align: center; margin-top: 15px; font-size: 12px; font-weight: 800; color: #BBB; text-decoration: none; text-transform: uppercase; letter-spacing: 1px;">Tozalash</a>
+                {% if request.GET.model or request.GET.memory or request.GET.color or request.GET.min_price or request.GET.max_price %}
+                <a href="{% url 'phones:filter' %}" class="reset-link">Tozalash</a>
                 {% endif %}
             </form>
         </aside>
@@ -236,11 +215,13 @@
         <!-- Main Content -->
         <main>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h1 style="font-size: 28px; font-weight: 900; color: var(--text-main); margin: 0;">Katalog</h1>
-                <button onclick="toggleFilters(true)" class="mobile-only" style="background:#fff; border:1px solid var(--border); padding:10px 20px; border-radius:12px; font-weight:800; font-size:13px; display:flex; align-items:center; gap:8px;">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                    Filtrlar
-                </button>
+                <h1 style="font-size: 28px; font-weight: 900; color: var(--text-main); margin: 0; letter-spacing: -1px;">Katalog</h1>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); background: #F5F5F5; padding: 6px 12px; border-radius: 10px;">{{ phones|length }} ta telefon</span>
+                    <button onclick="toggleFilters(true)" class="mobile-only" style="background:#fff; border:1px solid var(--border); padding:10px 20px; border-radius:12px; font-weight:800; font-size:13px; display:flex; align-items:center; gap:8px;">
+                        ⚙️ Filtrlar
+                    </button>
+                </div>
             </div>
 
             <div class="grid-products">
@@ -268,6 +249,7 @@
                             <div class="compact-meta">
                                 <span class="compact-memory">{{ phone.memory }}GB</span>
                                 <span class="compact-memory" style="background:rgba(34,197,94,0.1); color:#16A34A;">🔋 {{ phone.battery_health }}%</span>
+                                <span class="compact-memory" style="background:rgba(0,0,0,0.05); color:var(--text-main);">{{ phone.color|default:"Standard" }}</span>
                             </div>
                             <div class="compact-bottom">
                                 <div class="compact-seller">@{{ phone.seller.username|default:"admin" }}</div>

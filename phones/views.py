@@ -320,11 +320,38 @@ class FilterView(ListView):
     def get_queryset(self):
         clean_expired_bookings()
         queryset = Listing.objects.filter(is_approved=True, is_booked=False)
+        
+        # Get parameters
         model = self.request.GET.get('model')
+        color = self.request.GET.get('color')
         memory = self.request.GET.get('memory')
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
+        sort = self.request.GET.get('sort')
+
+        # Apply filters
         if model: queryset = queryset.filter(model_name__icontains=model)
+        if color: queryset = queryset.filter(color__iexact=color)
         if memory: queryset = queryset.filter(memory=memory)
+        if min_price: queryset = queryset.filter(price__gte=min_price)
+        if max_price: queryset = queryset.filter(price__lte=max_price)
+
+        # Apply Sorting
+        if sort == 'price_asc':
+            queryset = queryset.order_by('price')
+        elif sort == 'price_desc':
+            queryset = queryset.order_by('-price')
+        else:
+            queryset = queryset.order_by('-created_at')
+
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Fetch unique models and colors from existing listings for the filter UI
+        context['available_models'] = Listing.objects.filter(is_approved=True).values_list('model_name', flat=True).distinct().order_by('model_name')
+        context['available_colors'] = Listing.objects.filter(is_approved=True).values_list('color', flat=True).distinct().order_by('color')
+        return context
 
 class SearchView(ListView):
     model = Listing
