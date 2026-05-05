@@ -4,110 +4,118 @@
 {% block title %}Mahsulot Qo'shish — Markab Admin{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto py-8 px-4">
-    <div class="mb-6">
-        <a href="{% url 'phones:admin_dashboard' %}" class="inline-flex items-center gap-2 text-gray-500 hover:text-brand transition-colors text-sm font-bold">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Dashboardga qaytish
+<div class="animate">
+
+    <!-- Back Button -->
+    <div style="margin-bottom:20px;">
+        <a href="{% url 'phones:admin_dashboard' %}" style="display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); text-decoration:none; font-size:13px; font-weight:800;">
+            ← Dashboardga qaytish
         </a>
     </div>
 
-    <div class="card p-8 relative overflow-hidden">
-        <!-- Top accent line -->
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand to-brand-light"></div>
+    <!-- Card -->
+    <div class="premium-card" style="padding:24px; border-top:4px solid var(--primary);">
 
-        <h1 class="text-3xl font-black text-gray-900 mb-8">
-            ➕ Yangi <span class="text-gradient">Mahsulot</span>
+        <h1 style="font-size:22px; font-weight:900; color:var(--text-main); margin-bottom:24px;">
+            ➕ Yangi <span style="color:var(--primary);">Mahsulot</span>
         </h1>
 
-        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:18px;">
             {% csrf_token %}
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <!-- Model -->
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">📱 Model nomi</label>
-                    <select name="model_name" required class="input-field">
-                        {% for val, label in form.fields.model_name.choices %}
-                        <option value="{{ val }}">{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <!-- Model -->
+            <div>
+                <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">📱 Model nomi</label>
+                <select name="model_name" required style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main); appearance:auto;">
+                    {% for val, label in form.fields.model_name.choices %}
+                    <option value="{{ val }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-                <!-- Memory -->
+            <!-- Memory + Battery in 2 cols -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
                 <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">💾 Xotira</label>
-                    <select name="memory" required class="input-field">
+                    <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">💾 Xotira</label>
+                    <select name="memory" required style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main);">
                         {% for val, label in form.fields.memory.choices %}
                         <option value="{{ val }}">{{ label }}</option>
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- Battery -->
                 <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">🔋 Batareya (%)</label>
+                    <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">🔋 Batareya (%)</label>
                     <input type="number" name="battery_health" value="100" min="1" max="100" required
-                           class="input-field" placeholder="95">
+                           style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main);"
+                           placeholder="95">
                 </div>
+            </div>
 
-                <!-- Condition -->
-                <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">🛠️ Holati</label>
-                    <select name="condition" required class="input-field">
-                        {% for val, label in form.fields.condition.choices %}
-                        <option value="{{ val }}">{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <!-- Condition -->
+            <div>
+                <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">🛠️ Holati</label>
+                <select name="condition" required style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main);">
+                    {% for val, label in form.fields.condition.choices %}
+                    <option value="{{ val }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-                <!-- Price -->
+            <!-- Price + Color -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
                 <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">💰 Narxi (so'm)</label>
-                    <input type="number" name="price" required class="input-field" placeholder="12500000">
+                    <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">💰 Narxi (so'm)</label>
+                    <input type="number" name="price" required
+                           style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main);"
+                           placeholder="12500000">
                 </div>
+                <div>
+                    <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">🎨 Rang</label>
+                    <input type="text" name="color"
+                           style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main);"
+                           placeholder="Space Gray">
+                </div>
+            </div>
 
-                <!-- Color -->
-                <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">🎨 Rang (ixtiyoriy)</label>
-                    <input type="text" name="color" class="input-field" placeholder="Space Gray">
-                </div>
-
-                <!-- Region -->
-                <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">🌍 Region (ixtiyoriy)</label>
-                    <input type="text" name="region" class="input-field" placeholder="USA, EU...">
-                </div>
+            <!-- Region -->
+            <div>
+                <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">🌍 Region</label>
+                <input type="text" name="region"
+                       style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main);"
+                       placeholder="USA, EU...">
             </div>
 
             <!-- Image Upload -->
             <div>
-                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">🖼️ Mahsulot rasmi</label>
-                <div class="relative">
+                <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">🖼️ Mahsulot rasmi</label>
+                <div style="position:relative;">
                     <input type="file" name="image" id="imageUpload" accept="image/*"
-                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                           style="position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; z-index:10;"
                            onchange="updateFileName(this)">
-                    <div class="border-2 border-dashed border-surface-border rounded-2xl p-8 text-center hover:border-brand/50 hover:bg-brand/5 transition-all cursor-pointer">
-                        <span class="text-4xl block mb-3">📷</span>
-                        <p class="font-bold text-gray-600" id="fileLabel">Rasm tanlash uchun bosing</p>
-                        <p class="text-xs text-gray-400 mt-1">JPG, PNG, WEBP</p>
+                    <div id="uploadBox" style="border:2px dashed var(--border); border-radius:16px; padding:24px; text-align:center; transition:all 0.3s;">
+                        <span style="font-size:32px; display:block; margin-bottom:8px;">📷</span>
+                        <p id="fileLabel" style="font-weight:700; color:var(--text-muted); font-size:13px;">Rasm tanlash uchun bosing</p>
+                        <p style="font-size:11px; color:#bbb; margin-top:4px;">JPG, PNG, WEBP</p>
                     </div>
                 </div>
             </div>
 
             <!-- Description -->
             <div>
-                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">📝 Tavsif (ixtiyoriy)</label>
-                <textarea name="description" rows="3" class="input-field resize-none"
+                <label style="display:block; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:8px;">📝 Tavsif</label>
+                <textarea name="description" rows="3"
+                          style="width:100%; padding:14px 16px; border:1.5px solid var(--border); border-radius:14px; font-size:14px; font-weight:700; background:#fff; color:var(--text-main); resize:none; font-family:inherit;"
                           placeholder="Qo'shimcha ma'lumotlar..."></textarea>
             </div>
 
-            <!-- Hidden branch (always malika) -->
+            <!-- Hidden Branch -->
             <input type="hidden" name="branch" value="malika">
 
-            <button type="submit" class="btn-primary w-full font-black uppercase tracking-wide">
+            <!-- Submit -->
+            <button type="submit" class="btn-primary" style="width:100%; font-size:15px; font-weight:900; letter-spacing:0.5px; padding:16px;">
                 ✅ Mahsulotni Saqlash
             </button>
+
         </form>
     </div>
 </div>
@@ -115,8 +123,11 @@
 <script>
 function updateFileName(input) {
     const label = document.getElementById('fileLabel');
+    const box = document.getElementById('uploadBox');
     if (input.files && input.files[0]) {
         label.textContent = '✅ ' + input.files[0].name;
+        box.style.borderColor = 'var(--primary)';
+        box.style.background = 'rgba(177,34,65,0.03)';
     }
 }
 </script>
