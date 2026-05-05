@@ -3,188 +3,174 @@
 
 {% block content %}
 <style>
-    /* Mobiks Style Adaptations */
-    .hero-banner {
-        width: 100%;
-        height: 200px;
-        background: url('{% static "images/banner.png" %}') center/cover no-repeat;
-        border-radius: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    /* Global Mobiks Styling */
+    .hero-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
     }
     
+    .main-banner {
+        width: 100%;
+        height: 400px;
+        background: url('{% static "images/banner.png" %}') center/cover no-repeat;
+        border-radius: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    }
+
+    .side-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .action-card {
+        flex: 1;
+        border-radius: 30px;
+        padding: 30px;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+    .action-card.red { background: var(--primary); color: white; }
+    .action-card.white { background: white; color: #1A1A1A; border: 1px solid var(--border); }
+    [data-theme="dark"] .action-card.white { background: #1E1E1E; color: white; }
+
+    .action-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .action-card.white .action-icon { background: rgba(177,34,65,0.1); color: var(--primary); }
+
+    /* Quick Menu (Small Cards below) */
     .quick-menu {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 30px;
+        gap: 15px;
+        margin-bottom: 40px;
     }
     .quick-item {
         background: var(--card-bg);
         border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 15px 5px;
+        border-radius: 25px;
+        padding: 20px 10px;
         text-align: center;
         text-decoration: none;
         color: var(--text-main);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         transition: 0.3s;
     }
-    .quick-icon {
-        width: 45px;
-        height: 45px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-    }
-    .quick-label { font-size: 12px; font-weight: 800; }
 
-    .trust-badges {
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-        padding-bottom: 15px;
-        margin-bottom: 25px;
-        scrollbar-width: none;
+    /* Responsive Logic */
+    @media (max-width: 992px) {
+        .hero-section { grid-template-columns: 1fr; }
+        .side-actions { display: none; } /* Hide side cards on mobile, use quick menu instead */
+        .main-banner { height: 200px; border-radius: 20px; }
     }
-    .trust-badge {
-        flex: 0 0 auto;
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        padding: 8px 15px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    .tabs-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-    .tabs {
-        display: flex;
-        gap: 10px;
-        background: #F5F5F5;
-        padding: 5px;
-        border-radius: 15px;
-    }
-    [data-theme="dark"] .tabs { background: #2A2A2A; }
-    .tab {
-        padding: 10px 20px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 800;
-        cursor: pointer;
-        transition: 0.2s;
-        text-decoration: none;
-        color: var(--text-muted);
-    }
-    .tab.active {
-        background: #fff;
-        color: var(--primary);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-    [data-theme="dark"] .tab.active { background: #1E1E1E; }
 
     @media (max-width: 480px) {
-        .hero-banner { height: 160px; }
-        .quick-icon { width: 40px; height: 40px; font-size: 18px; }
-        .quick-label { font-size: 11px; }
+        .quick-menu { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .quick-item { padding: 15px 5px; border-radius: 18px; }
+        .quick-item span { font-size: 11px; }
     }
 </style>
 
 <div class="animate">
-    <!-- Header Search Area (Mobiks Style) -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <img src="{% static 'images/logo_.png' %}" style="height: 24px;">
-            <span style="font-weight: 900; font-size: 18px;">Markab</span>
-        </div>
-        <div style="color: var(--primary); font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 4px;">
-            📍 Toshkent <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path></svg>
+    <!-- Desktop Hero Section -->
+    <div class="hero-section">
+        <div class="main-banner"></div>
+        
+        <div class="side-actions">
+            <a href="{% url 'phones:sell' %}" class="action-card red">
+                <div class="action-icon">🤝</div>
+                <h3 style="font-size: 24px; font-weight: 900; margin-bottom: 10px;" data-lang-key="sell_phone">Telefon sotish</h3>
+                <p style="opacity: 0.9; font-size: 14px;" data-lang-key="sell_desc">Tezda baholash va naqd to'lov</p>
+                <div style="margin-top: 20px; font-weight: 900;" data-lang-key="start">Boshlash &rarr;</div>
+            </a>
+            
+            <a href="{% url 'phones:price' %}" class="action-card white">
+                <div class="action-icon">📋</div>
+                <h3 style="font-size: 24px; font-weight: 900; margin-bottom: 10px;" data-lang-key="free_price">Bepul baholash</h3>
+                <p style="color: var(--text-muted); font-size: 14px;" data-lang-key="price_desc">2 daqiqada narxni biling</p>
+                <div style="margin-top: 20px; font-weight: 900; color: var(--primary);" data-lang-key="pricing">Baholash &rarr;</div>
+            </a>
         </div>
     </div>
-    
-    <!-- Search Bar -->
-    <div style="position: relative; margin-bottom: 25px;">
-        <input type="text" data-lang-key="search" placeholder="Telefonlarni qidirish..." style="width: 100%; padding: 15px 20px 15px 45px; border-radius: 18px; border: 1px solid var(--border); background: #F9F9F9; font-weight: 700; outline: none;">
-        <svg style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999;" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-    </div>
 
-    <!-- Banner -->
-    <div class="hero-banner"></div>
-
-    <!-- Quick Menu -->
+    <!-- Quick Menu (Visible on both, but key for Mobile) -->
     <div class="quick-menu">
         <a href="{% url 'phones:sell' %}" class="quick-item">
-            <div class="quick-icon" style="background: rgba(34,197,94,0.1); color: #22C55E;">🤝</div>
-            <div class="quick-label" data-lang-key="sell">Sotish</div>
+            <div style="font-size: 24px;">🤝</div>
+            <span style="font-weight: 800;" data-lang-key="sell">Sotish</span>
         </a>
         <a href="?brand=iPhone" class="quick-item">
-            <div class="quick-icon" style="background: rgba(0,0,0,0.05); color: #000;">🍎</div>
-            <div class="quick-label">iPhone</div>
+            <div style="font-size: 24px;">🍎</div>
+            <span style="font-weight: 800;">iPhone</span>
         </a>
         <a href="{% url 'phones:nasiya' %}" class="quick-item">
-            <div class="quick-icon" style="background: rgba(177,34,65,0.1); color: var(--primary);">💳</div>
-            <div class="quick-label" data-lang-key="nasiya">Nasiya</div>
+            <div style="font-size: 24px;">💳</div>
+            <span style="font-weight: 800;" data-lang-key="nasiya">Nasiya</span>
         </a>
         <a href="{% url 'phones:price' %}" class="quick-item">
-            <div class="quick-icon" style="background: rgba(245,158,11,0.1); color: #F59E0B;">📋</div>
-            <div class="quick-label" data-lang-key="pricing">Baholash</div>
+            <div style="font-size: 24px;">📋</div>
+            <span style="font-weight: 800;" data-lang-key="pricing">Baholash</span>
         </a>
     </div>
 
-    <!-- Trust Badges -->
-    <div class="trust-badges">
-        <div class="trust-badge">🛡️ 30 kun kafolat</div>
-        <div class="trust-badge">📦 Nasiya mavjud</div>
-        <div class="trust-badge">✅ 100% tekshirilgan</div>
+    <!-- Trust Info -->
+    <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 20px; margin-bottom: 30px; scrollbar-width: none;">
+        <div style="flex:0 0 auto; background: var(--card-bg); padding: 12px 20px; border-radius: 15px; border: 1px solid var(--border); font-size: 13px; font-weight: 800;">🛡️ 30 kun kafolat</div>
+        <div style="flex:0 0 auto; background: var(--card-bg); padding: 12px 20px; border-radius: 15px; border: 1px solid var(--border); font-size: 13px; font-weight: 800;">📦 Nasiya mavjud</div>
+        <div style="flex:0 0 auto; background: var(--card-bg); padding: 12px 20px; border-radius: 15px; border: 1px solid var(--border); font-size: 13px; font-weight: 800;">✅ 100% tekshirilgan</div>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs-container">
-        <div class="tabs">
-            <a href="?filter=sale" class="tab {% if request.GET.filter == 'sale' %}active{% endif %}" data-lang-key="promos">Aksiya</a>
-            <a href="?filter=week" class="tab {% if not request.GET.filter or request.GET.filter == 'week' %}active{% endif %}" data-lang-key="new_ads">Yangi</a>
-            <a href="#" class="tab">Foydali</a>
+    <!-- Filter Tabs -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <div style="display: flex; gap: 10px; background: #F0F0F0; padding: 5px; border-radius: 15px;">
+            <a href="?filter=sale" class="tab {% if request.GET.filter == 'sale' %}active{% endif %}" style="padding: 10px 20px; border-radius: 12px; text-decoration: none; color: inherit; font-weight: 800; font-size: 14px; background: {% if request.GET.filter == 'sale' %}white{% else %}transparent{% endif %};" data-lang-key="promos">Aksiya</a>
+            <a href="?filter=week" class="tab {% if not request.GET.filter or request.GET.filter == 'week' %}active{% endif %}" style="padding: 10px 20px; border-radius: 12px; text-decoration: none; color: inherit; font-weight: 800; font-size: 14px; background: {% if not request.GET.filter or request.GET.filter == 'week' %}white{% else %}transparent{% endif %};" data-lang-key="new_ads">Yangi</a>
         </div>
-        <a href="{% url 'phones:catalog' %}" style="color: var(--primary); font-weight: 900; font-size: 13px; text-decoration: none;" data-lang-key="catalog">Hammasi &rarr;</a>
+        <a href="{% url 'phones:catalog' %}" style="color: var(--primary); font-weight: 900; text-decoration: none; font-size: 14px;" data-lang-key="catalog">Hammasi &rarr;</a>
     </div>
 
-    <!-- Products Grid -->
+    <!-- Product Grid -->
     <div class="grid-products">
         {% for listing in listings %}
-            <div class="compact-card">
-                <a href="{% url 'phones:detail' listing.id %}" style="text-decoration:none; color:inherit;">
-                    <div class="compact-img-area">
-                        {% if listing.is_sale %}
-                            <div style="position:absolute; top:10px; left:10px; background:#22C55E; color:white; font-size:10px; font-weight:900; padding:4px 8px; border-radius:8px;">-{{ listing.get_discount_percentage }}%</div>
-                        {% endif %}
-                        {% if listing.image %}
-                            <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
-                        {% endif %}
-                        <button class="compact-fav" onclick="event.preventDefault(); window.location.href='{% url 'phones:toggle_favorite' listing.id %}'">❤️</button>
+        <div class="compact-card">
+            <a href="{% url 'phones:detail' listing.id %}" style="text-decoration:none; color:inherit;">
+                <div class="compact-img-area">
+                    {% if listing.image %}
+                        <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
+                    {% endif %}
+                    {% if listing.is_sale %}
+                        <div style="position:absolute; top:12px; left:12px; background:#22C55E; color:white; font-size:10px; font-weight:900; padding:4px 10px; border-radius:8px;">-{{ listing.get_discount_percentage }}%</div>
+                    {% endif %}
+                </div>
+                <div class="compact-info">
+                    <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
+                    <h3 class="compact-title">{{ listing.title }}</h3>
+                    <div class="compact-meta">
+                        <span>🔋{{ listing.battery_health }}%</span>
+                        <span>💾 {{ listing.memory }}GB</span>
                     </div>
-                    <div class="compact-info">
-                        <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
-                        <h3 class="compact-title">{{ listing.title }}</h3>
-                        <div class="compact-meta">
-                            <span>🔋{{ listing.battery_health }}%</span>
-                            <span>💾 {{ listing.memory }}GB</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
+                </div>
+            </a>
+        </div>
         {% endfor %}
     </div>
 </div>
