@@ -5,6 +5,8 @@ app_name = 'phones'
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
+    path('search/', views.SearchView.as_view(), name='search'),
+    path('catalog/', views.CatalogView.as_view(), name='catalog'),
     path('listing/<int:pk>/', views.ListingDetailView.as_view(), name='detail'),
     path('sell/', views.SellView.as_view(), name='sell'),
     path('price/', views.PriceView.as_view(), name='price'),

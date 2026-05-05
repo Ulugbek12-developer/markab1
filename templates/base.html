@@ -39,7 +39,7 @@
             </a>
             
             <!-- Katalog Button -->
-            <a href="{% url 'phones:home' %}" class="btn-primary hide-on-mobile" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 14px; min-width: max-content; border-radius: 12px;">
+            <a href="{% url 'phones:catalog' %}" class="btn-primary hide-on-mobile" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 14px; min-width: max-content; border-radius: 12px;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                 Katalog
             </a>
@@ -67,6 +67,21 @@
                     Savat
                     <span id="cart-count" style="display:none; position:absolute; top:-5px; right:-5px; background:var(--primary); color:white; font-size:10px; padding:2px 5px; border-radius:10px; font-weight:900;">0</span>
                 </a>
+                
+                {% if user.is_authenticated %}
+                    <form action="{% url 'users:logout' %}" method="POST" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="hide-on-mobile" style="background:none; border:none; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #FF4D4D; font-size: 12px; font-weight: 700; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                            Chiqish
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="hide-on-mobile" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--primary); font-size: 12px; font-weight: 700; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                        Kirish
+                    </a>
+                {% endif %}
                 
                 {% if user.is_staff %}
                     <a href="{% url 'phones:admin_dashboard' %}" class="btn-primary hide-on-mobile" style="background:var(--text-main); color:#fff; padding: 10px 20px; font-size: 14px; border-radius: 12px;">Do'kon Paneli</a>

@@ -62,8 +62,59 @@
 
     <!-- Description -->
     <div class="premium-card" style="margin-top:40px;">
-        <h3 style="font-weight:900; margin-bottom:15px;">Ma'lumot</h3>
-        <p style="color:var(--text-muted); white-space:pre-line; line-height:1.6;">{{ listing.description }}</p>
+        <h3 style="font-weight:900; margin-bottom:20px; font-size: 22px;">Asosiy ma'lumotlar</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;">
+            {% if listing.model_name %}
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Model</p>
+                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.model_name }}</p>
+            </div>
+            {% endif %}
+            
+            {% if listing.memory %}
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Xotira</p>
+                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.memory }} GB</p>
+            </div>
+            {% endif %}
+
+            {% if listing.color %}
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Rang</p>
+                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.color }}</p>
+            </div>
+            {% endif %}
+            
+            {% if listing.battery_health %}
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Batareya</p>
+                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.battery_health }}%</p>
+            </div>
+            {% endif %}
+            
+            {% if listing.region %}
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Region</p>
+                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.region }}</p>
+            </div>
+            {% endif %}
+            
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Holati</p>
+                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.get_condition_display }}</p>
+            </div>
+
+            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
+                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Karobka-Dokument</p>
+                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{% if listing.has_box %}Bor ✅{% else %}Yo'q ❌{% endif %}</p>
+            </div>
+        </div>
+
+        {% if listing.description %}
+        <h3 style="font-weight:900; margin-bottom:15px; font-size: 18px;">Qo'shimcha ma'lumot</h3>
+        <p style="color:var(--text-muted); white-space:pre-line; line-height:1.6; padding: 20px; background: #F9F9F9; border-radius: 16px;">{{ listing.description }}</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

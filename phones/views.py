@@ -61,6 +61,33 @@ class HomeView(ListView):
         })
         return context
 
+class CatalogView(TemplateView):
+    template_name = 'phones/catalog.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = Listing.objects.filter(status='active', is_approved=True)
+
+        # Filters
+        brand = self.request.GET.get('brand')
+        if brand:
+            queryset = queryset.filter(model_name__icontains=brand)
+
+        memory = self.request.GET.get('memory')
+        if memory:
+            queryset = queryset.filter(memory__icontains=memory)
+
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+
+        context['listings'] = queryset
+        context['categories'] = Category.objects.all()
+        return context
+
 class ListingDetailView(DetailView):
     model = Listing
     template_name = 'phones/detail.html'
