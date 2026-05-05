@@ -74,7 +74,7 @@
             
             <div style="background:rgba(0,0,0,0.2); padding: 30px; border-radius: 20px;">
                 <p style="font-size:14px; font-weight:900; opacity:0.8; margin-bottom:10px;">TO'LANADIGAN FARQ:</p>
-                <p style="font-size:48px; font-weight:900; text-shadow: 0 5px 15px rgba(0,0,0,0.2);">{{ result.difference|floatformat:1 }} mln so'm</p>
+                <p style="font-size:48px; font-weight:900; text-shadow: 0 5px 15px rgba(0,0,0,0.2);">{{ result.difference|floatformat:1 }} $</p>
             </div>
             
             <p style="font-size:14px; font-weight:700; opacity:0.9; margin-top:20px;">* Bu taxminiy narx. Aniq narx filialda telefon tekshirilgandan so'ng aytiladi.</p>
@@ -120,7 +120,7 @@
                         </div>
                         <div>
                             <p style="font-weight:900; font-size:20px; margin-bottom:5px;">{{ target_phone.title }}</p>
-                            <p style="color:var(--primary); font-weight:900; font-size:18px;">{{ target_phone.price|floatformat:0 }} so'm</p>
+                            <p style="color:var(--primary); font-weight:900; font-size:18px;">{{ target_phone.price|floatformat:0 }} $</p>
                         </div>
                     </div>
                 {% else %}

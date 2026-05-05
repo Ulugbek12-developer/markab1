@@ -76,4 +76,4 @@ def calculate_phone_price(data):
             elif "wifi" in d: base -= 80
             else: base -= 30
 
-    return round(base / 100, 1) # Returns price in millions (e.g. 8.5)
+    return int(base) # Returns price in dollars (e.g. 850)

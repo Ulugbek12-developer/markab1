@@ -20,7 +20,7 @@
                         <h3 style="font-size:18px; font-weight:900; margin:5px 0;">{{ listing.title }}</h3>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="price-tag">{{ listing.price|floatformat:0 }} so'm</span>
+                        <span class="price-tag">{{ listing.price|floatformat:0 }} $</span>
                         <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST">
                             {% csrf_token %}
                             <button type="submit" style="background:none; border:none; color:var(--primary); cursor:pointer;">
