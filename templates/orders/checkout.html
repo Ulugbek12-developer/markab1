@@ -77,7 +77,7 @@
             </div>
             <div class="checkout-product-info">
                 <h2>{{ listing.title }}</h2>
-                <div class="price">{{ listing.price|floatformat:0 }} so'm</div>
+                <div class="price">{{ listing.price|floatformat:0 }} $</div>
             </div>
         </div>
 
@@ -114,19 +114,22 @@
                 </div>
                 <input type="hidden" name="months" id="inp_months" value="6">
 
-                <div class="form-group" style="margin-bottom:20px;">
-                    <label style="color:var(--primary);">Boshlang'ich to'lov (so'm)</label>
-                    <input type="number" name="initial_payment" id="inp_initial" value="0" oninput="updateCalc()" style="font-size:20px; color:var(--primary);">
+                <div class="section-label" style="color:var(--primary);">Hududni tanlang</div>
+                <div class="payment-toggle" style="margin-bottom:20px;">
+                    <button type="button" id="btnShahar" class="active-installment" onclick="setRegion('shahar')">🏙️ Shahar (30%)</button>
+                    <button type="button" id="btnViloyat" onclick="setRegion('viloyat')">🌄 Viloyat (40%)</button>
                 </div>
+                <input type="hidden" name="region_type" id="inp_region" value="shahar">
+                <input type="hidden" name="initial_payment" id="inp_initial" value="0">
 
                 <div class="calc-box">
-                    <div class="calc-row"><span>Mahsulot:</span><span class="val" id="calcProduct">0 so'm</span></div>
-                    <div class="calc-row"><span>Boshlang'ich to'lov:</span><span class="val red" id="calcInitial">- 0 so'm</span></div>
-                    <div class="calc-row"><span>Qolgan summa:</span><span class="val" id="calcRemaining">0 so'm</span></div>
+                    <div class="calc-row"><span>Mahsulot:</span><span class="val" id="calcProduct">0 $</span></div>
+                    <div class="calc-row"><span>Boshlang'ich to'lov:</span><span class="val red" id="calcInitial">- 0 $</span></div>
+                    <div class="calc-row"><span>Qolgan summa:</span><span class="val" id="calcRemaining">0 $</span></div>
                     <div class="calc-divider"></div>
                     <div class="calc-total">
                         <span class="label">Har oylik to'lov:</span>
-                        <span class="amount" id="calcMonthly">0 so'm</span>
+                        <span class="amount" id="calcMonthly">0 $</span>
                     </div>
                     <div class="calc-badge">
                         <div class="small">To'lov muddati</div>
@@ -202,8 +205,27 @@ function setDelivery(type) {
     }
 }
 
+let regionType = 'shahar';
+
+function setRegion(type) {
+    regionType = type;
+    document.getElementById('inp_region').value = type;
+    const btnS = document.getElementById('btnShahar');
+    const btnV = document.getElementById('btnViloyat');
+    if (type === 'shahar') {
+        btnS.className = 'active-installment'; btnV.className = '';
+    } else {
+        btnS.className = ''; btnV.className = 'active-installment';
+    }
+    updateCalc();
+}
+
 function updateCalc() {
-    const initial = parseInt(document.getElementById('inp_initial').value) || 0;
+    // Shahar = 30%, Viloyat = 40% initial payment
+    const initialPct = regionType === 'viloyat' ? 0.40 : 0.30;
+    const initial = Math.round(BASE_PRICE * initialPct);
+    document.getElementById('inp_initial').value = initial;
+    
     const remaining = Math.max(0, BASE_PRICE - initial);
     let rate = 0;
     if (months === 3) rate = 0.10;
@@ -212,10 +234,10 @@ function updateCalc() {
     const total = remaining + Math.round(remaining * rate);
     const monthly = Math.round(total / months);
 
-    document.getElementById('calcProduct').textContent = formatPrice(BASE_PRICE) + " so'm";
-    document.getElementById('calcInitial').textContent = "- " + formatPrice(initial) + " so'm";
-    document.getElementById('calcRemaining').textContent = formatPrice(remaining) + " so'm";
-    document.getElementById('calcMonthly').textContent = formatPrice(monthly) + " so'm";
+    document.getElementById('calcProduct').textContent = formatPrice(BASE_PRICE) + " $";
+    document.getElementById('calcInitial').textContent = "- " + formatPrice(initial) + " $";
+    document.getElementById('calcRemaining').textContent = formatPrice(remaining) + " $";
+    document.getElementById('calcMonthly').textContent = formatPrice(monthly) + " $";
     document.getElementById('calcMonths').textContent = months + " oy";
 }
 </script>
