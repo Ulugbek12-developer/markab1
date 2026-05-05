@@ -116,10 +116,20 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Listing
     template_name = 'phones/admin_dashboard.html'
     context_object_name = 'phones'
-    def test_func(self): return self.request.user.is_staff
-    def get_queryset(self): return Listing.objects.all().order_by('-created_at')
+    def test_func(self): 
+        return self.request.user.role in ['head_admin', 'staff_seller', 'staff_cashier'] or self.request.user.is_staff
+
+    def get_queryset(self): 
+        # Kassir doesn't see product list to manage, he sees orders/assessments (handled in context)
+        if self.request.user.role == 'staff_cashier':
+            return Listing.objects.none()
+        return Listing.objects.all().order_by('-created_at')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.request.user.role in ['head_admin', 'staff_cashier']:
+            context['orders'] = Order.objects.all().order_by('-created_at')
+            context['assessments'] = PriceAssessment.objects.all().order_by('-created_at')
         context['branches'] = Branch.objects.all()
         return context
 
@@ -259,6 +269,24 @@ class PriceView(TemplateView):
             'defects': data.get('defects_list', '').split(','),
         })
         
+        # SAVE Assessment to DB
+        from .models import PriceAssessment
+        PriceAssessment.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            model_name=data.get('model_name', 'Unknown'),
+            memory=data.get('memory', 'Unknown'),
+            battery_health=int(data.get('battery_health', 0)) if data.get('battery_health') else 0,
+            calculated_price=my_phone_price,
+            details={
+                'region': data.get('region'),
+                'screen': data.get('screen_condition'),
+                'body': data.get('body_condition'),
+                'box': data.get('has_box'),
+                'parts': data.get('replaced_parts_list'),
+                'defects': data.get('defects_list')
+            }
+        )
+        
         context = self.get_context_data()
         context['result'] = {
             'price': my_phone_price,
@@ -336,7 +364,8 @@ class AdminBranchCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
         return super().form_valid(form)
 
 class AdminBranchDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self): return self.request.user.is_staff
+    def test_func(self): 
+        return self.request.user.role in ['head_admin', 'staff_seller']
     def get(self, request, pk):
         get_object_or_404(Branch, pk=pk).delete()
         messages.success(request, "Filial o'chirildi.")

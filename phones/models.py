@@ -95,3 +95,17 @@ class Favorite(models.Model):
 
     class Meta:
         unique_together = ('user', 'listing')
+class PriceAssessment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    model_name = models.CharField(max_length=100)
+    memory = models.CharField(max_length=50)
+    battery_health = models.IntegerField()
+    calculated_price = models.DecimalField(max_digits=15, decimal_places=0)
+    details = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.model_name} - {self.calculated_price} $"
