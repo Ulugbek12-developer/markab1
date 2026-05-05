@@ -4,113 +4,155 @@
 {% block title %}Katalog | Markab{% endblock %}
 
 {% block content %}
-<div class="animate" style="display: grid; grid-template-columns: 250px 1fr; gap: 30px;">
-    
-    <!-- Sidebar / Filters -->
-    <div class="hide-on-mobile" style="background: white; border-radius: 24px; padding: 25px; border: 1px solid var(--border); align-self: start; position: sticky; top: 20px;">
-        <h3 style="font-weight: 900; font-size: 20px; margin-bottom: 20px; color: var(--text-main);">Filtrlar</h3>
-        
-        <form method="GET" action="{% url 'phones:catalog' %}">
-            <div style="margin-bottom: 20px;">
-                <label style="font-size: 13px; font-weight: 900; color: var(--text-muted); display: block; margin-bottom: 8px;">Brend</label>
-                <select name="brand" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #F9F9F9; outline: none; font-weight: 700;">
-                    <option value="">Barchasi</option>
-                    <option value="iPhone" {% if request.GET.brand == 'iPhone' %}selected{% endif %}>Apple iPhone</option>
-                    <option value="Samsung" {% if request.GET.brand == 'Samsung' %}selected{% endif %}>Samsung</option>
-                    <option value="Xiaomi" {% if request.GET.brand == 'Xiaomi' %}selected{% endif %}>Xiaomi</option>
-                </select>
-            </div>
+<style>
+    .catalog-layout { display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
+    .filter-sidebar { 
+        background: var(--card-bg); 
+        border-radius: 24px; 
+        padding: 30px; 
+        border: 1px solid var(--border); 
+        align-self: start; 
+        position: sticky; 
+        top: 100px; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+    .filter-label { font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 10px; }
+    .filter-select, .filter-input { 
+        width: 100%; 
+        padding: 14px 18px; 
+        border-radius: 15px; 
+        border: 1px solid var(--border); 
+        background: var(--bg); 
+        color: var(--text-main);
+        font-weight: 800; 
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s;
+    }
+    .filter-select:focus, .filter-input:focus { border-color: var(--primary); }
 
-            <div style="margin-bottom: 20px;">
-                <label style="font-size: 13px; font-weight: 900; color: var(--text-muted); display: block; margin-bottom: 8px;">Xotira</label>
-                <select name="memory" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #F9F9F9; outline: none; font-weight: 700;">
-                    <option value="">Barchasi</option>
-                    <option value="64" {% if request.GET.memory == '64' %}selected{% endif %}>64 GB</option>
-                    <option value="128" {% if request.GET.memory == '128' %}selected{% endif %}>128 GB</option>
-                    <option value="256" {% if request.GET.memory == '256' %}selected{% endif %}>256 GB</option>
-                    <option value="512" {% if request.GET.memory == '512' %}selected{% endif %}>512 GB</option>
-                    <option value="1024" {% if request.GET.memory == '1024' %}selected{% endif %}>1 TB</option>
-                </select>
-            </div>
+    .mobile-filter-btn {
+        display: none;
+        width: 100%;
+        padding: 15px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-weight: 900;
+        margin-bottom: 20px;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+    }
 
-            <div style="margin-bottom: 20px;">
-                <label style="font-size: 13px; font-weight: 900; color: var(--text-muted); display: block; margin-bottom: 8px;">Narx oralig'i ($)</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" name="min_price" value="{{ request.GET.min_price }}" placeholder="Dan" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #F9F9F9; outline: none; font-weight: 700;">
-                    <input type="number" name="max_price" value="{{ request.GET.max_price }}" placeholder="Gacha" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #F9F9F9; outline: none; font-weight: 700;">
-                </div>
-            </div>
+    @media (max-width: 992px) {
+        .catalog-layout { grid-template-columns: 1fr; }
+        .filter-sidebar { display: none; }
+        .mobile-filter-btn { display: flex; }
+    }
+</style>
 
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 14px;">Qo'llash</button>
-            {% if request.GET %}
-                <a href="{% url 'phones:catalog' %}" style="display: block; text-align: center; margin-top: 15px; font-size: 13px; font-weight: 700; color: var(--text-muted); text-decoration: none;">Filtrlarni tozalash</a>
-            {% endif %}
-        </form>
+<div class="animate">
+    <div style="margin-bottom: 30px;">
+        <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 5px;">Barcha telefonlar</h1>
+        <p style="color: var(--text-muted); font-weight: 700;">{{ listings|length }} ta e'lon topildi</p>
     </div>
 
-    <!-- Products Area -->
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="font-size:24px; font-weight:900;">Katalog</h2>
-            <span style="background: rgba(177,34,65,0.1); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 900;">{{ listings|length }} ta telefon</span>
-        </div>
+    <button class="mobile-filter-btn" onclick="toggleMobileFilters()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+        Filtrlar
+    </button>
 
+    <div class="catalog-layout">
+        <!-- Sidebar Filters -->
+        <aside class="filter-sidebar" id="filter-sidebar">
+            <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 25px;">Saralash</h3>
+            <form method="GET">
+                <div style="margin-bottom: 25px;">
+                    <label class="filter-label">Brend</label>
+                    <select name="brand" class="filter-select">
+                        <option value="">Barchasi</option>
+                        <option value="iPhone" {% if request.GET.brand == 'iPhone' %}selected{% endif %}>iPhone</option>
+                        <option value="Samsung" {% if request.GET.brand == 'Samsung' %}selected{% endif %}>Samsung</option>
+                        <option value="Xiaomi" {% if request.GET.brand == 'Xiaomi' %}selected{% endif %}>Xiaomi</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label class="filter-label">Xotira</label>
+                    <select name="memory" class="filter-select">
+                        <option value="">Barchasi</option>
+                        <option value="64" {% if request.GET.memory == '64' %}selected{% endif %}>64 GB</option>
+                        <option value="128" {% if request.GET.memory == '128' %}selected{% endif %}>128 GB</option>
+                        <option value="256" {% if request.GET.memory == '256' %}selected{% endif %}>256 GB</option>
+                        <option value="512" {% if request.GET.memory == '512' %}selected{% endif %}>512 GB</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label class="filter-label">Narx ($)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" name="min_price" placeholder="Dan" class="filter-input" value="{{ request.GET.min_price }}">
+                        <input type="number" name="max_price" placeholder="Gacha" class="filter-input" value="{{ request.GET.max_price }}">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 18px; border-radius: 18px;">Qidirish</button>
+                <a href="{% url 'phones:catalog' %}" style="display: block; text-align: center; margin-top: 15px; font-size: 13px; font-weight: 800; color: var(--text-muted); text-decoration: none;">Tozalash</a>
+            </form>
+        </aside>
+
+        <!-- Product Grid -->
         <div class="grid-products">
             {% for listing in listings %}
-                <div class="compact-card">
-                    <a href="{% url 'phones:detail' listing.id %}" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; height:100%;">
-                        
-                        <!-- Image Area -->
-                        <div class="compact-img-area">
-                            {% if listing.image %}
-                                <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
-                            {% else %}
-                                <div class="no-img">Rasm yo'q</div>
-                            {% endif %}
-                            <button class="compact-fav" onclick="event.preventDefault(); window.location.href='{% url 'phones:toggle_favorite' listing.id %}'">
-                                ❤️
+            <div class="compact-card">
+                <a href="{% url 'phones:detail' listing.id %}" style="text-decoration:none; color:inherit;">
+                    <div class="compact-img-area">
+                        {% if listing.image %}
+                            <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
+                        {% endif %}
+                        {% if listing.is_sale %}
+                            <div style="position:absolute; top:12px; left:12px; background:var(--primary); color:white; font-size:10px; font-weight:900; padding:4px 10px; border-radius:8px; box-shadow:0 4px 10px rgba(177,34,65,0.3);">AKSIYA</div>
+                        {% endif %}
+                    </div>
+                    <div class="compact-info">
+                        <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
+                        <h3 class="compact-title">{{ listing.title }}</h3>
+                        <div class="compact-meta">
+                            <span>🔋{{ listing.battery_health }}%</span>
+                            <span>💾 {{ listing.memory }}GB</span>
+                        </div>
+                        <div class="compact-bottom">
+                            <p class="compact-seller">@{{ listing.seller.username }}</p>
+                            <button class="compact-cart-btn" onclick="event.preventDefault(); addToCart('{{ listing.id }}', '{{ listing.title|escapejs }}', '{{ listing.price }}', '{% if listing.image %}{{ listing.image.url }}{% endif %}')">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                             </button>
                         </div>
-
-                        <!-- Info Area -->
-                        <div class="compact-info">
-                            <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
-                            
-                            <h3 class="compact-title">{{ listing.title }}</h3>
-                            
-                            <div class="compact-meta">
-                                {% if listing.memory %}
-                                    <span class="compact-memory">{{ listing.memory }}GB</span>
-                                {% endif %}
-                                {% if listing.battery_health %}
-                                    <span class="compact-memory" style="margin-left:5px;">🔋{{ listing.battery_health }}%</span>
-                                {% endif %}
-                            </div>
-
-                            <div class="compact-bottom">
-                                <p class="compact-seller">@{{ listing.seller.username }}</p>
-                                
-                                <button class="compact-cart-btn" onclick="event.preventDefault(); event.stopPropagation(); addToCart('{{ listing.id }}', '{{ listing.title|escapejs }}', '{{ listing.price }}', '{% if listing.image %}{{ listing.image.url }}{% endif %}')">
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
+            </div>
             {% empty %}
-                <div style="grid-column: 1/-1; text-align:center; padding: 60px; background: #fff; border-radius: 24px; border: 2px dashed var(--border);">
-                    <div style="font-size: 50px; margin-bottom: 20px;">😔</div>
-                    <h3 style="font-size: 20px; font-weight: 900; color: var(--text-main); margin-bottom: 10px;">Hech narsa topilmadi</h3>
-                    <p style="color: var(--text-muted); font-size: 14px; font-weight: 700;">Filtrlarni o'zgartirib ko'ring</p>
-                </div>
+            <div style="grid-column: 1/-1; text-align: center; padding: 100px 0;">
+                <p style="font-size: 50px;">📦</p>
+                <h3 style="font-weight: 900; margin-top: 20px;">Hech narsa topilmadi</h3>
+            </div>
             {% endfor %}
         </div>
     </div>
 </div>
 
-<style>
-    @media (max-width: 768px) {
-        .animate { grid-template-columns: 1fr !important; }
+<script>
+    function toggleMobileFilters() {
+        const sidebar = document.getElementById('filter-sidebar');
+        sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
+        sidebar.style.position = 'fixed';
+        sidebar.style.top = '0';
+        sidebar.style.left = '0';
+        sidebar.style.width = '100%';
+        sidebar.style.height = '100%';
+        sidebar.style.zIndex = '2000';
+        sidebar.style.borderRadius = '0';
     }
-</style>
+</script>
 {% endblock %}
