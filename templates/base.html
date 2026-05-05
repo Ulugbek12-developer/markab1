@@ -156,9 +156,23 @@
                 cart.push({ id, title, price, image });
                 localStorage.setItem('markab-cart', JSON.stringify(cart));
                 updateCartUI();
-                alert('Savatga qo\'shildi!');
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Savatga qo\'shildi!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             } else {
-                alert('Bu mahsulot savatda bor');
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'info',
+                    title: 'Bu mahsulot savatda bor!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             }
         }
 
