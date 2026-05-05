@@ -11,7 +11,8 @@ import requests
 import os
 from dotenv import load_dotenv
 
-from .models import Category, Listing, Favorite, Branch, Review, Order
+from .models import Category, Listing, Favorite, Branch, Review
+from orders.models import Order
 from .utils import calculate_phone_price, BASE_PRICES
 
 def clean_expired_bookings():
