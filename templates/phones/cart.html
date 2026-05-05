@@ -20,7 +20,26 @@
             <p style="font-size:12px; font-weight:700; opacity:0.8;">Jami summa:</p>
             <p id="total-price" style="font-size:32px; font-weight:900;">0 $</p>
         </div>
-        <button onclick="checkout()" class="btn-secondary" style="background:white; border:none; padding:20px 40px; font-size:18px; font-weight:900; color:var(--primary);">SOTIB OLISH</button>
+        <button onclick="openOrderForm()" class="btn-secondary" style="background:white; border:none; padding:20px 40px; font-size:18px; font-weight:900; color:var(--primary);">SOTIB OLISH</button>
+    </div>
+
+    <!-- Hidden Order Form (Modal Style) -->
+    <div id="order-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:2000; backdrop-filter:blur(5px);">
+        <div class="premium-card" style="width:90%; max-width:500px; padding:40px;">
+            <h2 style="font-size:24px; font-weight:900; margin-bottom:10px;">Tasdiqlash</h2>
+            <p style="color:var(--text-muted); font-weight:700; margin-bottom:30px;">Buyurtmani rasmiylashtirish uchun ma'lumotlaringizni kiriting.</p>
+            
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <input type="text" id="order-name" placeholder="Ism familiya" style="padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700; outline:none;">
+                <input type="tel" id="order-phone" placeholder="Telefon raqam (+998...)" style="padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700; outline:none;">
+                <input type="text" id="order-telegram" placeholder="Telegram username (ixtiyoriy)" style="padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700; outline:none;">
+                
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button onclick="closeOrderForm()" class="btn-secondary" style="flex:1; border:1px solid var(--border);">BEKOR QILISH</button>
+                    <button onclick="submitOrder()" class="btn-primary" style="flex:1;">TASDIQLASH</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -51,7 +70,7 @@
                     </div>
                     <div style="flex:1;">
                         <h4 style="font-weight:900;">${item.title}</h4>
-                        <p style="color:var(--primary); font-weight:900;">${formatPrice(item.price)} $</p>
+                        <p style="color:var(--primary); font-weight:900;">${item.price} $</p>
                     </div>
                     <button onclick="removeFromCart('${item.id}')" style="background:none; border:none; color:#FF4D4D; cursor:pointer;">
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -60,11 +79,7 @@
             `;
         }).join('');
         
-        document.getElementById('total-price').innerText = formatPrice(total) + ' so\'m';
-    }
-
-    function formatPrice(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        document.getElementById('total-price').innerText = total + ' $';
     }
 
     function removeFromCart(id) {
@@ -72,13 +87,66 @@
         cart = cart.filter(item => item.id !== id);
         localStorage.setItem('markab-cart', JSON.stringify(cart));
         loadCart();
-        updateCartUI();
+        if (window.updateCartUI) window.updateCartUI();
     }
 
-    function checkout() {
-        alert('Rahmat! Buyurtmangiz qabul qilindi. Administrator siz bilan bog\'lanadi.');
-        localStorage.removeItem('markab-cart');
-        location.href = "/";
+    function openOrderForm() {
+        document.getElementById('order-modal').style.display = 'flex';
+    }
+
+    function closeOrderForm() {
+        document.getElementById('order-modal').style.display = 'none';
+    }
+
+    async function submitOrder() {
+        const name = document.getElementById('order-name').value;
+        const phone = document.getElementById('order-phone').value;
+        const telegram = document.getElementById('order-telegram').value;
+        const cart = JSON.parse(localStorage.getItem('markab-cart') || '[]');
+
+        if (!name || !phone) {
+            Swal.fire('Xatolik', 'Iltimos, ism va telefoningizni kiriting', 'error');
+            return;
+        }
+
+        if (phone.replace(/\D/g, '').length < 9) {
+            Swal.fire('Xatolik', 'Telefon raqami noto\'g\'ri', 'error');
+            return;
+        }
+
+        Swal.fire({
+            title: 'Buyurtma yuborilmoqda...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        try {
+            const response = await fetch("{% url 'orders:cart_order' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    items: cart,
+                    name: name,
+                    phone: phone,
+                    telegram: telegram
+                })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                localStorage.removeItem('markab-cart');
+                Swal.fire('Muvaffaqiyat!', 'Buyurtmangiz qabul qilindi. Kassir tez orada bog\'lanadi.', 'success').then(() => {
+                    location.href = "{% url 'phones:home' %}";
+                });
+            } else {
+                Swal.fire('Xatolik', result.message || 'Xatolik yuz berdi', 'error');
+            }
+        } catch (e) {
+            Swal.fire('Xatolik', 'Tarmoq xatosi yuz berdi', 'error');
+        }
     }
 
     loadCart();
