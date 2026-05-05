@@ -46,13 +46,14 @@
             font-family: 'Outfit', sans-serif; 
             overflow-x: hidden; 
             padding-bottom: 70px; 
-            font-weight: 400; /* Thinner default font */
+            font-weight: 400;
             letter-spacing: -0.01em;
+            font-size: 14px; /* Slightly smaller default */
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 12px; }
         
         /* Optimized Header Layout */
-        header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; padding: 12px 0; }
+        header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; padding: 10px 0; }
         .nav-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
         
         .logo-area { flex-shrink: 0; }
@@ -115,15 +116,28 @@
         .btn-phone { background: #22C55E; }
         .btn-msg { background: var(--primary); }
 
-        @media (max-width: 768px) {
+        /* Desktop vs Mobile separation */
+        @media (min-width: 993px) {
+            .bottom-nav { display: none !important; }
+            body { padding-bottom: 0; }
+            header { padding: 15px 0; }
+            .logo-area img { height: 40px; }
+            .search-input { padding: 13px 20px 13px 45px; font-size: 15px; }
+        }
+
+        @media (max-width: 992px) {
             .nav-wrapper { gap: 10px; }
-            .logo-area img { height: 24px; }
-            .search-area { max-width: none; }
+            .logo-area img { height: 26px; }
+            .search-area { max-width: 250px; }
             .search-input { padding: 9px 12px 9px 35px; font-size: 13px; border-radius: 12px; }
             .search-icon { left: 10px; }
             .header-btn { gap: 0; }
             .header-btn span { display: none; }
-            .header-actions { gap: 10px; }
+            .header-actions { gap: 8px; }
+        }
+
+        @media (max-width: 480px) {
+            .search-area { max-width: 160px; }
         }
     </style>
     {% block extra_head %}{% endblock %}

@@ -9,67 +9,69 @@
     .filter-sidebar { 
         background: var(--card-bg); 
         border-radius: 24px; 
-        padding: 30px; 
+        padding: 25px; 
         border: 1px solid var(--border); 
         align-self: start; 
         position: sticky; 
         top: 100px; 
-        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
     }
-    .filter-label { font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 10px; }
+    .filter-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 8px; }
     .filter-select, .filter-input { 
         width: 100%; 
-        padding: 14px 18px; 
-        border-radius: 15px; 
+        padding: 12px 15px; 
+        border-radius: 12px; 
         border: 1px solid var(--border); 
-        background: var(--bg); 
+        background: var(--input-bg); 
         color: var(--text-main);
-        font-weight: 800; 
+        font-weight: 600; 
         font-size: 14px;
         outline: none;
-        transition: 0.2s;
     }
-    .filter-select:focus, .filter-input:focus { border-color: var(--primary); }
 
     .mobile-filter-btn {
         display: none;
         width: 100%;
-        padding: 15px;
-        background: var(--primary);
-        color: white;
+        padding: 14px;
+        background: var(--primary-soft);
+        color: var(--primary);
         border: none;
-        border-radius: 15px;
-        font-weight: 900;
+        border-radius: 12px;
+        font-weight: 700;
         margin-bottom: 20px;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
         justify-content: center;
+        font-size: 14px;
     }
 
     @media (max-width: 992px) {
         .catalog-layout { grid-template-columns: 1fr; }
         .filter-sidebar { display: none; }
         .mobile-filter-btn { display: flex; }
+        .catalog-title { font-size: 24px !important; }
     }
 </style>
 
 <div class="animate">
-    <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 5px;">Barcha telefonlar</h1>
-        <p style="color: var(--text-muted); font-weight: 700;">{{ listings|length }} ta e'lon topildi</p>
+    <div style="margin-bottom: 20px;">
+        <h1 class="catalog-title" style="font-size: 28px; font-weight: 700; margin-bottom: 4px;">Katalog</h1>
+        <p style="color: var(--text-muted); font-size: 13px; font-weight: 500;">{{ listings|length }} ta e'lon topildi</p>
     </div>
 
     <button class="mobile-filter-btn" onclick="toggleMobileFilters()">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-        Filtrlar
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+        <span>Saralash va filtrlar</span>
     </button>
 
     <div class="catalog-layout">
         <!-- Sidebar Filters -->
         <aside class="filter-sidebar" id="filter-sidebar">
-            <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 25px;">Saralash</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; font-weight: 700;">Filtrlar</h3>
+                <button class="hide-on-desktop" onclick="toggleMobileFilters()" style="background:none; border:none; color:var(--text-muted); font-size:24px;">&times;</button>
+            </div>
             <form method="GET">
-                <div style="margin-bottom: 25px;">
+                <div style="margin-bottom: 20px;">
                     <label class="filter-label">Brend</label>
                     <select name="brand" class="filter-select">
                         <option value="">Barchasi</option>
@@ -79,7 +81,7 @@
                     </select>
                 </div>
 
-                <div style="margin-bottom: 25px;">
+                <div style="margin-bottom: 20px;">
                     <label class="filter-label">Xotira</label>
                     <select name="memory" class="filter-select">
                         <option value="">Barchasi</option>
@@ -92,14 +94,14 @@
 
                 <div style="margin-bottom: 25px;">
                     <label class="filter-label">Narx ($)</label>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 8px;">
                         <input type="number" name="min_price" placeholder="Dan" class="filter-input" value="{{ request.GET.min_price }}">
                         <input type="number" name="max_price" placeholder="Gacha" class="filter-input" value="{{ request.GET.max_price }}">
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 18px; border-radius: 18px;">Qidirish</button>
-                <a href="{% url 'phones:catalog' %}" style="display: block; text-align: center; margin-top: 15px; font-size: 13px; font-weight: 800; color: var(--text-muted); text-decoration: none;">Tozalash</a>
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; border-radius: 12px; font-size: 15px;">Qo'llash</button>
+                <a href="{% url 'phones:catalog' %}" style="display: block; text-align: center; margin-top: 15px; font-size: 13px; font-weight: 600; color: var(--text-muted); text-decoration: none;">Tozalash</a>
             </form>
         </aside>
 
@@ -113,7 +115,7 @@
                             <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
                         {% endif %}
                         {% if listing.is_sale %}
-                            <div style="position:absolute; top:12px; left:12px; background:var(--primary); color:white; font-size:10px; font-weight:900; padding:4px 10px; border-radius:8px; box-shadow:0 4px 10px rgba(177,34,65,0.3);">AKSIYA</div>
+                            <div style="position:absolute; top:10px; left:10px; background:var(--primary); color:white; font-size:9px; font-weight:700; padding:3px 8px; border-radius:6px;">AKSIYA</div>
                         {% endif %}
                     </div>
                     <div class="compact-info">
@@ -123,19 +125,13 @@
                             <span>🔋{{ listing.battery_health }}%</span>
                             <span>💾 {{ listing.memory }}GB</span>
                         </div>
-                        <div class="compact-bottom">
-                            <p class="compact-seller">@{{ listing.seller.username }}</p>
-                            <button class="compact-cart-btn" onclick="event.preventDefault(); addToCart('{{ listing.id }}', '{{ listing.title|escapejs }}', '{{ listing.price }}', '{% if listing.image %}{{ listing.image.url }}{% endif %}')">
-                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                            </button>
-                        </div>
                     </div>
                 </a>
             </div>
             {% empty %}
-            <div style="grid-column: 1/-1; text-align: center; padding: 100px 0;">
-                <p style="font-size: 50px;">📦</p>
-                <h3 style="font-weight: 900; margin-top: 20px;">Hech narsa topilmadi</h3>
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 0;">
+                <p style="font-size: 40px;">📦</p>
+                <h3 style="font-weight: 700; margin-top: 10px; font-size: 18px;">Hech narsa topilmadi</h3>
             </div>
             {% endfor %}
         </div>
@@ -145,14 +141,23 @@
 <script>
     function toggleMobileFilters() {
         const sidebar = document.getElementById('filter-sidebar');
-        sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
-        sidebar.style.position = 'fixed';
-        sidebar.style.top = '0';
-        sidebar.style.left = '0';
-        sidebar.style.width = '100%';
-        sidebar.style.height = '100%';
-        sidebar.style.zIndex = '2000';
-        sidebar.style.borderRadius = '0';
+        const isHidden = window.getComputedStyle(sidebar).display === 'none';
+        
+        if (isHidden) {
+            sidebar.style.display = 'block';
+            sidebar.style.position = 'fixed';
+            sidebar.style.top = '0';
+            sidebar.style.left = '0';
+            sidebar.style.width = '100%';
+            sidebar.style.height = '100%';
+            sidebar.style.zIndex = '3000';
+            sidebar.style.borderRadius = '0';
+            sidebar.style.overflowY = 'auto';
+            document.body.style.overflow = 'hidden';
+        } else {
+            sidebar.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
     }
 </script>
 {% endblock %}

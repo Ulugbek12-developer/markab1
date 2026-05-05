@@ -6,62 +6,61 @@
     /* Mobiks Style Adaptations */
     .hero-banner {
         width: 100%;
-        height: 200px;
+        height: 180px;
         background: url('{% static "images/banner.png" %}') center/cover no-repeat;
-        border-radius: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-radius: 20px;
+        margin-bottom: 20px;
     }
     
     .quick-menu {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 30px;
+        gap: 10px;
+        margin-bottom: 25px;
     }
     .quick-item {
         background: var(--card-bg);
         border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 15px 5px;
+        border-radius: 18px;
+        padding: 12px 5px;
         text-align: center;
         text-decoration: none;
         color: var(--text-main);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
-        transition: 0.3s;
+        gap: 6px;
+        transition: 0.2s;
     }
     .action-icon-svg {
-        width: 45px;
-        height: 45px;
-        border-radius: 14px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    .quick-label { font-size: 12px; font-weight: 600; color: var(--text-main); }
+    .quick-label { font-size: 11px; font-weight: 600; color: var(--text-main); }
 
     .trust-badges {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         overflow-x: auto;
-        padding-bottom: 15px;
-        margin-bottom: 25px;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
         scrollbar-width: none;
     }
     .trust-badge {
         flex: 0 0 auto;
         background: var(--card-bg);
         border: 1px solid var(--border);
-        padding: 8px 15px;
-        border-radius: 12px;
+        padding: 6px 12px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        font-weight: 600;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 500;
         color: var(--text-main);
     }
 
@@ -69,19 +68,19 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
     .tabs {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         background: var(--input-bg);
-        padding: 5px;
-        border-radius: 15px;
+        padding: 4px;
+        border-radius: 12px;
     }
     .tab {
-        padding: 10px 20px;
-        border-radius: 12px;
-        font-size: 13px;
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         transition: 0.2s;
@@ -91,63 +90,60 @@
     .tab.active {
         background: var(--card-bg);
         color: var(--primary);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
-    /* Product Grid Styling - Fixed for Dark Mode */
+    /* Product Grid Styling - Compact */
     .grid-products {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        gap: 12px;
         margin-bottom: 40px;
     }
     .compact-card {
         background: var(--card-bg);
         border: 1px solid var(--border);
-        border-radius: 20px;
+        border-radius: 18px;
         overflow: hidden;
-        transition: 0.3s;
+        transition: 0.2s;
     }
     .compact-img-area {
         position: relative;
         aspect-ratio: 1/1;
-        background: #F5F5F5;
+        background: var(--input-bg);
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    [data-theme="dark"] .compact-img-area { background: #1E1E1E; }
     .compact-img-area img { width: 100%; height: 100%; object-fit: cover; }
     
-    .compact-info { padding: 12px; }
-    .compact-price { display: block; font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .compact-info { padding: 10px; }
+    .compact-price { display: block; font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 2px; }
     .compact-title { 
-        font-size: 14px; 
+        font-size: 13px; 
         font-weight: 500; 
         color: var(--text-main); 
-        margin-bottom: 8px; 
+        margin-bottom: 6px; 
         display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; 
     }
-    .compact-meta { display: flex; gap: 8px; font-size: 11px; font-weight: 500; color: var(--text-muted); }
-    .compact-meta span { background: var(--input-bg); padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border); }
+    .compact-meta { display: flex; gap: 6px; font-size: 10px; font-weight: 500; color: var(--text-muted); }
+    .compact-meta span { background: var(--input-bg); padding: 2px 5px; border-radius: 5px; }
 
-    @media (max-width: 480px) {
-        .hero-banner { height: 160px; }
-        .action-icon-svg { width: 40px; height: 40px; }
-        .quick-label { font-size: 11px; }
+    @media (min-width: 993px) {
+        .hero-banner { height: 300px; }
+        .grid-products { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .compact-price { font-size: 20px; }
+        .compact-title { font-size: 15px; }
     }
 </style>
 
 <div class="animate">
-    <!-- Header Search Area (Mobiks Style) -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <img src="{% static 'images/logo_.png' %}" style="height: 24px;">
-            <span style="font-weight: 600; font-size: 18px; color: var(--text-main);">Markab</span>
+    <!-- Header Search Area -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;" class="hide-on-desktop">
+        <div style="display: flex; align-items: center; gap: 6px;">
+            <img src="{% static 'images/logo_.png' %}" style="height: 20px;">
+            <span style="font-weight: 600; font-size: 16px; color: var(--text-main);">Markab</span>
         </div>
-        <div style="color: var(--primary); font-weight: 600; font-size: 13px;">
-            📍 Toshkent
-        </div>
+        <div style="color: var(--primary); font-weight: 600; font-size: 12px;">📍 Toshkent</div>
     </div>
     
     <!-- Banner -->
@@ -157,25 +153,25 @@
     <div class="quick-menu">
         <a href="{% url 'phones:sell' %}" class="quick-item">
             <div class="action-icon-svg" style="background: rgba(34,197,94,0.1); color: #22C55E;">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
             </div>
             <div class="quick-label" data-lang-key="sell">Sotish</div>
         </a>
         <a href="?brand=iPhone" class="quick-item">
-            <div class="action-icon-svg" style="background: rgba(0,0,0,0.05); color: var(--text-main);">
-                <svg width="24" height="24" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.1-44.6-35.9-2.8-74.3 22.7-93.1 22.7-18.9 0-51.1-22.1-81.5-21.5-50.6 .6-95.9 29.5-121.8 75.3-53 93.9-15.1 233.1 36.3 307.7 24.8 36.2 53.6 77.2 92.6 75.9 37.5-1.3 52.3-24.1 97.5-24.1 45.1 0 58.7 24.1 98.4 23.3 39.8-.8 64.9-38.3 89.2-74.3 28.5-42.3 40.3-83.3 41.2-85.5-1-1-76.3-29.3-76.3-114.1zM245.9 83.1c20.3-24.7 34.2-59.2 30.5-93.1-29.1 1.2-64.9 19.5-86.1 44.1-18.1 20.8-34.1 56.4-29.7 89.7 32.5 2.5 65.5-16 85.3-40.7z"/></svg>
+            <div class="action-icon-svg" style="background: var(--input-bg); color: var(--text-main);">
+                <svg width="22" height="22" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.1-44.6-35.9-2.8-74.3 22.7-93.1 22.7-18.9 0-51.1-22.1-81.5-21.5-50.6 .6-95.9 29.5-121.8 75.3-53 93.9-15.1 233.1 36.3 307.7 24.8 36.2 53.6 77.2 92.6 75.9 37.5-1.3 52.3-24.1 97.5-24.1 45.1 0 58.7 24.1 98.4 23.3 39.8-.8 64.9-38.3 89.2-74.3 28.5-42.3 40.3-83.3 41.2-85.5-1-1-76.3-29.3-76.3-114.1zM245.9 83.1c20.3-24.7 34.2-59.2 30.5-93.1-29.1 1.2-64.9 19.5-86.1 44.1-18.1 20.8-34.1 56.4-29.7 89.7 32.5 2.5 65.5-16 85.3-40.7z"/></svg>
             </div>
             <div class="quick-label">iPhone</div>
         </a>
         <a href="{% url 'phones:nasiya' %}" class="quick-item">
-            <div class="action-icon-svg" style="background: rgba(177,34,65,0.1); color: var(--primary);">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+            <div class="action-icon-svg" style="background: var(--primary-soft); color: var(--primary);">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
             </div>
             <div class="quick-label" data-lang-key="nasiya">Nasiya</div>
         </a>
         <a href="{% url 'phones:price' %}" class="quick-item">
             <div class="action-icon-svg" style="background: rgba(245,158,11,0.1); color: #F59E0B;">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
             </div>
             <div class="quick-label" data-lang-key="pricing">Baholash</div>
         </a>
@@ -193,9 +189,8 @@
         <div class="tabs">
             <a href="?filter=sale" class="tab {% if request.GET.filter == 'sale' %}active{% endif %}" data-lang-key="promos">Aksiya</a>
             <a href="?filter=week" class="tab {% if not request.GET.filter or request.GET.filter == 'week' %}active{% endif %}" data-lang-key="new_ads">Yangi</a>
-            <a href="#" class="tab">Foydali</a>
         </div>
-        <a href="{% url 'phones:catalog' %}" style="color: var(--primary); font-weight: 700; font-size: 13px; text-decoration: none;" data-lang-key="catalog">Hammasi &rarr;</a>
+        <a href="{% url 'phones:catalog' %}" style="color: var(--primary); font-weight: 600; font-size: 12px; text-decoration: none;" data-lang-key="catalog">Hammasi &rarr;</a>
     </div>
 
     <!-- Products Grid -->
@@ -204,19 +199,13 @@
             <div class="compact-card">
                 <a href="{% url 'phones:detail' listing.id %}" style="text-decoration:none; color:inherit;">
                     <div class="compact-img-area">
-                        {% if listing.is_sale %}
-                            <div style="position:absolute; top:10px; left:10px; background:#22C55E; color:white; font-size:10px; font-weight:700; padding:4px 8px; border-radius:8px;">-{{ listing.get_discount_percentage }}%</div>
-                        {% endif %}
-                        {% if listing.image %}
-                            <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
-                        {% endif %}
-                        <button class="compact-fav" onclick="event.preventDefault(); window.location.href='{% url 'phones:toggle_favorite' listing.id %}'">❤️</button>
+                        {% if listing.image %}<img src="{{ listing.image.url }}" alt="{{ listing.title }}">{% endif %}
                     </div>
                     <div class="compact-info">
                         <span class="compact-price">{{ listing.price|floatformat:0 }} $</span>
                         <h3 class="compact-title">{{ listing.title }}</h3>
                         <div class="compact-meta">
-                            <span>🔋 {{ listing.battery_health }}%</span>
+                            <span>🔋{{ listing.battery_health }}%</span>
                             <span>💾 {{ listing.memory }}GB</span>
                         </div>
                     </div>

@@ -2,118 +2,272 @@
 {% load static %}
 
 {% block content %}
-<div class="animate">
-    <a href="{% url 'phones:home' %}" style="text-decoration:none; color:var(--text-muted); font-weight:700; display:flex; align-items:center; gap:8px; margin-bottom:30px;">
-        <svg class="icon" style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
-        Orqaga qaytish
-    </a>
+<style>
+    .detail-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-bottom: 30px;
+    }
 
-    <div class="grid grid-2">
-        <!-- Image Area -->
-        <div class="premium-card" style="padding: 10px; display:flex; align-items:center; justify-content:center; background:white;">
+    /* Back Link */
+    .back-link {
+        text-decoration: none;
+        color: var(--text-muted);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    /* Image Gallery */
+    .detail-gallery {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .detail-gallery img {
+        width: 100%;
+        height: auto;
+        border-radius: 15px;
+        max-height: 400px;
+        object-fit: contain;
+    }
+
+    /* Info Section */
+    .detail-info {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .detail-category {
+        display: inline-block;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 10px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 6px;
+        text-transform: uppercase;
+    }
+    .detail-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.2;
+        margin: 5px 0;
+    }
+    .detail-location {
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    /* Price Section */
+    .price-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        padding: 15px 20px;
+        border-radius: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .price-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+    .fav-btn {
+        background: var(--input-bg);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        cursor: pointer;
+    }
+
+    /* Actions */
+    .detail-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .detail-btn {
+        width: 100%;
+        padding: 14px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        transition: 0.2s;
+    }
+    .btn-buy { background: var(--text-main); color: var(--bg); }
+    .btn-nasiya { background: var(--primary); color: white; }
+    .btn-cart { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+
+    /* Specs Grid */
+    .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .spec-item {
+        background: var(--input-bg);
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+    }
+    .spec-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 3px; }
+    .spec-value { font-size: 13px; font-weight: 700; color: var(--text-main); }
+
+    /* Seller Card */
+    .seller-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .seller-avatar {
+        width: 45px;
+        height: 45px;
+        background: var(--primary);
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    /* Responsive for Desktop */
+    @media (min-width: 993px) {
+        .detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding-top: 20px;
+        }
+        .detail-title { font-size: 32px; }
+        .price-value { font-size: 32px; }
+    }
+</style>
+
+<div class="animate detail-container">
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        <a href="{% url 'phones:home' %}" class="back-link">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
+            <span data-lang-key="back">Orqaga</span>
+        </a>
+
+        <!-- Gallery -->
+        <div class="detail-gallery">
             {% if listing.image %}
-                <img src="{{ listing.image.url }}" alt="{{ listing.title }}" style="max-width:100%; height:auto; border-radius:20px;">
+                <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
             {% else %}
-                <div style="height:400px; display:flex; align-items:center; justify-content:center; color:#CCC;">Rasm yo'q</div>
+                <div style="height:300px; color:#CCC; font-weight:700;">Rasm yo'q</div>
             {% endif %}
-        </div>
-
-        <!-- Info Area -->
-        <div style="display:flex; flex-direction:column; gap:25px;">
-            <div>
-                <span style="background:var(--primary); color:white; font-size:10px; font-weight:900; padding:4px 12px; border-radius:8px; text-transform:uppercase;">{{ listing.category.name }}</span>
-                <h1 style="font-size:42px; font-weight:900; margin-top:15px; color:var(--text-main); line-height:1.1;">{{ listing.title }}</h1>
-                <p style="color:var(--text-muted); font-weight:700; margin-top:10px;">📍 {{ listing.location }}</p>
-            </div>
-
-            <div style="background:#FFF5F7; border:1px solid #FFEBEF; padding:25px; border-radius:24px; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <p style="font-size:10px; font-weight:900; color:var(--primary); text-transform:uppercase; margin-bottom:5px;">Narxi</p>
-                    <p style="font-size:32px; font-weight:900; color:var(--primary);">{{ listing.price|floatformat:0 }} $</p>
-                </div>
-                <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" style="background:white; border:1px solid #FFEBEF; padding:15px; border-radius:15px; cursor:pointer; color:var(--primary);">
-                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    </button>
-                </form>
-            </div>
-
-            <!-- Actions -->
-            <div style="display:flex; flex-direction:column; gap:15px;">
-                <a href="{% url 'orders:checkout' listing.id %}?type=cash" class="btn-primary" style="text-align:center; padding:18px; font-size:18px; background:#1A1A1A;">NAQD SOTIB OLISH</a>
-                <a href="{% url 'orders:checkout' listing.id %}?type=installment" class="btn-primary" style="text-align:center; padding:18px; font-size:18px;">MUDDATLI TO'LOV</a>
-                <button onclick="addToCart('{{ listing.id }}', '{{ listing.title|escapejs }}', '{{ listing.price }}', '{% if listing.image %}{{ listing.image.url }}{% endif %}')" 
-                        class="btn-secondary" style="padding:18px; font-size:18px; border:2px solid var(--primary); color:var(--primary); font-weight:900;">SAVATGA QO'SHISH</button>
-            </div>
-
-            <!-- Seller Info -->
-            <div class="premium-card" style="display:flex; align-items:center; gap:20px; border-color:rgba(177,34,65,0.1);">
-                <div style="width:60px; height:60px; background:var(--primary); color:white; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:900;">
-                    {{ listing.seller.username|first|upper }}
-                </div>
-                <div>
-                    <h4 style="font-weight:900; font-size:18px;">{{ listing.seller.username }}</h4>
-                    <p style="font-size:12px; color:var(--text-muted); font-weight:700;">✅ Tasdiqlangan sotuvchi</p>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Description -->
-    <div class="premium-card" style="margin-top:40px;">
-        <h3 style="font-weight:900; margin-bottom:20px; font-size: 22px;">Asosiy ma'lumotlar</h3>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;">
-            {% if listing.model_name %}
-            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
-                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Model</p>
-                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.model_name }}</p>
-            </div>
-            {% endif %}
-            
-            {% if listing.memory %}
-            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
-                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Xotira</p>
-                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.memory }} GB</p>
-            </div>
-            {% endif %}
+    <!-- Info -->
+    <div class="detail-info">
+        <div>
+            <span class="detail-category">{{ listing.category.name }}</span>
+            <h1 class="detail-title">{{ listing.title }}</h1>
+            <p class="detail-location">📍 {{ listing.location }}</p>
+        </div>
 
-            {% if listing.color %}
-            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
-                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Rang</p>
-                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.color }}</p>
+        <div class="price-card">
+            <div>
+                <p style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:2px;" data-lang-key="price">Narxi</p>
+                <p class="price-value">{{ listing.price|floatformat:0 }} $</p>
             </div>
-            {% endif %}
-            
-            {% if listing.battery_health %}
-            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
-                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Batareya</p>
-                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.battery_health }}%</p>
-            </div>
-            {% endif %}
-            
-            {% if listing.region %}
-            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
-                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Region</p>
-                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.region }}</p>
-            </div>
-            {% endif %}
-            
-            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
-                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Holati</p>
-                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{{ listing.get_condition_display }}</p>
-            </div>
+            <form action="{% url 'phones:toggle_favorite' listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="fav-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                </button>
+            </form>
+        </div>
 
-            <div style="background: #F9F9F9; padding: 15px; border-radius: 16px;">
-                <p style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px;">Karobka-Dokument</p>
-                <p style="font-size: 14px; font-weight: 900; color: var(--text-main);">{% if listing.has_box %}Bor ✅{% else %}Yo'q ❌{% endif %}</p>
+        <div class="detail-actions">
+            <a href="{% url 'orders:checkout' listing.id %}?type=cash" class="detail-btn btn-buy" data-lang-key="buy_now">SOTIB OLISH</a>
+            <a href="{% url 'orders:checkout' listing.id %}?type=installment" class="detail-btn btn-nasiya" data-lang-key="get_nasiya">MUDDATLI TO'LOV</a>
+            <button onclick="addToCart('{{ listing.id }}', '{{ listing.title|escapejs }}', '{{ listing.price }}', '{% if listing.image %}{{ listing.image.url }}{% endif %}')" 
+                    class="detail-btn btn-cart" data-lang-key="add_cart">SAVATGA QO'SHISH</button>
+        </div>
+
+        <!-- Specs -->
+        <div style="margin-top: 10px;">
+            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;" data-lang-key="main_specs">Asosiy ma'lumotlar</h3>
+            <div class="specs-grid">
+                {% if listing.model_name %}
+                <div class="spec-item">
+                    <p class="spec-label">Model</p>
+                    <p class="spec-value">{{ listing.model_name }}</p>
+                </div>
+                {% endif %}
+                {% if listing.memory %}
+                <div class="spec-item">
+                    <p class="spec-label" data-lang-key="memory">Xotira</p>
+                    <p class="spec-value">{{ listing.memory }} GB</p>
+                </div>
+                {% endif %}
+                {% if listing.color %}
+                <div class="spec-item">
+                    <p class="spec-label" data-lang-key="color">Rang</p>
+                    <p class="spec-value">{{ listing.color }}</p>
+                </div>
+                {% endif %}
+                {% if listing.battery_health %}
+                <div class="spec-item">
+                    <p class="spec-label" data-lang-key="battery">Batareya</p>
+                    <p class="spec-value">{{ listing.battery_health }}%</p>
+                </div>
+                {% endif %}
+                <div class="spec-item">
+                    <p class="spec-label" data-lang-key="condition">Holati</p>
+                    <p class="spec-value">{{ listing.get_condition_display }}</p>
+                </div>
+                <div class="spec-item">
+                    <p class="spec-label" data-lang-key="box">Karobka</p>
+                    <p class="spec-value">{% if listing.has_box %}Bor ✅{% else %}Yo'q ❌{% endif %}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seller -->
+        <div class="seller-card">
+            <div class="seller-avatar">{{ listing.seller.username|first|upper }}</div>
+            <div>
+                <h4 style="font-weight:700; font-size:15px; margin:0;">{{ listing.seller.username }}</h4>
+                <p style="font-size:11px; color:var(--text-muted); font-weight:600; margin-top:2px;">✅ Tasdiqlangan sotuvchi</p>
             </div>
         </div>
 
         {% if listing.description %}
-        <h3 style="font-weight:900; margin-bottom:15px; font-size: 18px;">Qo'shimcha ma'lumot</h3>
-        <p style="color:var(--text-muted); white-space:pre-line; line-height:1.6; padding: 20px; background: #F9F9F9; border-radius: 16px;">{{ listing.description }}</p>
+        <div style="margin-top: 10px;">
+            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 10px;" data-lang-key="extra_info">Qo'shimcha ma'lumot</h3>
+            <p style="color:var(--text-muted); font-size: 13px; line-height:1.6; padding: 15px; background: var(--input-bg); border-radius: 14px; border: 1px solid var(--border); white-space: pre-line;">{{ listing.description }}</p>
+        </div>
         {% endif %}
     </div>
 </div>
