@@ -5,14 +5,35 @@
 <style>
     /* Home Specific Styles */
     .hero-banner {
-        width: 100%;
+        flex: 1;
         height: 160px;
         background: url('{% static "images/banner.png" %}') center/cover no-repeat;
         border-radius: 20px;
-        margin-bottom: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
     
+    .banner-wrapper { display: block; margin-bottom: 25px; }
+    .banner-side-actions { display: none; }
+
+    .side-btn {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        text-decoration: none;
+        transition: 0.2s;
+        box-shadow: var(--shadow);
+        flex: 1;
+    }
+    .side-btn:hover { transform: translateX(5px); border-color: var(--primary); }
+    .side-icon { font-size: 24px; }
+    .side-text { display: flex; flex-direction: column; text-align: left; }
+    .side-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
+    .side-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
     .quick-menu {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -98,7 +119,9 @@
     }
 
     @media (min-width: 993px) {
+        .banner-wrapper { display: flex; gap: 20px; }
         .hero-banner { height: 320px; border-radius: 30px; }
+        .banner-side-actions { display: flex; flex-direction: column; gap: 15px; width: 280px; }
         .quick-menu { gap: 20px; }
         .quick-item { padding: 25px 10px; }
         .action-icon { width: 55px; height: 55px; }
@@ -106,8 +129,26 @@
 </style>
 
 <div class="animate">
-    <!-- Banner -->
-    <div class="hero-banner"></div>
+    <!-- Banner & Side Actions (Desktop Only) -->
+    <div class="banner-wrapper">
+        <div class="hero-banner"></div>
+        <div class="banner-side-actions">
+            <a href="{% url 'phones:sell' %}" class="side-btn">
+                <span class="side-icon">🚀</span>
+                <div class="side-text">
+                    <span class="side-title">Telefon sotish</span>
+                    <span class="side-sub">E'lon bering</span>
+                </div>
+            </a>
+            <a href="{% url 'phones:price' %}" class="side-btn">
+                <span class="side-icon">🧮</span>
+                <div class="side-text">
+                    <span class="side-title">Baholash</span>
+                    <span class="side-sub">Narxni bilish</span>
+                </div>
+            </a>
+        </div>
+    </div>
 
     <!-- Quick Menu -->
     <div class="quick-menu">
