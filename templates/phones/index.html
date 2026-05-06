@@ -17,22 +17,41 @@
 
     .side-btn {
         background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 20px;
+        border: 1.5px solid var(--border);
+        border-radius: 24px;
+        padding: 22px;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 18px;
         text-decoration: none;
-        transition: 0.2s;
-        box-shadow: var(--shadow);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
         flex: 1;
+        position: relative;
+        overflow: hidden;
     }
-    .side-btn:hover { transform: translateX(5px); border-color: var(--primary); }
-    .side-icon { font-size: 24px; }
-    .side-text { display: flex; flex-direction: column; text-align: left; }
-    .side-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
-    .side-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+    .side-btn::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(135deg, var(--primary) 0%, transparent 100%);
+        opacity: 0; transition: 0.3s; z-index: 0;
+    }
+    .side-btn:hover { 
+        transform: translateY(-5px) scale(1.02); 
+        border-color: var(--primary);
+        box-shadow: 0 20px 40px rgba(177,34,65,0.1);
+    }
+    .side-btn:hover::before { opacity: 0.05; }
+    
+    .side-icon-box { 
+        width: 52px; height: 52px; border-radius: 16px; 
+        display: flex; align-items: center; justify-content: center; 
+        font-size: 24px; z-index: 1; transition: 0.3s;
+    }
+    .side-btn:hover .side-icon-box { transform: rotate(-5deg) scale(1.1); }
+    
+    .side-text { display: flex; flex-direction: column; text-align: left; z-index: 1; }
+    .side-title { font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 2px; }
+    .side-sub { font-size: 12px; color: var(--text-muted); font-weight: 600; opacity: 0.8; }
 
     .quick-menu {
         display: grid;
@@ -134,17 +153,21 @@
         <div class="hero-banner"></div>
         <div class="banner-side-actions">
             <a href="{% url 'phones:sell' %}" class="side-btn">
-                <span class="side-icon">🚀</span>
+                <div class="side-icon-box" style="background: rgba(34,197,94,0.12); color: #22C55E;">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                </div>
                 <div class="side-text">
                     <span class="side-title">Telefon sotish</span>
-                    <span class="side-sub">E'lon bering</span>
+                    <span class="side-sub">Tez va qulay e'lon berish</span>
                 </div>
             </a>
             <a href="{% url 'phones:price' %}" class="side-btn">
-                <span class="side-icon">🧮</span>
+                <div class="side-icon-box" style="background: rgba(245,158,11,0.12); color: #F59E0B;">
+                    <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                </div>
                 <div class="side-text">
-                    <span class="side-title">Baholash</span>
-                    <span class="side-sub">Narxni bilish</span>
+                    <span class="side-title">Narxni bilish</span>
+                    <span class="side-sub">Ayfoningizni baholang</span>
                 </div>
             </a>
         </div>
