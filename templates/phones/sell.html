@@ -63,7 +63,7 @@
     <div class="premium-card" style="padding: 20px; background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border);">
         <div class="wizard-header">
             <button class="btn-back" id="btnBack">← Orqaga</button>
-            <div class="wizard-step-counter"><span id="currentStepText">1</span> / 7</div>
+            <div class="wizard-step-counter"><span id="currentStepText">1</span> / 8</div>
         </div>
         <div class="wizard-progress">
             <div class="wizard-progress-bar" id="progressBar"></div>
@@ -80,8 +80,8 @@
             <input type="hidden" name="battery_health" id="inp_battery">
             <input type="hidden" name="screen_condition" id="inp_screen">
             <input type="hidden" name="body_condition" id="inp_body">
-            <input type="hidden" name="has_box" id="inp_box">
-            <input type="hidden" name="condition" value="ideal">
+            <input type="hidden" name="box" id="inp_box">
+            <input type="hidden" name="condition" id="inp_condition" value="ideal">
             <input type="hidden" name="replaced_parts_list" id="inp_parts">
             <input type="hidden" name="defects_list" id="inp_defects">
 
@@ -141,21 +141,42 @@
             <!-- STEP 5: Defects -->
             <div class="wizard-step" id="step5">
                 <h2 class="wizard-title">Ta'mir va Nosozliklar</h2>
+                <p class="wizard-subtitle">Nima almashgan? (Bir nechta tanlash mumkin)</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;" id="partsGrid">
                     <div class="multi-card" data-val="Batareya">🔋 Batareya</div>
                     <div class="multi-card" data-val="Ekran">📱 Ekran</div>
+                    <div class="multi-card" data-val="Korpus">🤳 Korpus</div>
+                    <div class="multi-card" data-val="Kamera">📷 Kamera</div>
+                    <div class="multi-card" data-val="Plata">🔌 Plata</div>
                 </div>
-                <div class="multi-card ok-selected" id="noPartsBtn" style="justify-content:center; margin-bottom:20px;">✅ Ta'mirlanmagan</div>
+                <div class="multi-card ok-selected" id="noPartsBtn" style="justify-content:center; margin-bottom:25px;">✅ Ta'mirlanmagan (Toza)</div>
                 
+                <p class="wizard-subtitle">Qanday nuqsoni bor?</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;" id="defectsGrid">
-                    <div class="multi-card" data-val="Face ID">👤 Face ID</div>
+                    <div class="multi-card" data-val="Face ID">👤 Face ID / Touch ID</div>
                     <div class="multi-card" data-val="True Tone">🌈 True Tone</div>
+                    <div class="multi-card" data-val="Orqa oyna">💎 Orqa oyna</div>
+                    <div class="multi-card" data-val="Kamera dog'">📸 Kamera (dog'i bor)</div>
+                    <div class="multi-card" data-val="Wi-Fi / BT">📡 Wi-Fi / BT</div>
+                    <div class="multi-card" data-val="Ovoz / Dinamik">🔊 Ovoz / Dinamik</div>
                 </div>
-                <div class="multi-card ok-selected" id="noDefectsBtn" style="justify-content:center;">✅ Hammasi ishlaydi</div>
+                <div class="multi-card ok-selected" id="noDefectsBtn" style="justify-content:center;">✅ Aybi yo'q (Ideal)</div>
             </div>
 
-            <!-- STEP 6: Box -->
+            <!-- STEP 6: General Condition -->
             <div class="wizard-step" id="step6">
+                <h2 class="wizard-title">Umumiy holati</h2>
+                <p class="wizard-subtitle">Telefoningizni qanday baholaysiz?</p>
+                <div class="option-grid" id="conditionGrid">
+                    <div class="option-card" data-val="new">🆕 Yangi (Paket)</div>
+                    <div class="option-card" data-val="ideal">✨ Ideal</div>
+                    <div class="option-card" data-val="good">👍 Yaxshi</div>
+                    <div class="option-card" data-val="bad">🛠️ Ta'mir talab</div>
+                </div>
+            </div>
+
+            <!-- STEP 7: Box -->
+            <div class="wizard-step" id="step7">
                 <h2 class="wizard-title">Komplekt</h2>
                 <div class="option-grid" id="boxGrid">
                     <div class="option-card" data-val="Bor">📦 Karobka bor</div>
@@ -163,13 +184,17 @@
                 </div>
             </div>
 
-            <!-- STEP 7: Final -->
-            <div class="wizard-step" id="step7">
+            <!-- STEP 8: Final -->
+            <div class="wizard-step" id="step8">
                 <h2 class="wizard-title">Yakuniy ma'lumotlar</h2>
                 <div style="display:flex; flex-direction:column; gap:15px; margin-bottom:20px;">
                     <div>
                         <label class="section-label">Telefon raqam</label>
                         <input type="text" name="seller_phone" required placeholder="+998" class="form-input">
+                    </div>
+                    <div>
+                        <label class="section-label">Qo'shimcha ma'lumot (Ixtiyoriy)</label>
+                        <textarea name="description" class="form-input" placeholder="Masalan: Aybi yo'q, xolati ideal, bir qo'l ishlatilgan..." style="height: 100px; resize: none;"></textarea>
                     </div>
                     <div>
                         <label class="section-label">Rasm yuklash</label>
@@ -201,8 +226,8 @@ const MODELS = [
 ];
 const COLORS = IPHONE_COLORS;
 let currentStep = 1;
-const TOTAL_STEPS = 7;
-const state = { model: '', color: '', memory: '', region: '', battery: '', screen: '', body: '', parts: [], defects: [], box: '' };
+const TOTAL_STEPS = 8;
+const state = { model: '', color: '', memory: '', region: '', battery: '', screen: '', body: '', parts: [], defects: [], box: '', condition: '' };
 
 const modelGrid = document.getElementById('modelGrid');
 MODELS.reverse().forEach(m => {
@@ -257,6 +282,7 @@ setupSingleSelect('regionGrid', 'region', 'inp_region');
 setupSingleSelect('screenGrid', 'screen', 'inp_screen');
 setupSingleSelect('bodyGrid', 'body', 'inp_body');
 setupSingleSelect('boxGrid', 'box', 'inp_box');
+setupSingleSelect('conditionGrid', 'condition', 'inp_condition');
 
 document.getElementById('batteryInput').addEventListener('input', (e) => {
     state.battery = e.target.value;
@@ -300,8 +326,9 @@ function checkStepValidity() {
     if (currentStep === 3) valid = state.battery > 0;
     if (currentStep === 4) valid = !!state.screen && !!state.body;
     if (currentStep === 5) valid = true;
-    if (currentStep === 6) valid = !!state.box;
-    if (currentStep === 7) valid = true;
+    if (currentStep === 6) valid = !!state.condition;
+    if (currentStep === 7) valid = !!state.box;
+    if (currentStep === 8) valid = true;
     btnNext.disabled = !valid;
 }
 
